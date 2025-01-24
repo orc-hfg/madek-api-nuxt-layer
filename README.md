@@ -1,73 +1,17 @@
-# Nuxt Layer Starter
+# Madek-API Nuxt Layer
 
-Create Nuxt extendable layer with this GitHub template.
+## Dependency Updates
 
-## Setup
+### 1. Node-Version aktualisieren (auf aktuelle LTS-Version)
 
-Make sure to install the dependencies:
+Die aktuelle Node-LTS-Version herausfinden (https://github.com/nodejs/Release?tab=readme-ov-file#release-schedule) und in den folgenden Dateien entsprechend anpassen:
 
-```bash
-pnpm install
-```
+- `.nvmrc`
+- `package.json` im Abschnitt "engines"
+- `nvm use && npm install` ausführen, damit die definierte Node-Version (`.nvmrc`) in der aktuellen Shell aktiviert wird und die Abhängigkeiten für diese installiert werden (`package-lock.json`)
 
-## Working on your layer
+### 2. Externe Abhängigkeiten aktualisieren
 
-Your layer is at the root of this repository, it is exactly like a regular Nuxt project, except you can publish it on NPM.
+`npm run check-updates` verwenden, Updates installieren und währenddessen immer wieder die Funktionalität testen.
 
-The `.playground` directory should help you on trying your layer during development.
-
-Running `pnpm dev` will prepare and boot `.playground` directory, which imports your layer itself.
-
-## Distributing your layer
-
-Your Nuxt layer is shaped exactly the same as any other Nuxt project, except you can publish it on NPM.
-
-To do so, you only have to check if `files` in `package.json` are valid, then run:
-
-```bash
-npm publish --access public
-```
-
-Once done, your users will only have to run:
-
-```bash
-npm install --save your-layer
-```
-
-Then add the dependency to their `extends` in `nuxt.config`:
-
-```ts
-defineNuxtConfig({
-  extends: 'your-layer'
-})
-```
-
-## Development Server
-
-Start the development server on http://localhost:3000
-
-```bash
-pnpm dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-pnpm build
-```
-
-Or statically generate it with:
-
-```bash
-pnpm generate
-```
-
-Locally preview production build:
-
-```bash
-pnpm preview
-```
-
-Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+### 3. Aufgaben für das nächste Dependency Update bearbeiten und ggf. neue erstellen
