@@ -1,5 +1,9 @@
 {
-	"name": "madek-api-nuxt-layer",
+	"name": "@orc-hfg/madek-api-nuxt-layer",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/orc-hfg/madek-api-nuxt-layer"
+	},
 	"type": "module",
 	"version": "0.0.1",
 	"main": "./nuxt.config.ts",
