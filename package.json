@@ -13,7 +13,8 @@
 		"build": "nuxt build .playground",
 		"generate": "nuxt generate .playground",
 		"preview": "nuxt preview .playground",
-		"lint": "eslint ."
+		"lint": "eslint .",
+		"check-updates": "npx npm-check-updates --interactive --format group"
 	},
 	"devDependencies": {
 		"@nuxt/eslint": "0.7.5",
