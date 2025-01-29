@@ -37,9 +37,41 @@ Dadurch wird das lokale Layer-Projekt anstelle der in der package.json angegeben
 ### 4. Linking wieder auflösen (optional)
 Wenn wieder die offizielle (z. B. auf npm oder Git referenzierte) Version verwenden werden soll:
 
-- Symlink für das Hauptprojekt entfernen: siehe `Readme` im Hauptprojekt (es steht ein Skript in der `package.json` bereit)
+- siehe `Readme` im Hauptprojekt (es steht ein Skript in der `package.json` des Hauptprojekts bereit)
 - optional kann zusätzlich der globale Link für das Layer-Projekt entfernt werden: `npm unlink` im Layer-Projekt ausführen
 
+## Neue Version erstellen und veröffentlichen
+Um schnell neue Versionen zu veröffentlichen, stehen in der `package.json` drei Skripte zur Verfügung:
+
+1. **Patch-Release** (z. B. `1.0.2` → `1.0.3`): `npm run prepare-release:patch`
+2. **Minor-Release** (z. B. `1.0.2` → `1.1.0`): `npm run prepare-release:minor`
+3. **Major-Release** (z. B. `1.0.2` → `2.0.0`): `npm run prepare-release:major`
+
+### Was passiert dabei?
+
+1. **Versionsnummer aktualisieren**
+Je nachdem, welches Skript aufgerufen wird, passt `npm version` den entsprechenden Teil der Versionsnummer an (Patch, Minor oder Major).
+Gleichzeitig erzeugt es einen neuen Commit und erstellt einen Git-Tag (z. B. `1.0.3`).
+
+2. **Automatisches Pushen**
+Danach wird sowohl der neue Commit als auch der Tag direkt ins GitHub-Repository gepusht (via `git push --follow-tags`).
+
+### GitHub-Release anlegen
+
+Nach dem erfolgreichen Push des Tags kann du auf GitHub ein neues Release erstellt werden:
+
+1. **Releases-Seite öffnen**
+Gehe im Repository in den Abschnitt **„Releases“**.
+2. **Neues Release erstellen**
+Klicke auf **„Create a new release“** oder **„Draft a new release“**
+1. **Tag auswählen**
+Wähle den eben erstellten Tag (z. B. `1.0.3`) aus der Dropdown-Liste aus.
+1. **Release Details**
+Gib einen Titel (z. B. `1.0.3`) ein und ergänze bei Bedarf Release Notes.
+1. **Veröffentlichen**
+Klicke auf **„Publish release“**.
+
+Die CI/CD-Pipeline (GitHub Actions) reagiert auf das Erstellen eines neuen Releases und stellt es auf GitHub Packages zur Verwendung in der Haupt-App bereit.
 
 ## Dependency Updates
 

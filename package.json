@@ -14,7 +14,10 @@
 		"generate": "nuxt generate .playground",
 		"preview": "nuxt preview .playground",
 		"lint": "eslint .",
-		"check-updates": "npx npm-check-updates --interactive --format group"
+		"check-updates": "npx npm-check-updates --interactive --format group",
+		"prepare-release:patch": "npm version patch -m \"chore: release %s\" && git push --follow-tags",
+		"prepare-release:minor": "npm version minor -m \"chore: release %s\" && git push --follow-tags",
+		"prepare-release:major": "npm version major -m \"chore: release %s\" && git push --follow-tags"
 	},
 	"devDependencies": {
 		"@nuxt/eslint": "0.7.5",
