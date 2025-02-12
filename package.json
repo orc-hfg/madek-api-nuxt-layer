@@ -15,14 +15,17 @@
 		"preview": "nuxt preview .playground",
 		"lint": "eslint .",
 		"check-updates": "npx npm-check-updates --interactive --format group",
+		"generate:api": "openapi-generator-cli generate -i resources/openapi/swagger.json -g typescript-fetch -o generated/api --skip-validate-spec --additional-properties=supportsES6=true",
+		"postgenerate:api": "node scripts/post-generate-api.mjs",
 		"prepare-release:patch": "npm version patch -m \"chore: release %s\" && git push --follow-tags",
 		"prepare-release:minor": "npm version minor -m \"chore: release %s\" && git push --follow-tags",
 		"prepare-release:major": "npm version major -m \"chore: release %s\" && git push --follow-tags"
 	},
 	"devDependencies": {
-		"@nuxt/eslint": "0.7.5",
-		"eslint": "9.18.0",
-		"nuxt": "3.15.2",
+		"@nuxt/eslint": "1.0.0",
+		"@openapitools/openapi-generator-cli": "2.16.3",
+		"eslint": "9.19.0",
+		"nuxt": "3.15.4",
 		"typescript": "5.7.3",
 		"vue": "3.5.13",
 		"vue-tsc": "2.2.0"

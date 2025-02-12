@@ -40,6 +40,14 @@ Wenn wieder die offizielle (z. B. auf npm oder Git referenzierte) Version verw
 - siehe `Readme` im Hauptprojekt (es steht ein Skript in der `package.json` des Hauptprojekts bereit)
 - optional kann zusätzlich der globale Link für das Layer-Projekt entfernt werden: `npm unlink` im Layer-Projekt ausführen
 
+## API-Typen-Generierung
+
+Die API-Typen in `generated/api` werden aus der OpenAPI-Spezifikation in `resources/openapi/swagger.json` generiert. Diese Dateien werden im Repository versioniert, um Konsistenz im Team zu gewährleisten.
+
+### API-Typen aktualisieren
+
+Wenn sich die OpenAPI-Spezifikation ändert, können die Typen neu generiert werden: `npm run generate:api`
+
 ## Neue Version erstellen und veröffentlichen
 Um schnell neue Versionen zu veröffentlichen, stehen in der `package.json` drei Skripte zur Verfügung:
 

@@ -9,6 +9,10 @@ export default defineNuxtConfig({
 		typeCheck: true,
 	},
 	runtimeConfig: {
-		apiBaseUrl: "https://jsonplaceholder.typicode.com/",
+		madekApi: {
+			baseUrl: "https://dev.madek.hfg-karlsruhe.de",
+			username: "",
+			password: "",
+		},
 	},
 });
