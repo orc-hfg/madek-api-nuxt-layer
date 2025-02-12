@@ -9,6 +9,7 @@
 	"main": "./nuxt.config.ts",
 	"scripts": {
 		"dev": "nuxi dev .playground",
+		"dev2": "nuxi dev",
 		"dev:prepare": "nuxt prepare .playground",
 		"build": "nuxt build .playground",
 		"generate": "nuxt generate .playground",
@@ -32,5 +33,8 @@
 	},
 	"engines": {
 		"node": "22.13.0"
+	},
+	"dependencies": {
+		"zod": "3.24.2"
 	}
 }
