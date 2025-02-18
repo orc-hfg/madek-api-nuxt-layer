@@ -11,8 +11,7 @@ export default defineNuxtConfig({
 	runtimeConfig: {
 		madekApi: {
 			baseUrl: "https://dev.madek.hfg-karlsruhe.de",
-			username: "",
-			password: "",
+			token: "",
 		},
 	},
 });
