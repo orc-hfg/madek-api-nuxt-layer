@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import { getAuthHeader } from "./auth-service";
+import { useMadekApi } from "../../composables/useMadekApi";
 
 type MadekAuthInfo = {
 	type: string;
@@ -14,24 +14,19 @@ type MadekAuthInfo = {
 
 type AuthInfo = Pick<MadekAuthInfo, "first_name" | "last_name" | "email_address" | "authentication-method">;
 
-export const getAuthInfo = defineCachedFunction(
-	async (event: H3Event) => {
-		const config = useRuntimeConfig();
-		const authHeader = getAuthHeader();
-		const result = await $fetch<MadekAuthInfo>(`${config.madekApi.baseUrl}/auth-info`, {
-			headers: authHeader,
-		});
+export const getAuthInfo = async (event: H3Event) => {
+	const { fetchFromApi } = useMadekApi(event);
+	const result = await fetchFromApi<MadekAuthInfo>("/auth-info", {
+		cache: {
+			maxAge: 60 * 60,
+			swr: false,
+		},
+	});
 
-		return {
-			first_name: result.first_name,
-			last_name: result.last_name,
-			email_address: result.email_address,
-			"authentication-method": result["authentication-method"],
-		} satisfies AuthInfo;
-	},
-	{
-		maxAge: 60 * 60,
-		swr: false,
-		getKey: (event: H3Event) => event.path,
-	}
-);
+	return {
+		first_name: result.first_name,
+		last_name: result.last_name,
+		email_address: result.email_address,
+		"authentication-method": result["authentication-method"],
+	} satisfies AuthInfo;
+};
