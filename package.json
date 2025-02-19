@@ -16,6 +16,7 @@
 		"preview": "nuxt preview .playground",
 		"lint": "eslint .",
 		"check-updates": "npx npm-check-updates --interactive --format group",
+		"upgrade-nuxt": "npx nuxi upgrade",
 		"generate:api": "openapi-generator-cli generate -i resources/openapi/swagger.json -g typescript-fetch -o generated/api --skip-validate-spec --additional-properties=supportsES6=true",
 		"postgenerate:api": "node scripts/post-generate-api.mjs",
 		"prepare-release:patch": "npm version patch -m \"chore: release %s\" && git push --follow-tags",
@@ -33,5 +34,8 @@
 	},
 	"engines": {
 		"node": "22.13.0"
+	},
+	"dependencies": {
+		"http-status-codes": "2.3.0"
 	}
 }
