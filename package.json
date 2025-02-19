@@ -33,8 +33,5 @@
 	},
 	"engines": {
 		"node": "22.13.0"
-	},
-	"dependencies": {
-		"zod": "3.24.2"
 	}
 }

@@ -10,8 +10,15 @@ export default defineNuxtConfig({
 	},
 	runtimeConfig: {
 		madekApi: {
-			baseUrl: "https://dev.madek.hfg-karlsruhe.de",
+			baseUrl: "https://dev.madek.hfg-karlsruhe.de/api-v2",
 			token: "",
+		},
+	},
+	$production: {
+		runtimeConfig: {
+			madekApi: {
+				baseUrl: "https://madek.hfg-karlsruhe.de/api-v2",
+			},
 		},
 	},
 });
