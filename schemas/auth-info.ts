@@ -1,8 +1,7 @@
 import { z } from "zod";
 
-// Full API response schema
 export const MadekAuthInfoSchema = z.object({
-	type: z.literal("User2"),
+	type: z.literal("User"),
 	id: z.string().uuid(),
 	login: z.string(),
 	created_at: z.string().datetime(),
@@ -12,7 +11,6 @@ export const MadekAuthInfoSchema = z.object({
 	"authentication-method": z.literal("Token"),
 });
 
-// Schema for the picked fields we actually use
 export const AuthInfoSchema = MadekAuthInfoSchema.pick({
 	first_name: true,
 	last_name: true,
