@@ -1,22 +1,11 @@
 import type { H3Event } from "h3";
 import { useMadekApi } from "../../composables/useMadekApi";
+import { MadekAuthInfoSchema, type AuthInfo } from "../../schemas/auth-info";
 
-type MadekAuthInfo = {
-	type: string;
-	id: string;
-	login: string;
-	created_at: string;
-	first_name: string;
-	last_name: string;
-	email_address: string;
-	"authentication-method": string;
-};
-
-type AuthInfo = Pick<MadekAuthInfo, "first_name" | "last_name" | "email_address" | "authentication-method">;
-
-export const getAuthInfo = async (event: H3Event) => {
+export const getAuthInfo = async (event: H3Event): Promise<AuthInfo> => {
 	const { fetchFromApi } = useMadekApi(event);
-	const result = await fetchFromApi<MadekAuthInfo>("/auth-info", {
+	const result = await fetchFromApi<AuthInfo>("/auth-info", {
+		validator: MadekAuthInfoSchema,
 		cache: {
 			maxAge: 60 * 60,
 			swr: false,
@@ -28,5 +17,5 @@ export const getAuthInfo = async (event: H3Event) => {
 		last_name: result.last_name,
 		email_address: result.email_address,
 		"authentication-method": result["authentication-method"],
-	} satisfies AuthInfo;
+	};
 };
