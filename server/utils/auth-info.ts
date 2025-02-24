@@ -6,10 +6,10 @@ export const getAuthInfo = async (event: H3Event): Promise<AuthInfo> => {
 	const { fetchFromApi } = useMadekApi(event);
 	const result = await fetchFromApi<AuthInfo>("/auth-info", {
 		needsAuth: true,
-		// cache: {
-		// 	maxAge: 60 * 60,
-		// 	swr: false,
-		// },
+		cache: {
+			maxAge: 60 * 60,
+			swr: false,
+		},
 	});
 
 	return {

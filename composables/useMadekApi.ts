@@ -14,6 +14,7 @@ export const useMadekApi = (event: H3Event) => {
 
 	function getAuthHeader(): Record<string, string> | undefined {
 		const token = runtimeConfig.madekApi.token;
+
 		return token ? { Authorization: `token ${token}` } : undefined;
 	}
 
@@ -40,6 +41,7 @@ export const useMadekApi = (event: H3Event) => {
 	async function fetchData<T>(url: string, options: ApiOptions): Promise<T> {
 		try {
 			const response = await $fetch<T>(url, buildRequestConfig(options.needsAuth ?? false));
+
 			return response as T;
 		} catch (error) {
 			return handleFetchError(error) as never;
@@ -49,9 +51,19 @@ export const useMadekApi = (event: H3Event) => {
 	async function fetchFromApi<T>(endpoint: string, options: ApiOptions = {}): Promise<T> {
 		const url = `${runtimeConfig.madekApi.baseUrl}${endpoint}`;
 
-		return await defineCachedFunction(async () => fetchData<T>(url, options), {
-			...options.cache,
-			getKey: options.cache?.getKey ?? (() => event.path),
+		async function fetchFunction(): Promise<T> {
+			return fetchData<T>(url, options);
+		}
+
+		if (import.meta.dev || !options.cache) {
+			return await fetchFunction();
+		}
+
+		const cacheOptions = typeof options.cache === "object" ? options.cache : {};
+
+		return await defineCachedFunction(fetchFunction, {
+			...cacheOptions,
+			getKey: cacheOptions.getKey ?? (() => event.path),
 		})();
 	}
 
