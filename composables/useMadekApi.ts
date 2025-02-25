@@ -55,12 +55,12 @@ export const useMadekApi = (event: H3Event) => {
 			return fetchData<T>(url, options);
 		}
 
+		// Do not cache in development or if caching is not configured
 		if (import.meta.dev || !options.cache) {
 			return await fetchFunction();
 		}
 
 		const cacheOptions = typeof options.cache === "object" ? options.cache : {};
-
 		return await defineCachedFunction(fetchFunction, {
 			...cacheOptions,
 			getKey: cacheOptions.getKey ?? (() => event.path),
