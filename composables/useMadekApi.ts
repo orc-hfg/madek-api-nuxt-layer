@@ -1,8 +1,8 @@
-import type { H3Event } from "h3";
-import { createError } from "h3";
-import { FetchError } from "ofetch";
-import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from "nitropack";
-import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import type { H3Event } from 'h3';
+import { createError } from 'h3';
+import { FetchError } from 'ofetch';
+import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
+import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 
 export type ApiOptions = {
 	needsAuth?: boolean;
@@ -60,7 +60,7 @@ export const useMadekApi = (event: H3Event) => {
 			return await fetchFunction();
 		}
 
-		const cacheOptions = typeof options.cache === "object" ? options.cache : {};
+		const cacheOptions = typeof options.cache === 'object' ? options.cache : {};
 		return await defineCachedFunction(fetchFunction, {
 			...cacheOptions,
 			getKey: cacheOptions.getKey ?? (() => event.path),

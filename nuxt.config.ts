@@ -9,17 +9,17 @@ export default defineNuxtConfig({
 	},
 	runtimeConfig: {
 		madekApi: {
-			baseUrl: "https://dev.madek.hfg-karlsruhe.de/api-v2",
-			token: "",
+			baseUrl: 'https://dev.madek.hfg-karlsruhe.de/api-v2',
+			token: '',
 		},
 		delayResponse: true, // It will only take effect in deveplopment mode, useful for testing.
 	},
 	$production: {
 		runtimeConfig: {
 			madekApi: {
-				baseUrl: "https://madek.hfg-karlsruhe.de/api-v2",
+				baseUrl: 'https://madek.hfg-karlsruhe.de/api-v2',
 			},
 		},
 	},
-	compatibilityDate: "2025-01-24",
+	compatibilityDate: '2025-01-24',
 });

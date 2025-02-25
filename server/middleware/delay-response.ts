@@ -1,4 +1,4 @@
-import { sleep } from "../../shared/utils/sleep";
+import { sleep } from '../../shared/utils/sleep';
 
 const runtimeConfig = useRuntimeConfig();
 

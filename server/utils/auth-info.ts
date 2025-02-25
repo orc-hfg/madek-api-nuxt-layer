@@ -1,10 +1,10 @@
-import type { H3Event } from "h3";
-import { useMadekApi } from "../../composables/useMadekApi";
-import type { AuthInfo } from "../../schemas/auth-info";
+import type { H3Event } from 'h3';
+import { useMadekApi } from '../../composables/useMadekApi';
+import type { AuthInfo } from '../../schemas/auth-info';
 
 export const getAuthInfo = async (event: H3Event): Promise<AuthInfo> => {
 	const { fetchFromApi } = useMadekApi(event);
-	const result = await fetchFromApi<AuthInfo>("/auth-info", {
+	const result = await fetchFromApi<AuthInfo>('/auth-info', {
 		needsAuth: true,
 		cache: {
 			maxAge: 60 * 60,
