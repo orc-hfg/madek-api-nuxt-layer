@@ -42,13 +42,13 @@ Wenn wieder die offizielle (z. B. auf npm oder Git referenzierte) Version verw
 
 ## API-Typen-Generierung
 
-Die API-Typen in `generated/api` werden aus der OpenAPI-Spezifikation in `resources/openapi/swagger.json` generiert. Diese Dateien werden im Repository versioniert, um Konsistenz im Team zu gewährleisten. Da die aktuelle OpenAPI-Spezifikation in der Version 2.x vorliegt (Stand Februar 2025), kann noch nicht die aktuelle Version des Generators (OpenAPI TypeScript: https://openapi-ts.dev/) verwendet werden. Falls sich die Version der Spezifikation ändert (möglich ab Version 3.x), sollten wir auch hier die aktuelle Version des Generators nutzen.
+Die API-Typen in `generated/api` werden aus der OpenAPI-Spezifikation in `resources/openapi/swagger.json` generiert. Diese Dateien werden im Repository versioniert, um Konsistenz im Team zu gewährleisten. Da die aktuelle OpenAPI-Spezifikation in der Version 2.x vorliegt (Stand Februar 2025), kann nicht die aktuelle Version des Generators (OpenAPI TypeScript: https://openapi-ts.dev/) verwendet werden. Falls sich die Version der Spezifikation ändert (möglich ab Version 3.x), sollten wir auch die aktuelle Version des Generators nutzen.
 
-Aktuell verhindert die Version (< 3.x) und Vollständigkeit (z.B. fehlende Schemas für Responses, u.a. Status Code 406) der OpenAPI-Spezifikation die Verwendung unterstützender Tools, wie:
+Aktuell verhindert die Version der Spezifikation (< 3.x) und die Vollständigkeit der Angaben (z.B. fehlende Schemas für Responses, u.a. Status Code 406) der OpenAPI-Spezifikation die Verwendung unterstützender Tools, wie:
 - https://github.com/fabien0102/ts-to-zod
 - https://nuxt-open-fetch.vercel.app/
 
-Ziel wäre, dass wir uns an den Nuxt-Konventionen orientieren, also z.B. im Kern `$fetch` statt natives `fetch` verwenden.
+Bitte beachten: Unser Ziel ist es, dass wir uns an den Nuxt-Konventionen orientieren, also z.B. im Kern `$fetch` statt natives `fetch` für Server Requests verwenden.
 
 ### API-Typen aktualisieren
 
