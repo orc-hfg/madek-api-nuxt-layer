@@ -3,7 +3,6 @@ export default defineNuxtConfig({
 	future: {
 		compatibilityVersion: 4,
 	},
-	compatibilityDate: "2025-01-24",
 	devtools: { enabled: true },
 	typescript: {
 		typeCheck: true,
@@ -13,6 +12,7 @@ export default defineNuxtConfig({
 			baseUrl: "https://dev.madek.hfg-karlsruhe.de/api-v2",
 			token: "",
 		},
+		delayResponse: true, // It will only take effect in deveplopment mode, useful for testing.
 	},
 	$production: {
 		runtimeConfig: {
@@ -21,4 +21,5 @@ export default defineNuxtConfig({
 			},
 		},
 	},
+	compatibilityDate: "2025-01-24",
 });
