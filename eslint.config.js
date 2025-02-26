@@ -12,18 +12,95 @@ export default withNuxt(
 				// Enables type-aware linting
 				tsconfigPath: 'tsconfig.json',
 			},
-			// ESlint stylistic does not work well with VSCode (auto fix does not work), therefore disabled
-			// Prettier is used instead
-			stylistic: false,
+			stylistic: {
+				indent: 'tab',
+				semi: true,
+			},
 		},
 		{
+			files: ['**/*.ts', '**/*.vue'],
 			rules: {
+				'curly': 'error',
 				'no-console': [
 					'error',
 					{
 						allow: ['info', 'warn', 'error'],
 					},
 				],
+				'no-implicit-coercion': 'error',
+				'require-await': 'error',
+			},
+		},
+		{
+			files: ['**/*.ts'],
+			rules: {
+				'ts/explicit-function-return-type': 'error',
+				'camelcase': 'off',
+				'ts/naming-convention': [
+					'error',
+					// 1) All types (classes, interfaces, enums, type aliases, etc.) => PascalCase
+					{
+						selector: 'typeLike',
+						format: ['PascalCase'],
+					},
+					// 2) Interfaces must NOT start with 'I'
+					{
+						selector: 'interface',
+						format: ['PascalCase'],
+						custom: {
+							regex: '^I[A-Z]',
+							match: false,
+						},
+					},
+					// 3) Boolean variables => camelCase with prefix (is/has/etc.)
+					{
+						selector: 'variable',
+						types: ['boolean'],
+						format: ['camelCase'],
+						prefix: ['is', 'should', 'has', 'can', 'did', 'was', 'will'],
+					},
+					// 4) Destructured variables => camelCase
+					{
+						selector: 'variable',
+						modifiers: ['destructured'],
+						format: ['camelCase'],
+					},
+					// 5) Real constant booleans/numbers => UPPER_CASE (strings not enforced)
+					{
+						selector: 'variable',
+						modifiers: ['const'],
+						types: ['boolean', 'number'],
+						format: ['UPPER_CASE'],
+					},
+					// 6) Other variables => camelCase
+					{
+						selector: 'variable',
+						format: ['camelCase'],
+					},
+					// 7) Parameters => camelCase
+					{
+						selector: 'parameter',
+						format: ['camelCase'],
+					},
+					// 8) Functions => camelCase
+					{
+						selector: 'function',
+						format: ['camelCase'],
+					},
+				],
+				'ts/no-floating-promises': 'error',
+				'no-magic-numbers': 'off',
+				'ts/no-magic-numbers': [
+					'error',
+					{
+						ignoreReadonlyClassProperties: true,
+						ignore: [-1, 0, 1],
+						ignoreArrayIndexes: true,
+					},
+				],
+				'ts/no-misused-promises': 'error',
+				'ts/promise-function-async': 'error',
+				'ts/return-await': 'error',
 			},
 		},
 	),

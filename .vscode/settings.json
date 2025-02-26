@@ -1,10 +1,8 @@
-// Original recommendation: https://github.com/antfu/eslint-config?tab=readme-ov-file#ide-support-auto-fix-on-save
-// Modified to work with prettier as code formatter
-// ESlint stylistic does not work well with VSCode (auto fix does not work)
+// See: https://github.com/antfu/eslint-config?tab=readme-ov-file#ide-support-auto-fix-on-save
 {
-	"prettier.enable": true,
-	"editor.formatOnSave": true,
-	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	// Disable the default formatter, use eslint instead
+	"prettier.enable": false,
+	"editor.formatOnSave": false,
 
 	// Auto fix
 	"editor.codeActionsOnSave": {

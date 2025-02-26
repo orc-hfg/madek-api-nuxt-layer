@@ -19,9 +19,6 @@
 		"preview": "nuxt preview .playground",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
-		"format": "prettier . --check",
-		"format:fix": "prettier . --write --list-different",
-		"fix-all": "concurrently --raw 'npm:lint:fix' 'npm:format:fix'",
 		"check-types": "npx nuxi typecheck",
 		"check-updates": "npx npm-check-updates --interactive --format group",
 		"upgrade-nuxt": "npx nuxi upgrade",
@@ -37,7 +34,6 @@
 	"devDependencies": {
 		"@antfu/eslint-config": "4.3.0",
 		"@nuxt/eslint": "1.0.0",
-		"concurrently": "9.1.2",
 		"eslint": "9.19.0",
 		"nuxt": "3.15.4",
 		"openapi-typescript": "5.4.2",

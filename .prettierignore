@@ -1,7 +1,0 @@
-generated/
-node_modules/
-dist/
-.nuxt/
-.output/
-.playground/
-package-lock.json
