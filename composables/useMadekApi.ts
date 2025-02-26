@@ -1,20 +1,22 @@
-import type { H3Event } from "h3";
-import { createError } from "h3";
-import { FetchError } from "ofetch";
-import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from "nitropack";
-import { StatusCodes, getReasonPhrase } from "http-status-codes";
-import type { z } from "zod";
+import type { H3Event } from 'h3';
+import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
+import { createError } from 'h3';
+import { getReasonPhrase, StatusCodes } from 'http-status-codes';
+import { FetchError } from 'ofetch';
 
-export type ApiOptions<T> = {
+export interface ApiOptions {
+	needsAuth?: boolean;
 	cache?: CacheOptions;
-	validator?: z.ZodType<T>;
-};
+}
 
-export const useMadekApi = (event: H3Event) => {
-	const runtimeConfig = useRuntimeConfig();
+export function useMadekApi<T>(event: H3Event): {
+	fetchFromApi: (endpoint: string, options?: ApiOptions) => Promise<T>;
+} {
+	const runtimeConfig = useRuntimeConfig(event);
 
 	function getAuthHeader(): Record<string, string> | undefined {
 		const token = runtimeConfig.madekApi.token;
+
 		return token ? { Authorization: `token ${token}` } : undefined;
 	}
 
@@ -24,67 +26,50 @@ export const useMadekApi = (event: H3Event) => {
 		};
 	}
 
-	function handleFetchError(error: unknown) {
+	function handleFetchError(error: unknown): void {
 		if (error instanceof FetchError) {
 			throw createError({
 				statusCode: error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR,
 				statusMessage:
-					error.statusMessage ??
-					error.statusText ??
-					getReasonPhrase(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR),
+					error.statusMessage
+					?? error.statusText
+					?? getReasonPhrase(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR),
 			});
 		}
 
 		throw error;
 	}
 
-	function validateData<T>(data: unknown, validator?: z.ZodType<T>): T {
-		if (!validator) {
-			return data as T;
-		}
-
-		const validation = validator.safeParse(data);
-		if (!validation.success) {
-			console.error("🔥 Zod: Invalid API Response Format:", validation.error.errors);
-
-			throw createError({
-				statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
-				statusMessage: getReasonPhrase(StatusCodes.UNPROCESSABLE_ENTITY),
-				message: "🔥 Zod: Invalid API Response Format",
-				data: validation.error.errors.map((err) => ({
-					path: err.path.join("."),
-					message: err.message,
-				})),
-			});
-		}
-		return validation.data;
-	}
-
-	async function fetchData<T>(url: string, needsAuth: boolean): Promise<T> {
+	async function fetchData<T>(url: string, options: ApiOptions): Promise<T> {
 		try {
-			const response = await $fetch<T>(url, buildRequestConfig(needsAuth));
+			const response = await $fetch<T>(url, buildRequestConfig(options.needsAuth ?? false));
 
 			return response as T;
-		} catch (error) {
+		}
+		catch (error) {
 			return handleFetchError(error) as never;
 		}
 	}
 
-	async function fetchFromApi<T>(endpoint: string, options: ApiOptions<T> = {}, needsAuth: boolean): Promise<T> {
+	// Using Promise return pattern without unnecessary complexity
+	async function fetchFromApi<T>(endpoint: string, options: ApiOptions = {}): Promise<T> {
 		const url = `${runtimeConfig.madekApi.baseUrl}${endpoint}`;
 
-		const result = await defineCachedFunction(
-			async () => {
-				return await fetchData<T>(url, needsAuth);
-			},
-			{
-				...options.cache,
-				getKey: options.cache?.getKey ?? (() => event.path),
-			}
-		)();
+		async function fetchFunction(): Promise<T> {
+			return fetchData<T>(url, options);
+		}
 
-		return validateData<T>(result, options.validator);
+		// Do not cache in development or if caching is not configured
+		if (import.meta.dev || !options.cache) {
+			return fetchFunction();
+		}
+
+		const cacheOptions = typeof options.cache === 'object' ? options.cache : {};
+		return defineCachedFunction(fetchFunction, {
+			...cacheOptions,
+			getKey: cacheOptions.getKey ?? ((): string => event.path),
+		})();
 	}
 
 	return { fetchFromApi };
-};
+}

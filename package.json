@@ -1,12 +1,15 @@
 {
 	"name": "@orc-hfg/madek-api-nuxt-layer",
+	"type": "module",
+	"version": "1.0.4-alpha",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/orc-hfg/madek-api-nuxt-layer"
 	},
-	"type": "module",
-	"version": "1.0.4-alpha",
 	"main": "./nuxt.config.ts",
+	"engines": {
+		"node": "22.13.0"
+	},
 	"scripts": {
 		"dev": "nuxi dev .playground",
 		"dev2": "nuxi dev",
@@ -15,28 +18,27 @@
 		"generate": "nuxt generate .playground",
 		"preview": "nuxt preview .playground",
 		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"check-types": "npx nuxi typecheck",
 		"check-updates": "npx npm-check-updates --interactive --format group",
 		"upgrade-nuxt": "npx nuxi upgrade",
-		"generate:api": "openapi-generator-cli generate -i resources/openapi/swagger.json -g typescript-fetch -o generated/api --skip-validate-spec --additional-properties=supportsES6=true",
-		"postgenerate:api": "node scripts/post-generate-api.mjs",
+		"generate:api": "npx openapi-typescript ./resources/openapi/swagger.json -o ./generated/api/schema.d.ts",
 		"prepare-release:patch": "npm version patch -m \"chore: release %s\" && git push --follow-tags",
 		"prepare-release:minor": "npm version minor -m \"chore: release %s\" && git push --follow-tags",
 		"prepare-release:major": "npm version major -m \"chore: release %s\" && git push --follow-tags"
 	},
-	"devDependencies": {
-		"@nuxt/eslint": "1.0.0",
-		"@openapitools/openapi-generator-cli": "2.16.3",
-		"eslint": "9.19.0",
-		"nuxt": "3.15.4",
-		"typescript": "5.7.3",
-		"vue": "3.5.13",
-		"vue-tsc": "2.2.0"
-	},
-	"engines": {
-		"node": "22.13.0"
-	},
 	"dependencies": {
 		"http-status-codes": "2.3.0",
 		"zod": "3.24.2"
+	},
+	"devDependencies": {
+		"@antfu/eslint-config": "4.3.0",
+		"@nuxt/eslint": "1.0.0",
+		"eslint": "9.19.0",
+		"nuxt": "3.15.4",
+		"openapi-typescript": "5.4.2",
+		"typescript": "5.7.3",
+		"vue": "3.5.13",
+		"vue-tsc": "2.2.0"
 	}
 }
