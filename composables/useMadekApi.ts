@@ -10,7 +10,7 @@ export type ApiOptions = {
 };
 
 export const useMadekApi = (event: H3Event) => {
-	const runtimeConfig = useRuntimeConfig();
+	const runtimeConfig = useRuntimeConfig(event);
 
 	function getAuthHeader(): Record<string, string> | undefined {
 		const token = runtimeConfig.madekApi.token;
