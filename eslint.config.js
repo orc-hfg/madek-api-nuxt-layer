@@ -4,18 +4,16 @@ import withNuxt from './.playground/.nuxt/eslint.config.mjs';
 
 export default withNuxt(
 	antfu({
-		ignores: [
-			// '**/packages/**/',
-			// 'packages/',
-		],
+		ignores: ['generated/'],
 		// TypeScript and Vue are autodetected, but explicitly enabled here
 		vue: true,
 		typescript: {
-			tsconfigPath: 'tsconfig.json', // Enables type-aware linting
+			// Enables type-aware linting
+			tsconfigPath: 'tsconfig.json',
 		},
-		stylistic: {
-			indent: 'tab',
-		},
+		// ESlint stylistic does not work well with VSCode (auto fix does not work), therefore disabled
+		// Prettier is used instead
+		stylistic: false,
 	}),
 );
 

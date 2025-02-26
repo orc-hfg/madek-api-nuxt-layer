@@ -1,15 +1,15 @@
 import type { H3Event } from 'h3';
-import { createError } from 'h3';
-import { FetchError } from 'ofetch';
 import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
-import { StatusCodes, getReasonPhrase } from 'http-status-codes';
+import { createError } from 'h3';
+import { getReasonPhrase, StatusCodes } from 'http-status-codes';
+import { FetchError } from 'ofetch';
 
-export type ApiOptions = {
+export interface ApiOptions {
 	needsAuth?: boolean;
 	cache?: CacheOptions;
-};
+}
 
-export const useMadekApi = (event: H3Event) => {
+export function useMadekApi(event: H3Event) {
 	const runtimeConfig = useRuntimeConfig(event);
 
 	function getAuthHeader(): Record<string, string> | undefined {
@@ -57,15 +57,15 @@ export const useMadekApi = (event: H3Event) => {
 
 		// Do not cache in development or if caching is not configured
 		if (import.meta.dev || !options.cache) {
-			return await fetchFunction();
+			return fetchFunction();
 		}
 
 		const cacheOptions = typeof options.cache === 'object' ? options.cache : {};
-		return await defineCachedFunction(fetchFunction, {
+		return defineCachedFunction(fetchFunction, {
 			...cacheOptions,
 			getKey: cacheOptions.getKey ?? (() => event.path),
 		})();
 	}
 
 	return { fetchFromApi };
-};
+}

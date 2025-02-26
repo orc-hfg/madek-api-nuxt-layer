@@ -1,9 +1,9 @@
 import type { H3Event } from 'h3';
+import type { AuthInfo, MadekAuthInfoResponse } from '../../schemas/auth-info';
+import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { useMadekApi } from '../../composables/useMadekApi';
-import type { MadekAuthInfoResponse, AuthInfo } from '../../schemas/auth-info';
-import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 
-export const getAuthInfo = async (event: H3Event): Promise<AuthInfo> => {
+export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 	const { fetchFromApi } = useMadekApi(event);
 
 	try {
@@ -28,4 +28,4 @@ export const getAuthInfo = async (event: H3Event): Promise<AuthInfo> => {
 			message: 'Failed to fetch auth info',
 		});
 	}
-};
+}
