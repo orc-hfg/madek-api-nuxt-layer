@@ -1,7 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { defineNuxtConfig } from "nuxt/config";
+import { fileURLToPath } from 'node:url'
 
 export default defineNuxtConfig({
-	devtools: { enabled: true },
-	compatibilityDate: "2025-02-26",
-});
+	extends: ['..'],
+	modules: ['@nuxt/eslint'],
+
+	eslint: {
+		config: {
+			// Use the generated ESLint config for lint root project as well
+			rootDir: fileURLToPath(new URL('..', import.meta.url)),
+		},
+	},
+
+	compatibilityDate: '2025-02-25',
+})
