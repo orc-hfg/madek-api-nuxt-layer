@@ -26,6 +26,7 @@
 		"prepare-release:major": "npm version major -m \"chore: release %s\" && git push --follow-tags"
 	},
 	"devDependencies": {
+		"@antfu/eslint-config": "4.3.0",
 		"@nuxt/eslint": "1.0.0",
 		"eslint": "9.19.0",
 		"nuxt": "3.15.4",

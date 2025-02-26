@@ -7,12 +7,18 @@ export default defineNuxtConfig({
 	typescript: {
 		typeCheck: true,
 	},
+	modules: ['@nuxt/eslint'],
+	eslint: {
+		config: {
+			standalone: false, // Ensures the module only generates Nuxt-specific rules so that it can be merged with own config presets (@antfu/eslint-config)
+		},
+	},
 	runtimeConfig: {
 		madekApi: {
 			baseUrl: 'https://dev.madek.hfg-karlsruhe.de/api-v2',
 			token: '',
 		},
-		delayResponse: true, // It will only take effect in deveplopment mode, useful for testing.
+		delayResponse: false, // It will only take effect in deveplopment mode, useful for testing.
 	},
 	$production: {
 		runtimeConfig: {
