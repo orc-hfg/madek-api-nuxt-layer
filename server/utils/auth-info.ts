@@ -21,7 +21,7 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 			first_name: response.first_name,
 			last_name: response.last_name,
 		};
-	} catch (error) {
+	} catch {
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
 			statusMessage: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),

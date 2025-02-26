@@ -3,18 +3,30 @@ import antfu from '@antfu/eslint-config';
 import withNuxt from './.playground/.nuxt/eslint.config.mjs';
 
 export default withNuxt(
-	antfu({
-		ignores: ['generated/'],
-		// TypeScript and Vue are autodetected, but explicitly enabled here
-		vue: true,
-		typescript: {
-			// Enables type-aware linting
-			tsconfigPath: 'tsconfig.json',
+	antfu(
+		{
+			ignores: ['generated/'],
+			// TypeScript and Vue are autodetected, but explicitly enabled here
+			vue: true,
+			typescript: {
+				// Enables type-aware linting
+				tsconfigPath: 'tsconfig.json',
+			},
+			// ESlint stylistic does not work well with VSCode (auto fix does not work), therefore disabled
+			// Prettier is used instead
+			stylistic: false,
 		},
-		// ESlint stylistic does not work well with VSCode (auto fix does not work), therefore disabled
-		// Prettier is used instead
-		stylistic: false,
-	}),
+		{
+			rules: {
+				'no-console': [
+					'error',
+					{
+						allow: ['info', 'warn', 'error'],
+					},
+				],
+			},
+		},
+	),
 );
 
 // These plugins are used by antfu/eslintconfig:

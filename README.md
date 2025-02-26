@@ -2,12 +2,12 @@
 
 ## Lokale Entwicklung des madek-api-nuxt-layer und Integration in ein Hauptprojekt
 
-Damit neue oder geänderte Funktionen dieses Layers lokal in einer Nuxt-App (z. B. dem „Uploader“) getestet werden können, ohne für jede Änderung ein neues Release zu erstellen, empfiehlt sich das Vorgehen mit `npm link` (https://docs.npmjs.com/cli/v9/commands/npm-link).
+Damit neue oder geänderte Funktionen dieses Layers lokal in einer Nuxt-App (z.B. dem „Uploader“) getestet werden können, ohne für jede Änderung ein neues Release zu erstellen, empfiehlt sich das Vorgehen mit `npm link` (https://docs.npmjs.com/cli/v9/commands/npm-link).
 
 ### Voraussetzungen:
 
 - dieses Repository ist lokal geklont
-- ein Hauptprojekt (z. B. „Uploader“), in dem der Layer verwendet wird, ist ebenfalls lokal verfügbar
+- ein Hauptprojekt (z.B. „Uploader“), in dem der Layer verwendet wird, ist ebenfalls lokal verfügbar
 
 ### 1. Dieses Layer-Projekt global verlinken
 
@@ -19,11 +19,11 @@ Damit neue oder geänderte Funktionen dieses Layers lokal in einer Nuxt-App (z. 
 
 Damit wird das Paket global per Symlink registriert, so dass es in anderen Projekten per `npm link <package-name>` eingebunden werden kann.
 
-- **Hinweis:** in der `package.json` muss der Name korrekt gesetzt sein, z. B. `"name": "@orc-hfg/madek-api-nuxt-layer"`.
+- **Hinweis:** in der `package.json` muss der Name korrekt gesetzt sein, z.B. `"name": "@orc-hfg/madek-api-nuxt-layer"`.
 
 ### 2. Lokales Linking im Hauptprojekt aktivieren
 
-- in den Ordner des Hauptprojekts (z. B. „Uploader“) wechseln:
+- in den Ordner des Hauptprojekts (z.B. „Uploader“) wechseln:
   `cd /pfad/zum/hauptprojekt`
 
 - Hauptprojekt mit lokal verlinkten Layer verbinden:
@@ -41,7 +41,7 @@ Dadurch wird das lokale Layer-Projekt anstelle der in der package.json angegeben
 
 ### 4. Linking wieder auflösen (optional)
 
-Wenn wieder die offizielle (z. B. auf npm oder Git referenzierte) Version verwenden werden soll:
+Wenn wieder die offizielle (z.B. auf npm oder Git referenzierte) Version verwenden werden soll:
 
 - siehe `Readme` im Hauptprojekt (es steht ein Skript in der `package.json` des Hauptprojekts bereit)
 - optional kann zusätzlich der globale Link für das Layer-Projekt entfernt werden: `npm unlink` im Layer-Projekt ausführen
@@ -65,15 +65,15 @@ Wenn sich die OpenAPI-Spezifikation ändert, können die Typen neu generiert wer
 
 Um schnell neue Versionen zu veröffentlichen, stehen in der `package.json` drei Skripte zur Verfügung:
 
-1. **Patch-Release** (z. B. `1.0.2` → `1.0.3`): `npm run prepare-release:patch`
-2. **Minor-Release** (z. B. `1.0.2` → `1.1.0`): `npm run prepare-release:minor`
-3. **Major-Release** (z. B. `1.0.2` → `2.0.0`): `npm run prepare-release:major`
+1. **Patch-Release** (z.B. `1.0.2` → `1.0.3`): `npm run prepare-release:patch`
+2. **Minor-Release** (z.B. `1.0.2` → `1.1.0`): `npm run prepare-release:minor`
+3. **Major-Release** (z.B. `1.0.2` → `2.0.0`): `npm run prepare-release:major`
 
 ### Was passiert dabei?
 
 1. **Versionsnummer aktualisieren**
    Je nachdem, welches Skript aufgerufen wird, passt `npm version` den entsprechenden Teil der Versionsnummer an (Patch, Minor oder Major).
-   Gleichzeitig erzeugt es einen neuen Commit und erstellt einen Git-Tag (z. B. `1.0.3`).
+   Gleichzeitig erzeugt es einen neuen Commit und erstellt einen Git-Tag (z.B. `1.0.3`).
 
 2. **Automatisches Pushen**
    Danach wird sowohl der neue Commit als auch der Tag direkt ins GitHub-Repository gepusht (via `git push --follow-tags`).
@@ -87,9 +87,9 @@ Nach dem erfolgreichen Push des Tags kann du auf GitHub ein neues Release erstel
 2. **Neues Release erstellen**
    Klicke auf **„Create a new release“** oder **„Draft a new release“**
 3. **Tag auswählen**
-   Wähle den eben erstellten Tag (z. B. `1.0.3`) aus der Dropdown-Liste aus.
+   Wähle den eben erstellten Tag (z.B. `1.0.3`) aus der Dropdown-Liste aus.
 4. **Release Details**
-   Gib einen Titel (z. B. `1.0.3`) ein und ergänze bei Bedarf Release Notes.
+   Gib einen Titel (z.B. `1.0.3`) ein und ergänze bei Bedarf Release Notes.
 5. **Veröffentlichen**
    Klicke auf **„Publish release“**.
 
