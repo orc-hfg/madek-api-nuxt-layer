@@ -9,7 +9,9 @@ export interface ApiOptions {
 	cache?: CacheOptions;
 }
 
-export function useMadekApi(event: H3Event) {
+export function useMadekApi<T>(event: H3Event): {
+	fetchFromApi: (endpoint: string, options?: ApiOptions) => Promise<T>;
+} {
 	const runtimeConfig = useRuntimeConfig(event);
 
 	function getAuthHeader(): Record<string, string> | undefined {
@@ -24,14 +26,14 @@ export function useMadekApi(event: H3Event) {
 		};
 	}
 
-	function handleFetchError(error: unknown) {
+	function handleFetchError(error: unknown): void {
 		if (error instanceof FetchError) {
 			throw createError({
 				statusCode: error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR,
 				statusMessage:
-					error.statusMessage ??
-					error.statusText ??
-					getReasonPhrase(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR),
+					error.statusMessage
+					?? error.statusText
+					?? getReasonPhrase(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR),
 			});
 		}
 
@@ -43,11 +45,13 @@ export function useMadekApi(event: H3Event) {
 			const response = await $fetch<T>(url, buildRequestConfig(options.needsAuth ?? false));
 
 			return response as T;
-		} catch (error) {
+		}
+		catch (error) {
 			return handleFetchError(error) as never;
 		}
 	}
 
+	// Using Promise return pattern without unnecessary complexity
 	async function fetchFromApi<T>(endpoint: string, options: ApiOptions = {}): Promise<T> {
 		const url = `${runtimeConfig.madekApi.baseUrl}${endpoint}`;
 
@@ -63,7 +67,7 @@ export function useMadekApi(event: H3Event) {
 		const cacheOptions = typeof options.cache === 'object' ? options.cache : {};
 		return defineCachedFunction(fetchFunction, {
 			...cacheOptions,
-			getKey: cacheOptions.getKey ?? (() => event.path),
+			getKey: cacheOptions.getKey ?? ((): string => event.path),
 		})();
 	}
 

@@ -2,17 +2,15 @@ import type { H3Event } from 'h3';
 import type { AuthInfo, MadekAuthInfoResponse } from '../../schemas/auth-info';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { useMadekApi } from '../../composables/useMadekApi';
+import { freshOneHourCache } from '../../shared/constants/cache';
 
 export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
-	const { fetchFromApi } = useMadekApi(event);
+	const { fetchFromApi } = useMadekApi<MadekAuthInfoResponse>(event);
 
 	try {
-		const response = await fetchFromApi<MadekAuthInfoResponse>('/auth-info', {
+		const response = await fetchFromApi('/auth-info', {
 			needsAuth: true,
-			cache: {
-				maxAge: 60 * 60,
-				swr: false,
-			},
+			cache: freshOneHourCache,
 		});
 
 		return {
@@ -21,7 +19,8 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 			first_name: response.first_name,
 			last_name: response.last_name,
 		};
-	} catch {
+	}
+	catch {
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
 			statusMessage: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),

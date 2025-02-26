@@ -28,7 +28,6 @@ export default withNuxt(
 					},
 				],
 				'no-implicit-coercion': 'error',
-				'require-await': 'error',
 			},
 		},
 		{
@@ -36,6 +35,7 @@ export default withNuxt(
 			rules: {
 				'ts/explicit-function-return-type': 'error',
 				'camelcase': 'off',
+				'ts/member-ordering': 'error',
 				'ts/naming-convention': [
 					'error',
 					// 1) All types (classes, interfaces, enums, type aliases, etc.) => PascalCase
@@ -77,10 +77,11 @@ export default withNuxt(
 						selector: 'variable',
 						format: ['camelCase'],
 					},
-					// 7) Parameters => camelCase
+					// 7) Parameters => camelCase with optional leading underscore
 					{
 						selector: 'parameter',
 						format: ['camelCase'],
+						leadingUnderscore: 'allow',
 					},
 					// 8) Functions => camelCase
 					{
@@ -100,7 +101,7 @@ export default withNuxt(
 				],
 				'ts/no-misused-promises': 'error',
 				'ts/promise-function-async': 'error',
-				'ts/return-await': 'error',
+				'ts/return-await': ['error', 'in-try-catch'],
 			},
 		},
 	),
