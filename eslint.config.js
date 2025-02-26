@@ -35,7 +35,6 @@ export default withNuxt(
 			rules: {
 				'ts/explicit-function-return-type': 'error',
 				'camelcase': 'off',
-				'ts/member-ordering': 'error',
 				'ts/naming-convention': [
 					'error',
 					// 1) All types (classes, interfaces, enums, type aliases, etc.) => PascalCase
