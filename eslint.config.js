@@ -1,5 +1,6 @@
 // @ts-check
 import antfu from '@antfu/eslint-config';
+import eslintPluginSonarJs from 'eslint-plugin-sonarjs';
 import withNuxt from './.playground/.nuxt/eslint.config.mjs';
 
 export default withNuxt(
@@ -16,6 +17,7 @@ export default withNuxt(
 				indent: 'tab',
 				semi: true,
 			},
+			...eslintPluginSonarJs.configs.recommended,
 		},
 		{
 			files: ['**/*.ts', '**/*.vue'],

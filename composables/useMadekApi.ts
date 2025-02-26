@@ -47,11 +47,11 @@ export function useMadekApi<T>(event: H3Event): {
 			return response as T;
 		}
 		catch (error) {
-			return handleFetchError(error) as never;
+			handleFetchError(error);
+			throw error; // Explicit fallback throw to satisfy TypeScript
 		}
 	}
 
-	// Using Promise return pattern without unnecessary complexity
 	async function fetchFromApi<T>(endpoint: string, options: ApiOptions = {}): Promise<T> {
 		const url = `${runtimeConfig.madekApi.baseUrl}${endpoint}`;
 
