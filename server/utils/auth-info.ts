@@ -9,7 +9,9 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 
 	try {
 		const response = await fetchFromApi('/auth-info', {
-			needsAuth: true,
+			apiOptions: {
+				needsAuth: true,
+			},
 			cache: freshOneHourCache,
 		});
 

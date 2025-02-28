@@ -4,8 +4,13 @@ import { createError } from 'h3';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { FetchError } from 'ofetch';
 
-export interface ApiOptions {
+export interface MadekApiOptions {
 	needsAuth?: boolean;
+	query?: NitroFetchOptions<NitroFetchRequest>['query'];
+}
+
+export interface MadekApiRequestConfig {
+	apiOptions?: MadekApiOptions;
 	cache?: CacheOptions;
 }
 
@@ -24,7 +29,7 @@ function handleFetchError(error: unknown): void {
 }
 
 export function useMadekApi<T>(event: H3Event): {
-	fetchFromApi: (endpoint: string, options?: ApiOptions) => Promise<T>;
+	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
 } {
 	const runtimeConfig = useRuntimeConfig(event);
 
@@ -34,15 +39,16 @@ export function useMadekApi<T>(event: H3Event): {
 		return token ? { Authorization: `token ${token}` } : undefined;
 	}
 
-	function buildRequestConfig(needsAuth: boolean): NitroFetchOptions<NitroFetchRequest> {
+	function buildRequestConfig(apiOptions: MadekApiOptions = {}): NitroFetchOptions<NitroFetchRequest> {
 		return {
-			headers: needsAuth ? getAuthHeader() : undefined,
+			headers: apiOptions.needsAuth ? getAuthHeader() : undefined,
+			query: apiOptions.query,
 		};
 	}
 
-	async function fetchData<T>(url: string, options: ApiOptions): Promise<T> {
+	async function fetchData<T>(url: string, apiOptions: MadekApiOptions = {}): Promise<T> {
 		try {
-			const response = await $fetch<T>(url, buildRequestConfig(options.needsAuth ?? false));
+			const response = await $fetch<T>(url, buildRequestConfig(apiOptions));
 
 			return response as T;
 		}
@@ -52,24 +58,26 @@ export function useMadekApi<T>(event: H3Event): {
 		}
 	}
 
-	async function fetchFromApi<T>(endpoint: string, options: ApiOptions = {}): Promise<T> {
+	async function fetchFromApi<T>(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
 		const url = `${runtimeConfig.madekApi.baseUrl}${endpoint}`;
 
 		async function fetchFunction(): Promise<T> {
-			return fetchData<T>(url, options);
+			return fetchData<T>(url, apiRequestConfig.apiOptions || {});
 		}
 
 		// Do not cache in development or if caching is not configured
-		if (import.meta.dev || !options.cache) {
+		if (import.meta.dev || !apiRequestConfig.cache) {
 			return fetchFunction();
 		}
 
-		const cacheOptions = typeof options.cache === 'object' ? options.cache : {};
+		const cacheOptions = typeof apiRequestConfig.cache === 'object' ? apiRequestConfig.cache : {};
 		return defineCachedFunction(fetchFunction, {
 			...cacheOptions,
 			getKey: cacheOptions.getKey ?? ((): string => event.path),
 		})();
 	}
 
-	return { fetchFromApi };
+	return {
+		fetchFromApi,
+	};
 }

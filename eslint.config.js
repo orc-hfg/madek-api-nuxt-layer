@@ -1,6 +1,5 @@
 // Further configuration examples can be found at the end of the file
 
-// @ts-check
 import antfu from '@antfu/eslint-config';
 import eslintPluginSonarJs from 'eslint-plugin-sonarjs';
 import withNuxt from './.playground/.nuxt/eslint.config.mjs';
