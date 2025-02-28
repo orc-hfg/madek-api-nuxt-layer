@@ -4,12 +4,12 @@ import { createError } from 'h3';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { FetchError } from 'ofetch';
 
-export interface MadekApiOptions {
+interface MadekApiOptions {
 	needsAuth?: boolean;
 	query?: NitroFetchOptions<NitroFetchRequest>['query'];
 }
 
-export interface MadekApiRequestConfig {
+interface MadekApiRequestConfig {
 	apiOptions?: MadekApiOptions;
 	cache?: CacheOptions;
 }
