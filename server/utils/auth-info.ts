@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3';
-import type { AuthInfo, MadekAuthInfoResponse } from '../../schemas/auth-info';
+import type { AuthInfo, MadekAuthInfoResponse } from '../../shared/types/api/auth-info';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
-import { useMadekApi } from '../../composables/useMadekApi';
+import { useMadekApi } from '../../app/composables/use-madek-api';
 import { freshOneHourCache } from '../../shared/constants/cache';
 
 export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {

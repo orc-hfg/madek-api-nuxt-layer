@@ -1,3 +1,5 @@
+// Further configuration examples can be found at the end of the file
+
 // @ts-check
 import antfu from '@antfu/eslint-config';
 import eslintPluginSonarJs from 'eslint-plugin-sonarjs';
@@ -7,11 +9,12 @@ export default withNuxt(
 	antfu(
 		{
 			ignores: ['generated/'],
-			// TypeScript and Vue are autodetected, but explicitly enabled here
-			vue: true,
 			typescript: {
 				// Enables type-aware linting
 				tsconfigPath: 'tsconfig.json',
+			},
+			unicorn: {
+				allRecommended: true,
 			},
 			stylistic: {
 				indent: 'tab',
@@ -66,12 +69,17 @@ export default withNuxt(
 						modifiers: ['destructured'],
 						format: ['camelCase'],
 					},
-					// 5) Real constant booleans/numbers => UPPER_CASE (strings not enforced)
+					// 5) This rule allows both camelCase and UPPER_CASE for const variables.
+					// If the variable name strictly matches ^[A-Z0-9_]+$ (e.g. API_URL),
+					// the rule enforces correct uppercase formatting. Otherwise, it accepts camelCase.
 					{
 						selector: 'variable',
 						modifiers: ['const'],
-						types: ['boolean', 'number'],
-						format: ['UPPER_CASE'],
+						format: ['UPPER_CASE', 'camelCase'],
+						filter: {
+							regex: '^[A-Z0-9_]+$',
+							match: true,
+						},
 					},
 					// 6) Other variables => camelCase
 					{
@@ -105,44 +113,45 @@ export default withNuxt(
 				'ts/return-await': ['error', 'in-try-catch'],
 			},
 		},
+		{
+			files: ['**/*.vue'],
+			rules: {
+				'unicorn/filename-case': [
+					'error',
+					{
+						case: 'pascalCase',
+					},
+				],
+			},
+		},
 	),
 );
 
-// These plugins are used by antfu/eslintconfig:
-// "@eslint-community/eslint-plugin-eslint-comments"
-// "@eslint/markdown"
-// "@stylistic/eslint-plugin"
-// "@typescript-eslint/eslint-plugin"
-// "@vitest/eslint-plugin"
-// "eslint-plugin-antfu"
-// "eslint-plugin-command"
-// "eslint-plugin-import-x"
-// "eslint-plugin-jsdoc"
-// "eslint-plugin-jsonc"
-// "eslint-plugin-n"
-// "eslint-plugin-no-only-tests"
-// "eslint-plugin-perfectionist"
-// "eslint-plugin-regexp"
-// "eslint-plugin-toml"
-// "eslint-plugin-unicorn"
-// "eslint-plugin-unused-imports"
-// "eslint-plugin-vue"
-// "eslint-plugin-yml"
-// "eslint-processor-vue-blocks"
+/*
+These plugins are used by antfu/eslintconfig:
+https://github.com/antfu/eslint-config/tree/main/src/configs
 
-// Some of them are renamed to make the overall scope more consistent and easier to write:
-// https://github.com/antfu/eslint-config?tab=readme-ov-file#plugins-renaming
+Documentation:
+https://github.com/antfu/eslint-config
 
-// import/*
-// node/*
-// yaml/*
-// ts/*
-// style/*
-// test/*
+Some of them are renamed to make the overall scope more consistent and easier to write:
+https://github.com/antfu/eslint-config?tab=readme-ov-file#plugins-renaming
 
-// Other example configurations:
+import/*
+node/*
+yaml/*
+ts/*
+style/*
+test/*
+
+*/
 
 /*
+Other example configurations:
+
+Example project:
+https://github.com/joejordan/vite-frontend-template/blob/master/eslint.config.mjs
+
 export default await antfu(
   {
     unocss: false,
@@ -168,7 +177,6 @@ export default await antfu(
       'node/prefer-global/process': 'off',
     },
   },
-  // Sort local files
   {
     files: ['locales/**.json'],
     rules: {
@@ -193,47 +201,7 @@ export default antfu({
     },
   },
   yaml: {
-    overrides: {
-      // ...
-    },
+    overrides: {},
   },
 })
 */
-
-// export default antfu({
-//   ignores: [
-//     '**/packages/**/',
-//     'packages/',
-//   ],
-//   toml: false,
-//   yaml: false,
-//   ...pluginQuery.configs['flat/recommended'],
-// }, {
-//   files: ['**/*.vue'],
-//   rules: {
-//     'vue/max-attributes-per-line': ['error', {
-//       singleline: {
-//         max: 1,
-//       },
-//       multiline: {
-//         max: 1,
-//       },
-//     }],
-//   },
-// })
-
-// export default antfu(
-//   {
-//     // Configures for antfu's config
-//   },
-
-//   // From the second arguments they are ESLint Flat Configs
-//   // you can have multiple configs
-//   {
-//     files: ['**/*.ts'],
-//     rules: {},
-//   },
-//   {
-//     rules: {},
-//   },
-// )

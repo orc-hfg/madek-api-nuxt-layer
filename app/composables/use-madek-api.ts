@@ -9,6 +9,20 @@ export interface ApiOptions {
 	cache?: CacheOptions;
 }
 
+function handleFetchError(error: unknown): void {
+	if (error instanceof FetchError) {
+		throw createError({
+			statusCode: error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR,
+			statusMessage:
+				error.statusMessage
+				?? error.statusText
+				?? getReasonPhrase(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR),
+		});
+	}
+
+	throw error;
+}
+
 export function useMadekApi<T>(event: H3Event): {
 	fetchFromApi: (endpoint: string, options?: ApiOptions) => Promise<T>;
 } {
@@ -24,20 +38,6 @@ export function useMadekApi<T>(event: H3Event): {
 		return {
 			headers: needsAuth ? getAuthHeader() : undefined,
 		};
-	}
-
-	function handleFetchError(error: unknown): void {
-		if (error instanceof FetchError) {
-			throw createError({
-				statusCode: error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR,
-				statusMessage:
-					error.statusMessage
-					?? error.statusText
-					?? getReasonPhrase(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR),
-			});
-		}
-
-		throw error;
 	}
 
 	async function fetchData<T>(url: string, options: ApiOptions): Promise<T> {
