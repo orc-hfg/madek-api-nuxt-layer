@@ -26,7 +26,7 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
 			statusMessage: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
-			message: 'Failed to fetch auth info',
+			message: 'Failed to fetch auth info.',
 		});
 	}
 }
