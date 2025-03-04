@@ -35,7 +35,7 @@ Dadurch wird das lokale Layer-Projekt anstelle der in der package.json angegeben
 
 ### 3. Lokale Weiterentwicklung
 
-- nun können die Dateien im Layer-Projekt bearbeiten werden (Plugins, Composables usw.)
+- nun können die Dateien im Layer-Projekt bearbeitet werden (Plugins, Composables usw.)
 - damit die Änderungen im Hauptprojekt wirksam werden, muss ggf. der Dev-Server neu gestartet bzw. auf HMR (Hot Module Replacement) gewartet werden
 - die Haupt-App bezieht ab jetzt immer die lokalen Layer-Dateien aus dem Dateisystem, solange der Symlink aktiv ist
 
@@ -43,7 +43,7 @@ Dadurch wird das lokale Layer-Projekt anstelle der in der package.json angegeben
 
 Wenn wieder die offizielle (z.B. auf npm oder Git referenzierte) Version verwenden werden soll:
 
-- siehe `Readme` im Hauptprojekt (es steht ein Skript in der `package.json` des Hauptprojekts bereit)
+- siehe `readme` im Hauptprojekt (es steht ein Skript in der `package.json` des Hauptprojekts bereit)
 - optional kann zusätzlich der globale Link für das Layer-Projekt entfernt werden: `npm unlink` im Layer-Projekt ausführen
 
 ## API-Typen-Generierung

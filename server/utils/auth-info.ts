@@ -1,11 +1,11 @@
 import type { H3Event } from 'h3';
 import type { AuthInfo, MadekAuthInfoResponse } from '../../shared/types/api/auth-info';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
-import { useMadekApi } from '../../app/composables/use-madek-api';
 import { freshOneHourCache } from '../../shared/constants/cache';
+import { createMadekApiClient } from './madek-api';
 
 export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
-	const { fetchFromApi } = useMadekApi<MadekAuthInfoResponse>(event);
+	const { fetchFromApi } = createMadekApiClient<MadekAuthInfoResponse>(event);
 
 	try {
 		const response = await fetchFromApi('/auth-info', {

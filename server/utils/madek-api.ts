@@ -28,7 +28,7 @@ function handleFetchError(error: unknown): void {
 	throw error;
 }
 
-export function useMadekApi<T>(event: H3Event): {
+export function createMadekApiClient<T>(event: H3Event): {
 	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
 } {
 	const runtimeConfig = useRuntimeConfig(event);

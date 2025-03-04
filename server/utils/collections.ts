@@ -1,11 +1,11 @@
 import type { H3Event } from 'h3';
 import type { Collections, CollectionsQuery, MadekCollectionsResponse } from '../../shared/types/api/collections';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
-import { useMadekApi } from '../../app/composables/use-madek-api';
 import { noCache } from '../../shared/constants/cache';
+import { createMadekApiClient } from './madek-api';
 
 export async function getCollections(event: H3Event, query: CollectionsQuery): Promise<Collections> {
-	const { fetchFromApi } = useMadekApi<MadekCollectionsResponse>(event);
+	const { fetchFromApi } = createMadekApiClient<MadekCollectionsResponse>(event);
 
 	try {
 		const response = await fetchFromApi('/collections', {
