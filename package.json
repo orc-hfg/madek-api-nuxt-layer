@@ -21,6 +21,7 @@
 		"check:eslint-config": "npx @eslint/config-inspector@latest",
 		"check:types": "nuxi typecheck",
 		"check:unused": "knip --include dependencies,exports,types --production",
+		"check:node-version": "node ./scripts/check-node-version.mjs",
 		"check:updates": "npx npm-check-updates --interactive --format group",
 		"generate:api": "openapi-typescript ./resources/openapi/swagger.json -o ./generated/api/schema.d.ts",
 		"upgrade": "nuxi upgrade",
