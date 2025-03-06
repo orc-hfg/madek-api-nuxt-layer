@@ -36,6 +36,7 @@
 	"devDependencies": {
 		"@antfu/eslint-config": "4.3.0",
 		"@nuxt/eslint": "1.1.0",
+		"@pinia/nuxt": "0.10.1",
 		"@types/node": "22.13.5",
 		"eslint": "9.21.0",
 		"eslint-plugin-sonarjs": "3.0.2",
@@ -44,6 +45,7 @@
 		"lint-staged": "15.4.3",
 		"nuxt": "3.15.4",
 		"openapi-typescript": "5.4.2",
+		"pinia": "3.0.1",
 		"typescript": "5.7.3",
 		"vue": "3.5.13",
 		"vue-tsc": "2.2.4"

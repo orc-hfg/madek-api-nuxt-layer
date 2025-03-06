@@ -19,7 +19,7 @@ Damit neue oder geänderte Funktionen dieses Layers lokal in einer Nuxt-App (z.B
 
 Damit wird das Paket global per Symlink registriert, so dass es in anderen Projekten per `npm link <package-name>` eingebunden werden kann.
 
-- **Hinweis:** in der `package.json` muss der Name korrekt gesetzt sein, z.B. `"name": "@orc-hfg/madek-api-nuxt-layer"`.
+**Hinweis:** in der `package.json` muss der Name korrekt gesetzt sein, z.B. `"name": "@orc-hfg/madek-api-nuxt-layer"`.
 
 ### 2. Lokales Linking im Hauptprojekt aktivieren
 
@@ -38,6 +38,8 @@ Dadurch wird das lokale Layer-Projekt anstelle der in der package.json angegeben
 - nun können die Dateien im Layer-Projekt bearbeitet werden (Plugins, Composables usw.)
 - damit die Änderungen im Hauptprojekt wirksam werden, muss ggf. der Dev-Server neu gestartet bzw. auf HMR (Hot Module Replacement) gewartet werden
 - die Haupt-App bezieht ab jetzt immer die lokalen Layer-Dateien aus dem Dateisystem, solange der Symlink aktiv ist
+
+**Hinweis:** Nuxt Plugins dürfen nicht doppelt installiert werden. Beispielsweise darf Pinia nur im Layer-Projekt installiert sein.
 
 ### 4. Linking wieder auflösen (optional)
 

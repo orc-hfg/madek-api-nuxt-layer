@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3';
 import type { AuthInfo, MadekAuthInfoResponse } from '../../shared/types/api/auth-info';
-import { getReasonPhrase, StatusCodes } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { freshOneHourCache } from '../../shared/constants/cache';
 import { createMadekApiClient } from './madek-api';
 
@@ -25,8 +25,7 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 	catch {
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-			statusMessage: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
-			message: 'Failed to fetch auth info.',
+			statusMessage: 'Failed to fetch auth info.',
 		});
 	}
 }

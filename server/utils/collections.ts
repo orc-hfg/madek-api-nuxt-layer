@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3';
 import type { Collections, CollectionsQuery, MadekCollectionsResponse } from '../../shared/types/api/collections';
-import { getReasonPhrase, StatusCodes } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { noCache } from '../../shared/constants/cache';
 import { createMadekApiClient } from './madek-api';
 
@@ -23,8 +23,7 @@ export async function getCollections(event: H3Event, query: CollectionsQuery): P
 	catch {
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-			statusMessage: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
-			message: 'Failed to fetch collections.',
+			statusMessage: 'Failed to fetch collections.',
 		});
 	}
 }

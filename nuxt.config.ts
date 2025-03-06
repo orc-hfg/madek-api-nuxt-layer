@@ -1,4 +1,7 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import { createResolver } from '@nuxt/kit';
+
+const resolver = createResolver(import.meta.url);
+
 export default defineNuxtConfig({
 	future: {
 		compatibilityVersion: 4,
@@ -7,7 +10,13 @@ export default defineNuxtConfig({
 	typescript: {
 		typeCheck: true,
 	},
-	modules: ['@nuxt/eslint'],
+	modules: ['@nuxt/eslint', '@pinia/nuxt'],
+	pinia: {
+		// See:
+		// https://github.com/vuejs/pinia/discussions/2378#discussioncomment-8940427
+		// https://pinia.vuejs.org/ssr/nuxt.html#Auto-imports
+		storesDirs: [resolver.resolve('./app/stores/**')],
+	},
 	eslint: {
 		config: {
 			standalone: false, // Ensures the module only generates Nuxt-specific rules so that it can be merged with own config presets (@antfu/eslint-config)
