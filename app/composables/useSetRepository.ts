@@ -5,25 +5,16 @@ interface SetRepository {
 	getSetById: (id: string) => Promise<Collection>;
 }
 
-interface ApiInstance {
-	<T>(url: string, options?: any): Promise<T>;
-}
-
-export function createSetRepository($api: ApiInstance): SetRepository {
+export function useSetRepository(): SetRepository {
 	return {
 		async getSets(parameters?: CollectionsQuery): Promise<Collections> {
-			return $api('/collections', {
+			return $fetch('/api/collections', {
 				params: parameters,
 			});
 		},
 
 		async getSetById(id: string): Promise<Collection> {
-			return $api(`/collections/${id}`);
+			return $fetch(`/api/collections/${id}`);
 		},
 	};
-}
-
-export function useSetRepository(): SetRepository {
-	const { $api } = useNuxtApp();
-	return createSetRepository($api);
 }
