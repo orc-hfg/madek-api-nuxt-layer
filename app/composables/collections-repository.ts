@@ -1,4 +1,4 @@
-import type { Collection, Collections, CollectionsQuery } from '../../../shared/types/api/collections';
+import type { Collection, Collections, CollectionsQuery } from '../../shared/types/api/collections';
 
 interface CollectionsRepository {
 	getCollections: (parameters?: CollectionsQuery) => Promise<Collections>;

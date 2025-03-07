@@ -1,4 +1,4 @@
-import type { AuthInfo } from '../../../shared/types/api/auth-info';
+import type { AuthInfo } from '../../shared/types/api/auth-info';
 
 interface UserRepository {
 	getAuthInfo: () => Promise<AuthInfo>;
@@ -8,7 +8,7 @@ interface ApiInstance {
 	<T>(url: string, options?: any): Promise<T>;
 }
 
-export function createUserRepository($api: ApiInstance): UserRepository {
+function createUserRepository($api: ApiInstance): UserRepository {
 	return {
 		async getAuthInfo(): Promise<AuthInfo> {
 			return $api('/auth-info');
