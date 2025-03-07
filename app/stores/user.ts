@@ -1,6 +1,6 @@
 import type { AuthInfo } from '../../shared/types/api/auth-info';
 import { acceptHMRUpdate, defineStore } from 'pinia';
-import { useUserRepository } from '../composables/user-repository';
+import { useUserRepository } from '../composables/useUserRepository';
 
 export const useUserStore = defineStore('user', () => {
 	const id = ref<AuthInfo['id']>();
