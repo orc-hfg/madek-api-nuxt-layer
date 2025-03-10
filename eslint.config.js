@@ -113,12 +113,29 @@ export default withNuxt(
 			},
 		},
 		{
+			// File naming conventions:
+			// - Vue components (.vue): PascalCase (official Nuxt/Vue convention)
+			// - Global default remains kebab-case (unicorn default setting)
 			files: ['**/*.vue'],
 			rules: {
 				'unicorn/filename-case': [
 					'error',
 					{
 						case: 'pascalCase',
+					},
+				],
+			},
+		},
+		{
+			// Composables naming convention:
+			// - camelCase with 'use' prefix (Vue 3 Composition API standard)
+			// - Example: useUserRepository.ts, useUserStore.ts
+			files: ['app/composables/**/*.ts', 'app/stores/**/*.ts'],
+			rules: {
+				'unicorn/filename-case': [
+					'error',
+					{
+						case: 'camelCase',
 					},
 				],
 			},

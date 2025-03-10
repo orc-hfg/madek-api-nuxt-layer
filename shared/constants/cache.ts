@@ -5,9 +5,9 @@
 import type { CacheOptions } from 'nitropack';
 import {
 	FIVE_MINUTES_IN_SECONDS,
+	ONE_DAY_IN_SECONDS,
 	ONE_HOUR_IN_SECONDS,
 	TWELVE_HOURS_IN_SECONDS,
-	TWENTY_FOUR_HOURS_IN_SECONDS,
 } from './time';
 
 // Standard cache configurations
@@ -32,7 +32,7 @@ export const twelveHoursCache: CacheOptions = {
 };
 
 export const twentyFourHoursCache: CacheOptions = {
-	maxAge: TWENTY_FOUR_HOURS_IN_SECONDS,
+	maxAge: ONE_DAY_IN_SECONDS,
 	swr: true,
 };
 

@@ -11,8 +11,10 @@ export const useUserStore = defineStore('user', () => {
 		return `${firstName.value} ${lastName.value}`;
 	});
 
+	const userRepository = getUserRepository();
+
 	async function fetchData(): Promise<void> {
-		const data = await $fetch('/api/auth-info');
+		const data = await userRepository.getAuthInfo();
 
 		id.value = data.id;
 		login.value = data.login;
