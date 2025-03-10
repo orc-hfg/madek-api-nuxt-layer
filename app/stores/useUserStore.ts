@@ -1,6 +1,5 @@
 import type { AuthInfo } from '../../shared/types/api/auth-info';
 import { acceptHMRUpdate, defineStore } from 'pinia';
-import { useUserRepository } from '../composables/useUserRepository';
 
 export const useUserStore = defineStore('user', () => {
 	const id = ref<AuthInfo['id']>();
@@ -12,7 +11,7 @@ export const useUserStore = defineStore('user', () => {
 		return `${firstName.value} ${lastName.value}`;
 	});
 
-	const userRepository = useUserRepository();
+	const userRepository = getUserRepository();
 
 	async function fetchData(): Promise<void> {
 		const data = await userRepository.getAuthInfo();

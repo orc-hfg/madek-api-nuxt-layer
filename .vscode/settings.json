@@ -47,5 +47,11 @@
 		"scss",
 		"pcss",
 		"postcss"
-	]
+	],
+	"vue.server.hybridMode": "typeScriptPluginOnly",
+	"vue.inlayHints.destructuredProps": true,
+	"vue.inlayHints.inlineHandlerLeading": true,
+	"vue.inlayHints.missingProps": true,
+	"vue.inlayHints.optionsWrapper": true,
+	"vue.inlayHints.vBindShorthand": true
 }
