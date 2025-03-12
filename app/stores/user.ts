@@ -2,11 +2,11 @@ import type { AuthInfo } from '../../shared/types/api/auth-info';
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
 export const useUserStore = defineStore('user', () => {
+	const isInitialized = ref(false);
 	const id = ref<AuthInfo['id']>();
 	const login = ref<AuthInfo['login']>();
 	const firstName = ref<AuthInfo['first_name']>();
 	const lastName = ref<AuthInfo['last_name']>();
-
 	const displayName = computed(() => {
 		return `${firstName.value} ${lastName.value}`;
 	});
@@ -22,6 +22,15 @@ export const useUserStore = defineStore('user', () => {
 		lastName.value = data.last_name;
 	}
 
+	async function initialize(): Promise<void> {
+		if (isInitialized.value) {
+			return;
+		}
+
+		await fetchData();
+		isInitialized.value = true;
+	}
+
 	return {
 		id,
 		login,
@@ -29,6 +38,7 @@ export const useUserStore = defineStore('user', () => {
 		lastName,
 		displayName,
 		fetchData,
+		initialize,
 	};
 });
 

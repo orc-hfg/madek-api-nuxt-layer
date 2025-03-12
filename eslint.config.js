@@ -129,8 +129,8 @@ export default withNuxt(
 		{
 			// Composables naming convention:
 			// - camelCase with 'use' prefix (Vue 3 Composition API standard)
-			// - Example: useUserRepository.ts, useUserStore.ts
-			files: ['app/composables/**/*.ts', 'app/stores/**/*.ts'],
+			// - Example: useComposable.ts
+			files: ['app/composables/**/*.ts'],
 			rules: {
 				'unicorn/filename-case': [
 					'error',
