@@ -1,4 +1,9 @@
 import { createResolver } from '@nuxt/kit';
+import packageJson from './package.json' with { type: 'json' };
+
+function composeVersion(): string {
+	return packageJson.version ? `v${packageJson.version}` : 'Unknown Version';
+}
 
 const resolver = createResolver(import.meta.url);
 
@@ -22,17 +27,48 @@ export default defineNuxtConfig({
 			standalone: false, // Ensures the module only generates Nuxt-specific rules so that it can be merged with own config presets (@antfu/eslint-config)
 		},
 	},
+	// See:
+	// https://github.com/unjs/c12?tab=readme-ov-file#environment-specific-configuration
+	// https://nuxt.com/docs/getting-started/configuration#environment-overrides
 	runtimeConfig: {
 		madekApi: {
-			baseUrl: 'https://dev.madek.hfg-karlsruhe.de/api-v2',
+			baseUrl: '',
 			token: '',
 		},
-		delayResponse: false, // It will only take effect in deveplopment mode, useful for testing.
+		delayResponse: false, // It will only take effect in development mode, useful for testing.
+		public: {
+			version: composeVersion(),
+			madekApi: {
+				baseUrl: '',
+			},
+		},
+	},
+	$development: {
+		runtimeConfig: {
+			public: {
+				madekApi: {
+					baseUrl: 'https://dev.madek.hfg-karlsruhe.de/api-v2',
+				},
+			},
+		},
 	},
 	$production: {
 		runtimeConfig: {
-			madekApi: {
-				baseUrl: 'https://madek.hfg-karlsruhe.de/api-v2',
+			public: {
+				madekApi: {
+					baseUrl: 'https://madek.hfg-karlsruhe.de/api-v2',
+				},
+			},
+		},
+	},
+	$env: {
+		staging: {
+			runtimeConfig: {
+				public: {
+					madekApi: {
+						baseUrl: 'https://staging.madek.hfg-karlsruhe.de/api-v2',
+					},
+				},
 			},
 		},
 	},

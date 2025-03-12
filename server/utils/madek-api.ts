@@ -59,7 +59,7 @@ export function createMadekApiClient<T>(event: H3Event): {
 	}
 
 	async function fetchFromApi<T>(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
-		const url = `${runtimeConfig.madekApi.baseUrl}${endpoint}`;
+		const url = `${runtimeConfig.public.madekApi.baseUrl}${endpoint}`;
 
 		async function fetchFunction(): Promise<T> {
 			return fetchData<T>(url, apiRequestConfig.apiOptions || {});
