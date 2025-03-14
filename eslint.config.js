@@ -7,7 +7,7 @@ import withNuxt from './.playground/.nuxt/eslint.config.mjs';
 export default withNuxt(
 	antfu(
 		{
-			ignores: ['generated/'],
+			ignores: ['generated/', 'architectural-concept.md'],
 			typescript: {
 				// Enables type-aware linting
 				tsconfigPath: 'tsconfig.json',

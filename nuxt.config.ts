@@ -8,10 +8,20 @@ function composeVersion(): string {
 const resolver = createResolver(import.meta.url);
 
 export default defineNuxtConfig({
+	experimental: {
+		// See: https://youtu.be/XnWXWye8sBM?si=HJYjOualqx1vpF7I&t=3300
+		typedPages: true,
+	},
 	future: {
 		compatibilityVersion: 4,
 	},
-	devtools: { enabled: true },
+	devtools: {
+		enabled: true,
+
+		timeline: {
+			enabled: true,
+		},
+	},
 	typescript: {
 		typeCheck: true,
 	},

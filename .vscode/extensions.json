@@ -8,6 +8,7 @@
 		"heybourn.headwind",
 		"lokalise.i18n-ally",
 		"usernamehw.errorlens",
-		"vue.volar"
+		"vue.volar",
+		"nuxtr.nuxtr-vscode"
 	]
 }
