@@ -67,9 +67,9 @@ Wenn sich die OpenAPI-Spezifikation ändert, können die Typen neu generiert wer
 
 Um schnell neue Versionen zu veröffentlichen, stehen in der `package.json` drei Skripte zur Verfügung:
 
-1. **Patch-Release** (z.B. `1.0.2` → `1.0.3`): `npm run prepare-release:patch`
-2. **Minor-Release** (z.B. `1.0.2` → `1.1.0`): `npm run prepare-release:minor`
-3. **Major-Release** (z.B. `1.0.2` → `2.0.0`): `npm run prepare-release:major`
+1. **Patch-Release** (z.B. `1.0.2` → `1.0.3`): `npm run release:patch`
+2. **Minor-Release** (z.B. `1.0.2` → `1.1.0`): `npm run release:minor`
+3. **Major-Release** (z.B. `1.0.2` → `2.0.0`): `npm run release:major`
 
 ### Was passiert dabei?
 
