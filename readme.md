@@ -1,5 +1,10 @@
 # Madek-API Nuxt Layer
 
+## Weiterführende Dokumentation
+
+- [Architektur-Konzept / Teil 1](./documentation/architectural-concept-part-1.md)
+- [Architektur-Konzept / Teil 2](./documentation/architectural-concept-part-2.md)
+
 ## Lokale Entwicklung des madek-api-nuxt-layer und Integration in ein Hauptprojekt
 
 Damit neue oder geänderte Funktionen dieses Layers lokal in einer Nuxt-App (z.B. dem „Uploader“) getestet werden können, ohne für jede Änderung ein neues Release zu erstellen, empfiehlt sich das Vorgehen mit `npm link` (https://docs.npmjs.com/cli/v9/commands/npm-link).

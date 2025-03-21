@@ -80,7 +80,7 @@ Nuxt Client Applications (Uploader, Schaufenster)
    - SetRepository, UserRepository etc.
    - Domainspezifische Namensgebung und Gruppierung
 
-3. **Pinia Stores**: Client-seitige Zustandsverwaltung
+3. **Pinia Stores**: Clientseitige Zustandsverwaltung
    - Reaktive Datenspeicherung
    - Integration mit Repositories
 
