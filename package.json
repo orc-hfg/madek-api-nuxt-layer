@@ -11,7 +11,7 @@
 		"node": "22.14.0"
 	},
 	"scripts": {
-		"dev": "nuxi dev .playground",
+		"dev": "nuxi dev -p 3001 .playground",
 		"dev:prepare": "nuxt prepare .playground",
 		"build": "nuxt build .playground",
 		"generate": "nuxt generate .playground",
@@ -34,16 +34,16 @@
 		"http-status-codes": "2.3.0"
 	},
 	"devDependencies": {
-		"@antfu/eslint-config": "4.10.1",
+		"@antfu/eslint-config": "4.11.0",
 		"@nuxt/eslint": "1.2.0",
 		"@pinia/nuxt": "0.10.1",
-		"@types/node": "22.13.10",
-		"eslint": "9.22.0",
+		"@types/node": "22.13.13",
+		"eslint": "9.23.0",
 		"eslint-plugin-sonarjs": "3.0.2",
 		"husky": "9.1.7",
-		"knip": "5.46.0",
+		"knip": "5.46.2",
 		"lint-staged": "15.5.0",
-		"nuxt": "3.16.0",
+		"nuxt": "3.16.1",
 		"openapi-typescript": "5.4.2",
 		"pinia": "3.0.1",
 		"typescript": "5.8.2",
