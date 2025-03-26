@@ -1,14 +1,17 @@
 import type { Collection } from '../../shared/types/api/collections';
 import { acceptHMRUpdate, defineStore } from 'pinia';
+import { ref } from 'vue';
+import { getSetRepository } from '../utils/set-repository';
+import { useUserStore } from './user';
 
 export const useUserSetsStore = defineStore('user-sets', () => {
 	const isInitialized = ref(false);
 	const sets = ref<Collection[]>([]);
 
-	const userStore = useUserStore();
-	const setRepository = getSetRepository();
-
 	async function fetchData(): Promise<void> {
+		const userStore = useUserStore();
+		const setRepository = getSetRepository();
+
 		if (userStore.id === undefined) {
 			await userStore.initialize();
 		}
