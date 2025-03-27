@@ -25,6 +25,7 @@
 	],
 	"ignore": ["shared/constants/**"],
 	"ignoreDependencies": [
+		"@nuxt/devtools",
 		"@nuxt/eslint",
 		"@pinia/nuxt",
 		"vue-tsc"
