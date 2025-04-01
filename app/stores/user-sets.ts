@@ -8,7 +8,7 @@ export const useUserSetsStore = defineStore('user-sets', () => {
 	const isInitialized = ref(false);
 	const sets = ref<Collection[]>([]);
 
-	async function fetchData(): Promise<void> {
+	async function refreshData(): Promise<void> {
 		const userStore = useUserStore();
 		const setRepository = getSetRepository();
 
@@ -28,18 +28,17 @@ export const useUserSetsStore = defineStore('user-sets', () => {
 			return;
 		}
 
-		await fetchData();
+		await refreshData();
 		isInitialized.value = true;
 	}
 
 	return {
 		sets,
-		fetchData,
+		refreshData,
 		initialize,
 	};
 });
 
-// https://pinia.vuejs.org/cookbook/hot-module-replacement.html
 if (import.meta.hot) {
 	import.meta.hot.accept(acceptHMRUpdate(useUserSetsStore, import.meta.hot));
 }

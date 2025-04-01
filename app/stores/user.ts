@@ -12,7 +12,7 @@ export const useUserStore = defineStore('user', () => {
 		return `${firstName.value} ${lastName.value}`;
 	});
 
-	async function fetchData(): Promise<void> {
+	async function refreshData(): Promise<void> {
 		const userRepository = getUserRepository();
 		const data = await userRepository.getAuthInfo();
 
@@ -27,7 +27,7 @@ export const useUserStore = defineStore('user', () => {
 			return;
 		}
 
-		await fetchData();
+		await refreshData();
 		isInitialized.value = true;
 	}
 
@@ -37,12 +37,11 @@ export const useUserStore = defineStore('user', () => {
 		firstName,
 		lastName,
 		displayName,
-		fetchData,
+		refreshData,
 		initialize,
 	};
 });
 
-// https://pinia.vuejs.org/cookbook/hot-module-replacement.html
 if (import.meta.hot) {
 	import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot));
 }
