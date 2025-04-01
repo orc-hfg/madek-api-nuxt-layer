@@ -13,7 +13,7 @@ export async function getCollections(event: H3Event, query: CollectionsUserQuery
 				needsAuth: false,
 				query,
 			},
-			cache: noCache,
+			publicDataCache: noCache,
 		});
 
 		return response.collections.map(item => ({

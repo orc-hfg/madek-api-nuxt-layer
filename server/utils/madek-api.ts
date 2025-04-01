@@ -11,7 +11,7 @@ interface MadekApiOptions {
 
 interface MadekApiRequestConfig {
 	apiOptions?: MadekApiOptions;
-	cache?: CacheOptions;
+	publicDataCache?: CacheOptions;
 }
 
 function handleFetchError(error: unknown): void {
@@ -60,21 +60,39 @@ export function createMadekApiClient<T>(event: H3Event): {
 
 	async function fetchFromApi<T>(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
 		const url = `${runtimeConfig.public.madekApi.baseUrl}${endpoint}`;
+		const isAuthNeeded = apiRequestConfig.apiOptions?.needsAuth === true;
+		const shouldSkipCache = import.meta.dev || isAuthNeeded;
 
-		async function fetchFunction(): Promise<T> {
+		if (isAuthNeeded && apiRequestConfig.publicDataCache !== noCache) {
+			console.warn(
+				`[madek-api] Warning: Authenticated requests should only use 'noCache' for publicDataCache (or none at all). Other cache configurations are ignored. Request: ${endpoint}`,
+			);
+		}
+
+		if (shouldSkipCache) {
 			return fetchData<T>(url, apiRequestConfig.apiOptions || {});
 		}
 
-		// Do not cache in development or if caching is not configured
-		if (import.meta.dev || !apiRequestConfig.cache) {
-			return fetchFunction();
+		if (apiRequestConfig.publicDataCache) {
+			const cacheOptions = apiRequestConfig.publicDataCache;
+
+			return defineCachedFunction(
+				async () => fetchData<T>(url, apiRequestConfig.apiOptions || {}),
+				{
+					...cacheOptions,
+					getKey: cacheOptions.getKey ?? ((): string => {
+						const query = apiRequestConfig.apiOptions?.query || {};
+						const queryString = Object.keys(query).length > 0
+							? `?${new URLSearchParams(query).toString()}`
+							: '';
+
+						return `${endpoint}${queryString}`;
+					}),
+				},
+			)();
 		}
 
-		const cacheOptions = typeof apiRequestConfig.cache === 'object' ? apiRequestConfig.cache : {};
-		return defineCachedFunction(fetchFunction, {
-			...cacheOptions,
-			getKey: cacheOptions.getKey ?? ((): string => event.path),
-		})();
+		return fetchData<T>(url, apiRequestConfig.apiOptions || {});
 	}
 
 	return {
