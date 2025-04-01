@@ -59,7 +59,7 @@ export default withNuxt(
 					{
 						selector: 'variable',
 						types: ['boolean'],
-						format: ['camelCase'],
+						format: ['PascalCase'], // Note: As documented, the prefix is trimmed before format is validated, thus PascalCase must be used to allow variables such as isEnabled
 						prefix: ['is', 'should', 'has', 'can', 'did', 'was', 'will'],
 					},
 					// 4) Destructured variables => camelCase
