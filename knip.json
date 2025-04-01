@@ -1,27 +1,13 @@
 {
 	"$schema": "https://unpkg.com/knip@5/schema.json",
 	"entry": [
-		"scripts/*.mjs",
-		"nuxt.config.ts",
-		"app/app.config.ts",
-		"app/app.vue",
-		"app/router.options.ts",
-		"app/components/*.vue",
-		"app/composables/*.ts",
-		"app/plugins/*.ts",
 		"app/stores/**/*.ts",
-		"app/utils/*.ts",
-		"server/utils/*.ts",
-		"shared/types/*.ts",
-		"shared/utils/*.ts"
+		"server/utils/*.ts"
 	],
 	"project": [
 		"app/**",
 		"server/**",
-		"shared/**",
-		"modules/**",
-		"layers/**",
-		"content/**"
+		"shared/**"
 	],
 	"ignore": ["shared/constants/**"],
 	"ignoreDependencies": [
