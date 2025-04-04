@@ -23,5 +23,5 @@ function createSetRepository($madekApi: ApiFunction): SetRepository {
 export function getSetRepository(): SetRepository {
 	const { $madekApi } = useNuxtApp();
 
-	return createSetRepository($madekApi);
+	return createSetRepository($madekApi as ApiFunction);
 }

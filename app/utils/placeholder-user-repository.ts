@@ -48,5 +48,5 @@ function createPlaceholderUserRepository($placeholderApi: ApiFunction): Placehol
 export function getPlaceholderUserRepository(): PlaceholderUserRepository {
 	const { $placeholderApi } = useNuxtApp();
 
-	return createPlaceholderUserRepository($placeholderApi);
+	return createPlaceholderUserRepository($placeholderApi as ApiFunction);
 }

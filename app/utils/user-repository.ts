@@ -16,5 +16,5 @@ function createUserRepository($madekApi: ApiFunction): UserRepository {
 export function getUserRepository(): UserRepository {
 	const { $madekApi } = useNuxtApp();
 
-	return createUserRepository($madekApi);
+	return createUserRepository($madekApi as ApiFunction);
 }
