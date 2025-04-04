@@ -3,6 +3,7 @@ import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropa
 import { createError } from 'h3';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { FetchError } from 'ofetch';
+import { noCache } from '../constants/cache';
 
 interface MadekApiOptions {
 	needsAuth?: boolean;
