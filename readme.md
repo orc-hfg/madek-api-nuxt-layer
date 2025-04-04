@@ -4,6 +4,7 @@
 
 - [Architektur-Konzept / Teil 1](./documentation/architectural-concept-part-1.md)
 - [Architektur-Konzept / Teil 2](./documentation/architectural-concept-part-2.md)
+- [Architektur](./documentation/architecture.md)
 
 ## Lokale Entwicklung des madek-api-nuxt-layer und Integration in ein Hauptprojekt
 

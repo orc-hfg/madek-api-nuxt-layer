@@ -287,16 +287,6 @@ function createUserRepository($madekApi: ApiFunction): UserRepository {
 
 ---
 
-# Caching-Optionen bei verschiedenen Architekturen
-
-| Caching-Typ | Direkter API-Zugriff | Repository | Repository + BFF |
-|-------------|---------------------|------------|------------------|
-| **Clientseitiges Caching** | ✓ Nur im Browser | ✓ useFetch/useAsyncData | ✓ useFetch/useAsyncData |
-| **Serverseitiges Caching** | ✗ Nicht möglich | ✗ Nicht möglich | ✓ Nitro Cache |
-| **Optimiert für mehrere Benutzer** | ✗ | ✗ | ✓ Shared Cache mit Benutzer-Keys |
-
----
-
 # Überlegungen zum Caching
 
 ## Serverseitiges Caching (BFF)

@@ -60,6 +60,8 @@ export function createMadekApiClient<T>(event: H3Event): {
 
 	async function fetchFromApi<T>(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
 		const url = `${runtimeConfig.public.madekApi.baseUrl}${endpoint}`;
+
+		// Authentication disables caching - shouldSkipCache ensures authenticated requests are never cached
 		const isAuthNeeded = apiRequestConfig.apiOptions?.needsAuth === true;
 		const shouldSkipCache = import.meta.dev || isAuthNeeded;
 
