@@ -15,7 +15,7 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 			publicDataCache: defaultCache,
 		});
 
-		return response.map(item => ({
+		return response.map((item: MadekContextsResponse[number]) => ({
 			id: item.id,
 			labels: item.labels,
 		}));
