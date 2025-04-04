@@ -71,25 +71,29 @@ export function createMadekApiClient<T>(event: H3Event): {
 			);
 		}
 
-		if (shouldSkipCache) {
-			return fetchData<T>(url, apiRequestConfig.apiOptions || {});
-		}
+		const cacheOptions = apiRequestConfig.publicDataCache;
+		const shouldUseCache = !shouldSkipCache && cacheOptions !== undefined;
 
-		if (apiRequestConfig.publicDataCache) {
-			const cacheOptions = apiRequestConfig.publicDataCache;
-
+		if (shouldUseCache) {
 			return defineCachedFunction(
 				async () => fetchData<T>(url, apiRequestConfig.apiOptions || {}),
 				{
 					...cacheOptions,
-					getKey: cacheOptions.getKey ?? ((): string => {
+					name: 'madek-api',
+					getKey: (): string => {
 						const query = apiRequestConfig.apiOptions?.query || {};
 						const queryString = Object.keys(query).length > 0
 							? `?${new URLSearchParams(query).toString()}`
 							: '';
+						const rawKey = `${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}${queryString}`;
+						const safeKey = rawKey
+							.replaceAll('/', ':')
+							.replaceAll('?', ':')
+							.replaceAll('=', ':')
+							.replaceAll('&', '.');
 
-						return `${endpoint}${queryString}`;
-					}),
+						return safeKey;
+					},
 				},
 			)();
 		}
