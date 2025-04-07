@@ -33,7 +33,7 @@ export default defineNuxtConfig({
 		router: true,
 		hydration: true,
 	},
-	modules: ['@nuxt/eslint', '@pinia/nuxt'],
+	modules: ['@nuxt/eslint', '@pinia/nuxt', '@nuxt/test-utils/module'],
 	pinia: {
 		// See:
 		// https://github.com/vuejs/pinia/discussions/2378#discussioncomment-8940427
