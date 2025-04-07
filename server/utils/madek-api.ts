@@ -15,10 +15,8 @@ interface MadekApiRequestConfig {
 	publicDataCache?: CacheOptions;
 }
 
-function generateCacheKey(endpoint: string, query: Record<string, string> = {}): string {
-	const queryString = Object.keys(query).length > 0
-		? `?${new URLSearchParams(query).toString()}`
-		: '';
+export function generateCacheKey(endpoint: string, query?: Record<string, string>): string {
+	const queryString = Object.keys(query ?? {}).length > 0 ? `?${new URLSearchParams(query).toString()}` : '';
 
 	const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
 	const rawKey = `${normalizedEndpoint}${queryString}`;
