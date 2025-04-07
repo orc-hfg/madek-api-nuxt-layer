@@ -15,6 +15,22 @@ interface MadekApiRequestConfig {
 	publicDataCache?: CacheOptions;
 }
 
+function generateCacheKey(endpoint: string, query: Record<string, string> = {}): string {
+	const queryString = Object.keys(query).length > 0
+		? `?${new URLSearchParams(query).toString()}`
+		: '';
+
+	const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+	const rawKey = `${normalizedEndpoint}${queryString}`;
+	const safeKey = rawKey
+		.replaceAll('/', ':')
+		.replaceAll('?', ':')
+		.replaceAll('=', ':')
+		.replaceAll('&', '.');
+
+	return safeKey;
+}
+
 function handleFetchError(error: unknown): void {
 	if (error instanceof FetchError) {
 		throw createError({
@@ -81,20 +97,7 @@ export function createMadekApiClient<T>(event: H3Event): {
 				{
 					...cacheOptions,
 					name: 'madek-api',
-					getKey: (): string => {
-						const query = apiRequestConfig.apiOptions?.query || {};
-						const queryString = Object.keys(query).length > 0
-							? `?${new URLSearchParams(query).toString()}`
-							: '';
-						const rawKey = `${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}${queryString}`;
-						const safeKey = rawKey
-							.replaceAll('/', ':')
-							.replaceAll('?', ':')
-							.replaceAll('=', ':')
-							.replaceAll('&', '.');
-
-						return safeKey;
-					},
+					getKey: () => generateCacheKey(endpoint, apiRequestConfig.apiOptions?.query || {}),
 				},
 			)();
 		}
