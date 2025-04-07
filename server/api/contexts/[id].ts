@@ -8,7 +8,7 @@ export default defineEventHandler(async (event: H3Event) => {
 	if (contextId === undefined || contextId === '') {
 		throw createError({
 			statusCode: StatusCodes.BAD_REQUEST,
-			statusMessage: 'Context ID is required',
+			statusMessage: 'Context ID is required.',
 		});
 	}
 

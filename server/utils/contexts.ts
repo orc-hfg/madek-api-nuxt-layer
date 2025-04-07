@@ -47,7 +47,7 @@ export async function getContextById(event: H3Event, id: string): Promise<Contex
 	catch {
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-			statusMessage: 'Failed to fetch context.',
+			statusMessage: 'Failed to fetch context by ID.',
 		});
 	}
 }
