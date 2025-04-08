@@ -15,8 +15,15 @@ interface MadekApiRequestConfig {
 	publicDataCache?: CacheOptions;
 }
 
+export interface MadekApiConfig {
+	baseUrl: string;
+	token?: string;
+}
+
 export function generateCacheKey(endpoint: string, query?: Record<string, string>): string {
-	const queryString = Object.keys(query ?? {}).length > 0 ? `?${new URLSearchParams(query).toString()}` : '';
+	const queryString = Object.keys(query ?? {}).length > 0
+		? `?${new URLSearchParams(query).toString()}`
+		: '';
 
 	const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
 	const rawKey = `${normalizedEndpoint}${queryString}`;
@@ -29,7 +36,7 @@ export function generateCacheKey(endpoint: string, query?: Record<string, string
 	return safeKey;
 }
 
-function handleFetchError(error: unknown): void {
+export function handleFetchError(error: unknown): void {
 	if (error instanceof FetchError) {
 		throw createError({
 			statusCode: error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR,
@@ -43,42 +50,62 @@ function handleFetchError(error: unknown): void {
 	throw error;
 }
 
-export function createMadekApiClient<T>(event: H3Event): {
-	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
-} {
+export function getAuthHeader(token?: string): Record<string, string> | undefined {
+	if (token === undefined || token === '') {
+		return undefined;
+	}
+
+	return { Authorization: `token ${token}` };
+}
+
+export function buildRequestConfig(apiOptions: MadekApiOptions = {}, token?: string): NitroFetchOptions<NitroFetchRequest> {
+	return {
+		headers: apiOptions.needsAuth ? getAuthHeader(token) : undefined,
+		query: apiOptions.query,
+	};
+}
+
+export async function fetchData<T>(
+	url: string,
+	apiOptions: MadekApiOptions = {},
+	token?: string,
+	fetchFunction = $fetch,
+): Promise<T> {
+	try {
+		const response = await fetchFunction<T>(url, buildRequestConfig(apiOptions, token));
+		return response as T;
+	}
+	catch (error) {
+		handleFetchError(error);
+		throw error; // Explicit fallback throw to satisfy TypeScript
+	}
+}
+
+export function shouldUseCaching(
+	isAuthNeeded: boolean,
+	cacheOptions?: CacheOptions,
+	isDevelopment = import.meta.dev,
+): boolean {
+	return !isDevelopment && !isAuthNeeded && cacheOptions !== undefined;
+}
+
+export function createMadekApiClient<T>(
+	event: H3Event,
+	customFetch = $fetch,
+	customDefineCachedFunction = defineCachedFunction,
+): {
+		fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
+	} {
 	const runtimeConfig = useRuntimeConfig(event);
+	const config: MadekApiConfig = {
+		baseUrl: runtimeConfig.public.madekApi.baseUrl,
+		token: runtimeConfig.madekApi.token,
+	};
 
-	function getAuthHeader(): Record<string, string> | undefined {
-		const token = runtimeConfig.madekApi.token;
-
-		return token ? { Authorization: `token ${token}` } : undefined;
-	}
-
-	function buildRequestConfig(apiOptions: MadekApiOptions = {}): NitroFetchOptions<NitroFetchRequest> {
-		return {
-			headers: apiOptions.needsAuth ? getAuthHeader() : undefined,
-			query: apiOptions.query,
-		};
-	}
-
-	async function fetchData<T>(url: string, apiOptions: MadekApiOptions = {}): Promise<T> {
-		try {
-			const response = await $fetch<T>(url, buildRequestConfig(apiOptions));
-
-			return response as T;
-		}
-		catch (error) {
-			handleFetchError(error);
-			throw error; // Explicit fallback throw to satisfy TypeScript
-		}
-	}
-
-	async function fetchFromApi<T>(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
-		const url = `${runtimeConfig.public.madekApi.baseUrl}${endpoint}`;
-
-		// Authentication disables caching - shouldSkipCache ensures authenticated requests are never cached
+	async function fetchFromApi(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
+		const url = `${config.baseUrl}${endpoint}`;
 		const isAuthNeeded = apiRequestConfig.apiOptions?.needsAuth === true;
-		const shouldSkipCache = import.meta.dev || isAuthNeeded;
+		const cacheOptions = apiRequestConfig.publicDataCache;
 
 		if (isAuthNeeded && apiRequestConfig.publicDataCache !== noCache) {
 			console.warn(
@@ -86,12 +113,9 @@ export function createMadekApiClient<T>(event: H3Event): {
 			);
 		}
 
-		const cacheOptions = apiRequestConfig.publicDataCache;
-		const shouldUseCache = !shouldSkipCache && cacheOptions !== undefined;
-
-		if (shouldUseCache) {
-			return defineCachedFunction(
-				async () => fetchData<T>(url, apiRequestConfig.apiOptions || {}),
+		if (shouldUseCaching(isAuthNeeded, cacheOptions)) {
+			return customDefineCachedFunction(
+				async () => fetchData<T>(url, apiRequestConfig.apiOptions || {}, config.token, customFetch),
 				{
 					...cacheOptions,
 					name: 'madek-api',
@@ -100,10 +124,8 @@ export function createMadekApiClient<T>(event: H3Event): {
 			)();
 		}
 
-		return fetchData<T>(url, apiRequestConfig.apiOptions || {});
+		return fetchData<T>(url, apiRequestConfig.apiOptions || {}, config.token, customFetch);
 	}
 
-	return {
-		fetchFromApi,
-	};
+	return { fetchFromApi };
 }
