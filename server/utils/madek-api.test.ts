@@ -170,6 +170,22 @@ describe('madek api client', () => {
 
 				expect(key1).toBe(key2);
 			});
+
+			it('generates consistent keys regardless of query parameter order', () => {
+				const queryOrder1 = { param1: 'value1', param2: 'value2', param3: 'value3' };
+				const queryOrder2 = { param3: 'value3', param1: 'value1', param2: 'value2' };
+				const queryOrder3 = { param2: 'value2', param3: 'value3', param1: 'value1' };
+
+				const key1 = generateCacheKey('/api-v2/collections', queryOrder1);
+				const key2 = generateCacheKey('/api-v2/collections', queryOrder2);
+				const key3 = generateCacheKey('/api-v2/collections', queryOrder3);
+
+				expect(key1).toBe(key2);
+				expect(key1).toBe(key3);
+				expect(key2).toBe(key3);
+
+				expect(key1).toBe('api-v2:collections:param1:value1:param2:value2:param3:value3');
+			});
 		});
 	});
 

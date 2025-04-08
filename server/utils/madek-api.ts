@@ -21,8 +21,17 @@ export interface MadekApiConfig {
 }
 
 export function generateCacheKey(endpoint: string, query?: Record<string, string>): string {
-	const queryString = Object.keys(query ?? {}).length > 0
-		? `?${new URLSearchParams(query).toString()}`
+	// Ensure query parameters are consistently ordered by sorting them alphabetically
+	const sortedQuery: Record<string, string> = {};
+	if (query) {
+		for (const key of Object.keys(query)
+			.sort((a, b) => a.localeCompare(b))) {
+			sortedQuery[key] = query[key] ?? '';
+		}
+	}
+
+	const queryString = Object.keys(sortedQuery).length > 0
+		? `?${new URLSearchParams(sortedQuery).toString()}`
 		: '';
 
 	const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
@@ -31,7 +40,7 @@ export function generateCacheKey(endpoint: string, query?: Record<string, string
 		.replaceAll('/', ':')
 		.replaceAll('?', ':')
 		.replaceAll('=', ':')
-		.replaceAll('&', '.');
+		.replaceAll('&', ':');
 
 	return safeKey;
 }
@@ -71,7 +80,6 @@ export async function fetchData<T>(
 		return response as T;
 	}
 	catch (error) {
-		// Only pass FetchError types to the handler
 		if (error instanceof FetchError) {
 			handleFetchError(error);
 		}
