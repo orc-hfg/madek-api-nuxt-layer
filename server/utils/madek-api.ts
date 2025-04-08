@@ -36,18 +36,14 @@ export function generateCacheKey(endpoint: string, query?: Record<string, string
 	return safeKey;
 }
 
-export function handleFetchError(error: unknown): void {
-	if (error instanceof FetchError) {
-		throw createError({
-			statusCode: error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR,
-			statusMessage:
-				error.statusMessage
-				?? error.statusText
-				?? getReasonPhrase(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR),
-		});
-	}
-
-	throw error;
+export function handleFetchError(error: FetchError): void {
+	throw createError({
+		statusCode: error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR,
+		statusMessage:
+			error.statusMessage
+			?? error.statusText
+			?? getReasonPhrase(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR),
+	});
 }
 
 export function getAuthHeader(token?: string): Record<string, string> | undefined {
@@ -69,15 +65,17 @@ export async function fetchData<T>(
 	url: string,
 	apiOptions: MadekApiOptions = {},
 	token?: string,
-	fetchFunction = $fetch,
 ): Promise<T> {
 	try {
-		const response = await fetchFunction<T>(url, buildRequestConfig(apiOptions, token));
+		const response = await $fetch<T>(url, buildRequestConfig(apiOptions, token));
 		return response as T;
 	}
 	catch (error) {
-		handleFetchError(error);
-		throw error; // Explicit fallback throw to satisfy TypeScript
+		// Only pass FetchError types to the handler
+		if (error instanceof FetchError) {
+			handleFetchError(error);
+		}
+		throw error;
 	}
 }
 
@@ -89,13 +87,9 @@ export function shouldUseCaching(
 	return !isDevelopment && !isAuthNeeded && cacheOptions !== undefined;
 }
 
-export function createMadekApiClient<T>(
-	event: H3Event,
-	customFetch = $fetch,
-	customDefineCachedFunction = defineCachedFunction,
-): {
-		fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
-	} {
+export function createMadekApiClient<T>(event: H3Event): {
+	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
+} {
 	const runtimeConfig = useRuntimeConfig(event);
 	const config: MadekApiConfig = {
 		baseUrl: runtimeConfig.public.madekApi.baseUrl,
@@ -114,8 +108,8 @@ export function createMadekApiClient<T>(
 		}
 
 		if (shouldUseCaching(isAuthNeeded, cacheOptions)) {
-			return customDefineCachedFunction(
-				async () => fetchData<T>(url, apiRequestConfig.apiOptions || {}, config.token, customFetch),
+			return defineCachedFunction(
+				async () => fetchData<T>(url, apiRequestConfig.apiOptions || {}, config.token),
 				{
 					...cacheOptions,
 					name: 'madek-api',
@@ -124,7 +118,7 @@ export function createMadekApiClient<T>(
 			)();
 		}
 
-		return fetchData<T>(url, apiRequestConfig.apiOptions || {}, config.token, customFetch);
+		return fetchData<T>(url, apiRequestConfig.apiOptions || {}, config.token);
 	}
 
 	return { fetchFromApi };
