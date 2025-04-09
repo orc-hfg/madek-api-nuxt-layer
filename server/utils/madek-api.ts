@@ -74,9 +74,10 @@ export async function fetchData<T>(
 	url: string,
 	apiOptions: MadekApiOptions = {},
 	token?: string,
+	fetchFunction = $fetch,
 ): Promise<T> {
 	try {
-		const response = await $fetch<T>(url, buildRequestConfig(apiOptions, token));
+		const response = await fetchFunction<T>(url, buildRequestConfig(apiOptions, token));
 		return response as T;
 	}
 	catch (error) {
@@ -95,7 +96,7 @@ export function shouldUseCaching(
 	return !isDevelopment && !isAuthNeeded && cacheOptions !== undefined;
 }
 
-export function createMadekApiClient<T>(event: H3Event): {
+export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetchData): {
 	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
 } {
 	const runtimeConfig = useRuntimeConfig(event);
@@ -117,7 +118,7 @@ export function createMadekApiClient<T>(event: H3Event): {
 
 		if (shouldUseCaching(isAuthNeeded, cacheOptions)) {
 			return defineCachedFunction(
-				async () => fetchData<T>(url, apiRequestConfig.apiOptions || {}, config.token),
+				async () => fetchDataFunction<T>(url, apiRequestConfig.apiOptions || {}, config.token),
 				{
 					...cacheOptions,
 					name: 'madek-api',
@@ -126,7 +127,7 @@ export function createMadekApiClient<T>(event: H3Event): {
 			)();
 		}
 
-		return fetchData<T>(url, apiRequestConfig.apiOptions || {}, config.token);
+		return fetchDataFunction<T>(url, apiRequestConfig.apiOptions || {}, config.token);
 	}
 
 	return { fetchFromApi };

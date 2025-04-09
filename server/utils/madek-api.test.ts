@@ -1,13 +1,8 @@
-import type { CacheOptions } from 'nitropack';
+import type { H3Event } from 'h3';
 import type { FetchError } from 'ofetch';
-import { describe, expect, it } from 'vitest';
-import { buildRequestConfig, generateCacheKey, getAuthHeader, handleFetchError, shouldUseCaching } from './madek-api';
-
-interface TestCase {
-	endpoint: string;
-	query?: Record<string, string>;
-	expected: string;
-}
+import { mockNuxtImport } from '@nuxt/test-utils/runtime';
+import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { buildRequestConfig, createMadekApiClient, fetchData, generateCacheKey, getAuthHeader, handleFetchError, shouldUseCaching } from './madek-api';
 
 describe('madek api client', () => {
 	describe('request configuration', () => {
@@ -86,17 +81,104 @@ describe('madek api client', () => {
 		});
 	});
 
+	describe('data fetching', () => {
+		describe('fetchData', () => {
+			it('builds correct request configuration and calls $fetch', async () => {
+				const fetchFunctionMock = vi.fn();
+				vi.stubGlobal('$fetch', fetchFunctionMock);
+
+				await fetchData('https://api.example.com/test', {
+					needsAuth: true,
+					query: { param: 'value' },
+				}, 'test-token');
+
+				expect(fetchFunctionMock).toHaveBeenCalledWith(
+					'https://api.example.com/test',
+					expect.objectContaining({
+						headers: { Authorization: 'token test-token' },
+						query: { param: 'value' },
+					}),
+				);
+
+				vi.unstubAllGlobals();
+			});
+		});
+	});
+
+	describe('error handling', () => {
+		it('passes FetchError status message correctly', () => {
+			const fetchError = new Error('Original message') as FetchError;
+			fetchError.statusCode = 401;
+			fetchError.statusMessage = 'Unauthorized';
+
+			let caughtError;
+			try {
+				handleFetchError(fetchError);
+			}
+			catch (error) {
+				caughtError = error as Error;
+			}
+
+			expect(caughtError?.message).toBe('Unauthorized');
+		});
+
+		it('uses statusCode when no message is provided', () => {
+			const fetchError = new Error('Network Error') as FetchError;
+			fetchError.statusCode = 404;
+
+			let caughtError;
+			try {
+				handleFetchError(fetchError);
+			}
+			catch (error) {
+				caughtError = error as Error;
+			}
+
+			expect(caughtError?.message).toBe('Not Found');
+		});
+
+		it('handles FetchError without statusCode or statusMessage', () => {
+			const fetchError = new Error('Fetch Error') as FetchError;
+
+			let caughtError;
+			try {
+				handleFetchError(fetchError);
+			}
+			catch (error) {
+				caughtError = error as Error;
+			}
+
+			expect(caughtError?.message).toBe('Internal Server Error');
+		});
+
+		it('uses statusText as fallback when statusMessage is missing', () => {
+			const fetchError = new Error('Network Error') as FetchError;
+			fetchError.statusCode = 403;
+			fetchError.statusText = 'Forbidden Access';
+
+			let caughtError;
+			try {
+				handleFetchError(fetchError);
+			}
+			catch (error) {
+				caughtError = error as Error;
+			}
+
+			expect(caughtError?.message).toBe('Forbidden Access');
+		});
+	});
+
 	describe('caching mechanisms', () => {
 		describe('shouldUseCaching', () => {
 			it('returns false when authentication is needed (do not allow caching for user sensitive data)', () => {
-				const cacheOptions: CacheOptions = { maxAge: 3600 };
+				const cacheOptions = { maxAge: 3600 };
 				const result = shouldUseCaching(true, cacheOptions, false);
 
 				expect(result).toBe(false);
 			});
 
 			it('returns false when in development mode', () => {
-				const cacheOptions: CacheOptions = { maxAge: 3600 };
+				const cacheOptions = { maxAge: 3600 };
 				const result = shouldUseCaching(false, cacheOptions, true);
 
 				expect(result).toBe(false);
@@ -109,7 +191,7 @@ describe('madek api client', () => {
 			});
 
 			it('returns true when all conditions for caching are met', () => {
-				const cacheOptions: CacheOptions = { maxAge: 3600 };
+				const cacheOptions = { maxAge: 3600 };
 				const result = shouldUseCaching(false, cacheOptions, false);
 
 				expect(result).toBe(true);
@@ -118,7 +200,7 @@ describe('madek api client', () => {
 
 		describe('generateCacheKey', () => {
 			it('generates consistent, filesystem-safe keys', () => {
-				const testCases: TestCase[] = [
+				const testCases: { endpoint: string; query?: Record<string, string>; expected: string }[] = [
 					{
 						endpoint: '/api-v2/auth-info',
 						expected: 'api-v2:auth-info',
@@ -189,66 +271,91 @@ describe('madek api client', () => {
 		});
 	});
 
-	describe('error handling', () => {
-		it('passes FetchError status message correctly', () => {
-			const fetchError = new Error('Original message') as FetchError;
-			fetchError.statusCode = 401;
-			fetchError.statusMessage = 'Unauthorized';
-
-			let caughtError;
-			try {
-				handleFetchError(fetchError);
-			}
-			catch (error) {
-				caughtError = error as Error;
-			}
-
-			expect(caughtError?.message).toBe('Unauthorized');
+	describe('createMadekApiClient', () => {
+		beforeEach(() => {
+			const mockDefineCachedFunction = vi.fn();
+			mockDefineCachedFunction.mockImplementation(<T>(function_: () => T) => {
+				return () => function_();
+			});
+			vi.stubGlobal('defineCachedFunction', mockDefineCachedFunction);
 		});
 
-		it('uses statusCode when no message is provided', () => {
-			const fetchError = new Error('Network Error') as FetchError;
-			fetchError.statusCode = 404;
-
-			let caughtError;
-			try {
-				handleFetchError(fetchError);
-			}
-			catch (error) {
-				caughtError = error as Error;
-			}
-
-			expect(caughtError?.message).toBe('Not Found');
+		mockNuxtImport('useRuntimeConfig', () => {
+			return () => {
+				return {
+					public: {
+						madekApi: {
+							baseUrl: 'https://api.example.com',
+						},
+					},
+					madekApi: {
+						token: 'test-api-token',
+					},
+				};
+			};
 		});
 
-		it('handles FetchError without statusCode or statusMessage', () => {
-			const fetchError = new Error('Fetch Error') as FetchError;
-
-			let caughtError;
-			try {
-				handleFetchError(fetchError);
-			}
-			catch (error) {
-				caughtError = error as Error;
-			}
-
-			expect(caughtError?.message).toBe('Internal Server Error');
+		afterAll(() => {
+			vi.restoreAllMocks();
 		});
 
-		it('uses statusText as fallback when statusMessage is missing', () => {
-			const fetchError = new Error('Network Error') as FetchError;
-			fetchError.statusCode = 403;
-			fetchError.statusText = 'Forbidden Access';
+		describe('basic API functionality', () => {
+			it('returns an object with fetchFromApi method that calls fetchData with correct parameters', async () => {
+				const fetchDataFunctionMock = vi.fn();
+				const mockEvent = {} as H3Event;
 
-			let caughtError;
-			try {
-				handleFetchError(fetchError);
-			}
-			catch (error) {
-				caughtError = error as Error;
-			}
+				const client = createMadekApiClient(mockEvent, fetchDataFunctionMock);
+				const endpoint = '/resources/123';
+				const apiOptions = { needsAuth: true, query: { param: 'value' } };
 
-			expect(caughtError?.message).toBe('Forbidden Access');
+				await client.fetchFromApi(endpoint, { apiOptions });
+
+				expect(fetchDataFunctionMock).toHaveBeenCalledWith(
+					'https://api.example.com/resources/123',
+					apiOptions,
+					'test-api-token',
+				);
+			});
+		});
+
+		describe('caching mechanism', () => {
+			it('uses cachedFunction with correct parameters when caching is enabled', async () => {
+				const fetchDataFunctionMock = vi.fn();
+				const mockEvent = {} as H3Event;
+
+				const client = createMadekApiClient(mockEvent, fetchDataFunctionMock);
+				await client.fetchFromApi('/test-endpoint', {
+					apiOptions: { query: { param: 'value' } },
+					publicDataCache: { maxAge: 3600 },
+				});
+
+				expect(defineCachedFunction).toHaveBeenCalledWith(
+					expect.any(Function),
+					expect.objectContaining({
+						maxAge: 3600,
+						name: 'madek-api',
+						getKey: expect.any(Function) as unknown as () => string,
+					}),
+				);
+			});
+
+			it('skips caching and directly calls fetchData when auth is needed', async () => {
+				const fetchDataFunctionMock = vi.fn();
+				const mockEvent = {} as H3Event;
+
+				const client = createMadekApiClient(mockEvent, fetchDataFunctionMock);
+				await client.fetchFromApi('/authenticated-endpoint', {
+					apiOptions: { needsAuth: true },
+					publicDataCache: { maxAge: 3600 },
+				});
+
+				expect(fetchDataFunctionMock).toHaveBeenCalledWith(
+					'https://api.example.com/authenticated-endpoint',
+					{ needsAuth: true },
+					'test-api-token',
+				);
+				expect(defineCachedFunction).not.toHaveBeenCalled();
+			});
 		});
 	});
 });
