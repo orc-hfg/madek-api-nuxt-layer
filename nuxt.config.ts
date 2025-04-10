@@ -35,25 +35,37 @@ export default defineNuxtConfig({
 	},
 	modules: ['@nuxt/eslint', '@pinia/nuxt', '@nuxt/test-utils/module'],
 	pinia: {
-		// See:
-		// https://github.com/vuejs/pinia/discussions/2378#discussioncomment-8940427
-		// https://pinia.vuejs.org/ssr/nuxt.html#Auto-imports
+
+		/*
+		 * See:
+		 * https://github.com/vuejs/pinia/discussions/2378#discussioncomment-8940427
+		 * https://pinia.vuejs.org/ssr/nuxt.html#Auto-imports
+		 */
 		storesDirs: [resolver.resolve('./app/stores/**')],
 	},
 	eslint: {
 		config: {
-			standalone: false, // Ensures the module only generates Nuxt-specific rules so that it can be merged with own config presets (@antfu/eslint-config)
+
+			/*
+			 * Ensures the module only generates Nuxt-specific rules so that it can be merged with
+			 * own config presets (@antfu/eslint-config)
+			 */
+			standalone: false,
 		},
 	},
-	// See:
-	// https://github.com/unjs/c12?tab=readme-ov-file#environment-specific-configuration
-	// https://nuxt.com/docs/getting-started/configuration#environment-overrides
+
+	/*
+	 * See:
+	 * https://github.com/unjs/c12?tab=readme-ov-file#environment-specific-configuration
+	 * https://nuxt.com/docs/getting-started/configuration#environment-overrides
+	 */
 	runtimeConfig: {
 		madekApi: {
 			baseUrl: '',
 			token: '',
 		},
-		delayResponse: false, // It will only take effect in development mode, useful for testing.
+		// It will only take effect in development mode, useful for testing.
+		delayResponse: false,
 		public: {
 			version: composeVersion(),
 			madekApi: {

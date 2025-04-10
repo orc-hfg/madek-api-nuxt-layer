@@ -10,28 +10,28 @@ interface GeoCoordinates {
 }
 
 interface Address {
+	city: string;
+	geo: GeoCoordinates;
 	street: string;
 	suite: string;
-	city: string;
 	zipcode: string;
-	geo: GeoCoordinates;
 }
 
 interface Company {
-	name: string;
-	catchPhrase: string;
 	bs: string;
+	catchPhrase: string;
+	name: string;
 }
 
 interface User {
+	address: Address;
+	company: Company;
+	email: string;
 	id: number;
 	name: string;
-	username: string;
-	email: string;
-	address: Address;
 	phone: string;
+	username: string;
 	website: string;
-	company: Company;
 }
 
 export type Users = User[];

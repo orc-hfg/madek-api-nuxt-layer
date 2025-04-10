@@ -3,6 +3,7 @@ export default defineNuxtPlugin({
 	setup() {
 		const placeholderApi = $fetch.create({
 			baseURL: 'https://jsonplaceholder.typicode.com/',
+			// eslint-disable-next-line ts/require-await
 			async onResponseError({ response }) {
 				console.error('Fetch response error:', response);
 			},

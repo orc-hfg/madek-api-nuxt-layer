@@ -63,7 +63,10 @@ export function getAuthHeader(token?: string): Record<string, string> | undefine
 	return { Authorization: `token ${token}` };
 }
 
-export function buildRequestConfig(apiOptions: MadekApiOptions = {}, token?: string): NitroFetchOptions<NitroFetchRequest> {
+export function buildRequestConfig(
+	apiOptions: MadekApiOptions = {},
+	token?: string,
+): NitroFetchOptions<NitroFetchRequest> {
 	return {
 		headers: apiOptions.needsAuth ? getAuthHeader(token) : undefined,
 		query: apiOptions.query,
@@ -77,7 +80,9 @@ export async function fetchData<T>(
 	fetchFunction = $fetch,
 ): Promise<T> {
 	try {
-		const response = await fetchFunction<T>(url, buildRequestConfig(apiOptions, token));
+		const requestConfig = buildRequestConfig(apiOptions, token);
+		const response = await fetchFunction<T>(url, requestConfig);
+
 		return response as T;
 	}
 	catch (error) {
@@ -112,22 +117,23 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 
 		if (isAuthNeeded && apiRequestConfig.publicDataCache !== noCache) {
 			console.warn(
-				`[madek-api] Warning: Authenticated requests should only use 'noCache' for publicDataCache (or none at all). Other cache configurations are ignored. Request: ${endpoint}`,
+				`[madek-api] Warning: Authenticated requests should only use 'noCache' for publicDataCache `
+				+ `(or none at all). Other cache configurations are ignored. Request: ${endpoint}`,
 			);
 		}
 
 		if (shouldUseCaching(isAuthNeeded, cacheOptions)) {
 			return defineCachedFunction(
-				async () => fetchDataFunction<T>(url, apiRequestConfig.apiOptions || {}, config.token),
+				async () => fetchDataFunction<T>(url, apiRequestConfig.apiOptions ?? {}, config.token),
 				{
 					...cacheOptions,
 					name: 'madek-api',
-					getKey: () => generateCacheKey(endpoint, apiRequestConfig.apiOptions?.query || {}),
+					getKey: () => generateCacheKey(endpoint, apiRequestConfig.apiOptions?.query ?? {}),
 				},
 			)();
 		}
 
-		return fetchDataFunction<T>(url, apiRequestConfig.apiOptions || {}, config.token);
+		return fetchDataFunction<T>(url, apiRequestConfig.apiOptions ?? {}, config.token);
 	}
 
 	return { fetchFromApi };

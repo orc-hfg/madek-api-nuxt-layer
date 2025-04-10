@@ -13,5 +13,6 @@ export default defineEventHandler(async (event: H3Event) => {
 	}
 
 	const context = await getContextById(event, contextId);
+
 	return context;
 });

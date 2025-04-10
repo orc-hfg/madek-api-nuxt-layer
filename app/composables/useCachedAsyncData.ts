@@ -1,7 +1,9 @@
 import type { AsyncDataOptions } from '#app';
 
-// Issues with reactive keys: https://github.com/nuxt/nuxt/issues/21532
-// This PR should solve this and other issues: https://github.com/nuxt/nuxt/pull/31373
+/*
+ * Issues with reactive keys: https://github.com/nuxt/nuxt/issues/21532
+ * This PR should solve this and other issues: https://github.com/nuxt/nuxt/pull/31373
+ */
 export function useCachedAsyncData<T = any>(
 	key: string,
 	handler: () => Promise<T>,

@@ -2,7 +2,15 @@ import type { H3Event } from 'h3';
 import type { FetchError } from 'ofetch';
 import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { buildRequestConfig, createMadekApiClient, fetchData, generateCacheKey, getAuthHeader, handleFetchError, shouldUseCaching } from './madek-api';
+import {
+	buildRequestConfig,
+	createMadekApiClient,
+	fetchData,
+	generateCacheKey,
+	getAuthHeader,
+	handleFetchError,
+	shouldUseCaching,
+} from './madek-api';
 
 describe('madek api client', () => {
 	describe('request configuration', () => {
@@ -200,7 +208,7 @@ describe('madek api client', () => {
 
 		describe('generateCacheKey', () => {
 			it('generates consistent, filesystem-safe keys', () => {
-				const testCases: { endpoint: string; query?: Record<string, string>; expected: string }[] = [
+				const testCases: { endpoint: string; expected: string; query?: Record<string, string> }[] = [
 					{
 						endpoint: '/api-v2/auth-info',
 						expected: 'api-v2:auth-info',
