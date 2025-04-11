@@ -19,7 +19,7 @@
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"test": "vitest run",
-		"test:watch": "vitest",
+		"test:watch": "vitest watch",
 		"check:eslint-config": "npx @eslint/config-inspector@latest",
 		"check:types": "nuxi typecheck",
 		"check:unused": "knip --include dependencies,duplicates,exports,types",
