@@ -31,7 +31,7 @@
 		"release:patch": "npm version patch -m \"chore: release %s\" && git push --follow-tags",
 		"release:minor": "npm version minor -m \"chore: release %s\" && git push --follow-tags",
 		"release:major": "npm version major -m \"chore: release %s\" && git push --follow-tags",
-		"prepare": "husky"
+		"prepare": "husky && nuxt prepare"
 	},
 	"dependencies": {
 		"@pinia/nuxt": "0.11.0",
