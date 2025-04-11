@@ -309,6 +309,7 @@ describe('madek api client', () => {
 
 		describe('basic API functionality', () => {
 			it('returns an object with fetchFromApi method that calls fetchData with correct parameters', async () => {
+				const warnSpy = vi.spyOn(console, 'warn').mockReturnValue();
 				const fetchDataFunctionMock = vi.fn();
 				const mockEvent = {} as H3Event;
 
@@ -318,6 +319,7 @@ describe('madek api client', () => {
 
 				await client.fetchFromApi(endpoint, { apiOptions });
 
+				expect(warnSpy).toHaveBeenCalledTimes(1);
 				expect(fetchDataFunctionMock).toHaveBeenCalledWith(
 					'https://api.example.com/resources/123',
 					apiOptions,
@@ -348,6 +350,7 @@ describe('madek api client', () => {
 			});
 
 			it('skips caching and directly calls fetchData when auth is needed', async () => {
+				const warnSpy = vi.spyOn(console, 'warn').mockReturnValue();
 				const fetchDataFunctionMock = vi.fn();
 				const mockEvent = {} as H3Event;
 
@@ -357,6 +360,7 @@ describe('madek api client', () => {
 					publicDataCache: { maxAge: 3600 },
 				});
 
+				expect(warnSpy).toHaveBeenCalledTimes(1);
 				expect(fetchDataFunctionMock).toHaveBeenCalledWith(
 					'https://api.example.com/authenticated-endpoint',
 					{ needsAuth: true },
