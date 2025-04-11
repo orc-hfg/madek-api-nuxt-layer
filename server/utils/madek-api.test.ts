@@ -2,15 +2,7 @@ import type { H3Event } from 'h3';
 import type { FetchError } from 'ofetch';
 import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-	buildRequestConfig,
-	createMadekApiClient,
-	fetchData,
-	generateCacheKey,
-	getAuthHeader,
-	handleFetchError,
-	shouldUseCaching,
-} from './madek-api';
+import { buildRequestConfig, createMadekApiClient, fetchData, generateCacheKey, getAuthHeader, handleFetchError, shouldUseCaching } from './madek-api';
 
 mockNuxtImport('useRuntimeConfig', () => {
 	return () => {

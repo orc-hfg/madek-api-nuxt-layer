@@ -117,8 +117,7 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 
 		if (isAuthNeeded && apiRequestConfig.publicDataCache !== noCache) {
 			console.warn(
-				`[madek-api] Warning: Authenticated requests should only use 'noCache' for publicDataCache `
-				+ `(or none at all). Other cache configurations are ignored. Request: ${endpoint}`,
+				`[madek-api] Warning: Authenticated requests should only use 'noCache' for publicDataCache (or none at all). Other cache configurations are ignored. Request: ${endpoint}`,
 			);
 		}
 

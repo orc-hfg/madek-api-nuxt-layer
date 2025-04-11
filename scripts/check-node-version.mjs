@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import { readFileSync } from 'node:fs';
 import https from 'node:https';
 import path from 'node:path';

@@ -22,7 +22,7 @@ export default withNuxt(
 			...eslintPluginSonarJs.configs.recommended,
 		},
 		{
-			files: ['**/*.ts', '**/*.vue'],
+			files: ['**/*.ts'],
 			rules: {
 				'no-console': [
 					'error',
@@ -165,7 +165,6 @@ export default withNuxt(
 				'style/line-comment-position': 'error',
 				'style/linebreak-style': 'error',
 				'style/lines-around-comment': 'error',
-				'style/max-len': ['error', { code: 120, tabWidth: 2 }],
 				'style/multiline-comment-style': 'error',
 				'style/newline-per-chained-call': 'error',
 				'style/no-confusing-arrow': 'error',
@@ -192,12 +191,17 @@ export default withNuxt(
 			},
 		},
 		{
-			// File naming conventions:
-			// - Vue components (.vue): PascalCase (official Nuxt/Vue convention)
-			// - Global default remains kebab-case (unicorn default setting)
 			files: ['**/*.vue'],
 			rules: {
 				'vue/no-constant-condition': 'error',
+			},
+		},
+		{
+			// File naming conventions:
+			// - Vue components (.vue): PascalCase (official Nuxt/Vue convention)
+			// - Global default remains kebab-case (unicorn default setting)
+			files: ['app/components/**/*.vue'],
+			rules: {
 				'unicorn/filename-case': [
 					'error',
 					{
