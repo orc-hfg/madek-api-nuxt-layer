@@ -93,11 +93,11 @@ Nach dem erfolgreichen Push des Tags kann du auf GitHub ein neues Release erstel
 1. **Releases-Seite öffnen**
    Gehe im Repository in den Abschnitt **„Releases“**.
 2. **Neues Release erstellen**
-   Klicke auf **„Create a new release“** oder **„Draft a new release“**
+   Klicke auf **„Draft a new release“**
 3. **Tag auswählen**
-   Wähle den eben erstellten Tag (z.B. `1.0.3`) aus der Dropdown-Liste aus.
+   Wähle den eben erstellten Tag (z.B. `1.1.0`) aus der Dropdown-Liste aus.
 4. **Release Details**
-   Gib einen Titel (z.B. `1.0.3`) ein und ergänze bei Bedarf Release Notes.
+   Gib einen Titel (z.B. `1.1.0`) ein und ergänze bei Bedarf Release Notes.
 5. **Veröffentlichen**
    Klicke auf **„Publish release“**.
 
@@ -123,7 +123,7 @@ Folgende Dateien entsprechend anpassen:
 
 ### 2. Externe Abhängigkeiten aktualisieren
 
-- `npm run upgrade`ausführen, um Nuxt zu updaten.
+- `npm run upgrade` ausführen, um Nuxt zu updaten.
 - `npm run check:updates` verwenden, Updates installieren und währenddessen immer wieder die Funktionalität testen.
 
 ### 3. Aufgaben für das nächste Dependency Update bearbeiten und ggf. neue erstellen
