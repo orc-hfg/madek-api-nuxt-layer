@@ -16,6 +16,14 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
       - name: Install dependencies
         run: npm ci
+      - name: Run linting
+        run: npm run lint
+      - name: Type check
+        run: npm run check:types
+      - name: Check unused code and dependencies
+        run: npm run check:unused
+      - name: Run tests
+        run: npm run test
       - name: Publish package
         run: npm publish
         env:

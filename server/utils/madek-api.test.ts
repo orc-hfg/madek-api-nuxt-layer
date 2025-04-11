@@ -12,6 +12,21 @@ import {
 	shouldUseCaching,
 } from './madek-api';
 
+mockNuxtImport('useRuntimeConfig', () => {
+	return () => {
+		return {
+			public: {
+				madekApi: {
+					baseUrl: 'https://api.example.com',
+				},
+			},
+			madekApi: {
+				token: 'test-api-token',
+			},
+		};
+	};
+});
+
 describe('madek api client', () => {
 	describe('request configuration', () => {
 		describe('getAuthHeader', () => {
@@ -286,21 +301,6 @@ describe('madek api client', () => {
 				return () => function_();
 			});
 			vi.stubGlobal('defineCachedFunction', mockDefineCachedFunction);
-		});
-
-		mockNuxtImport('useRuntimeConfig', () => {
-			return () => {
-				return {
-					public: {
-						madekApi: {
-							baseUrl: 'https://api.example.com',
-						},
-					},
-					madekApi: {
-						token: 'test-api-token',
-					},
-				};
-			};
 		});
 
 		afterAll(() => {
