@@ -38,6 +38,7 @@ export default withNuxt(
 				'no-empty-static-block': 'error',
 				'no-nonoctal-decimal-escape': 'error',
 				'no-unsafe-optional-chaining': 'error',
+				'no-useless-concat': 'error',
 				'no-useless-escape': 'error',
 				'require-yield': 'error',
 				'import/no-deprecated': 'error',
@@ -168,6 +169,7 @@ export default withNuxt(
 				'style/multiline-comment-style': 'error',
 				'style/newline-per-chained-call': 'error',
 				'style/no-confusing-arrow': 'error',
+				'style/no-extra-parens': 'error',
 				'style/object-curly-newline': 'error',
 				'style/one-var-declaration-per-line': 'error',
 				'style/padding-line-between-statements': [

@@ -127,3 +127,4 @@ Folgende Dateien entsprechend anpassen:
 - `npm run check:updates` verwenden, Updates installieren und währenddessen immer wieder die Funktionalität testen.
 
 ### 3. Aufgaben für das nächste Dependency Update bearbeiten und ggf. neue erstellen
+- `getCachedData` Implementierung für Client-Caching nach Update auf Nuxt 3.17 anpassen: https://github.com/nuxt/nuxt/pull/31373
