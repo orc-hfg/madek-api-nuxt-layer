@@ -21,18 +21,6 @@ export default defineNuxtConfig({
 	typescript: {
 		typeCheck: true,
 	},
-	debug: {
-		templates: true,
-		modules: true,
-		watchers: true,
-		hooks: {
-			client: true,
-			server: true,
-		},
-		nitro: true,
-		router: true,
-		hydration: true,
-	},
 	modules: ['@nuxt/eslint', '@pinia/nuxt', '@nuxt/test-utils/module'],
 	pinia: {
 
