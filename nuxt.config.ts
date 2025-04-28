@@ -8,20 +8,17 @@ function composeVersion(): string {
 const resolver = createResolver(import.meta.url);
 
 export default defineNuxtConfig({
-	experimental: {
-		// See: https://youtu.be/XnWXWye8sBM?si=HJYjOualqx1vpF7I&t=3300
-		typedPages: true,
-	},
 	future: {
 		compatibilityVersion: 4,
 	},
+	compatibilityDate: '2025-01-24',
 	devtools: {
 		enabled: true,
 	},
 	typescript: {
 		typeCheck: true,
 	},
-	modules: ['@nuxt/eslint', '@pinia/nuxt', '@nuxt/test-utils/module'],
+	modules: ['@pinia/nuxt', '@nuxt/eslint', '@nuxt/test-utils/module'],
 	pinia: {
 
 		/*
@@ -90,5 +87,4 @@ export default defineNuxtConfig({
 			},
 		},
 	},
-	compatibilityDate: '2025-01-24',
 });
