@@ -45,6 +45,9 @@ export default defineNuxtConfig({
 	 * https://nuxt.com/docs/getting-started/configuration#environment-overrides
 	 */
 	runtimeConfig: {
+		app: {
+			baseUrl: '',
+		},
 		madekApi: {
 			baseUrl: '',
 			token: '',
