@@ -46,10 +46,10 @@ export default defineNuxtConfig({
 	 */
 	runtimeConfig: {
 		app: {
-			baseUrl: '',
+			baseURL: '',
 		},
 		madekApi: {
-			baseUrl: '',
+			baseURL: '',
 			token: '',
 		},
 		// It will only take effect in development mode, useful for testing.
@@ -57,7 +57,7 @@ export default defineNuxtConfig({
 		public: {
 			version: composeVersion(),
 			madekApi: {
-				baseUrl: '',
+				baseURL: '',
 			},
 		},
 	},
@@ -65,7 +65,7 @@ export default defineNuxtConfig({
 		runtimeConfig: {
 			public: {
 				madekApi: {
-					baseUrl: 'https://dev.madek.hfg-karlsruhe.de/api-v2',
+					baseURL: 'https://dev.madek.hfg-karlsruhe.de/api-v2',
 				},
 			},
 		},
@@ -74,7 +74,7 @@ export default defineNuxtConfig({
 		runtimeConfig: {
 			public: {
 				madekApi: {
-					baseUrl: 'https://madek.hfg-karlsruhe.de/api-v2',
+					baseURL: 'https://madek.hfg-karlsruhe.de/api-v2',
 				},
 			},
 		},
@@ -84,7 +84,7 @@ export default defineNuxtConfig({
 			runtimeConfig: {
 				public: {
 					madekApi: {
-						baseUrl: 'https://staging.madek.hfg-karlsruhe.de/api-v2',
+						baseURL: 'https://staging.madek.hfg-karlsruhe.de/api-v2',
 					},
 				},
 			},

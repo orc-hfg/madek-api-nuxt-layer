@@ -16,7 +16,7 @@ interface MadekApiRequestConfig {
 }
 
 export interface MadekApiConfig {
-	baseUrl: string;
+	baseURL: string;
 	token?: string;
 }
 
@@ -106,12 +106,12 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 } {
 	const runtimeConfig = useRuntimeConfig(event);
 	const config: MadekApiConfig = {
-		baseUrl: runtimeConfig.public.madekApi.baseUrl,
+		baseURL: runtimeConfig.public.madekApi.baseURL,
 		token: runtimeConfig.madekApi.token,
 	};
 
 	async function fetchFromApi(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
-		const url = `${config.baseUrl}${endpoint}`;
+		const url = `${config.baseURL}${endpoint}`;
 		const isAuthNeeded = apiRequestConfig.apiOptions?.needsAuth === true;
 		const cacheOptions = apiRequestConfig.publicDataCache;
 

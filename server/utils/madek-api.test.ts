@@ -9,7 +9,7 @@ mockNuxtImport('useRuntimeConfig', () => {
 		return {
 			public: {
 				madekApi: {
-					baseUrl: 'https://api.example.com',
+					baseURL: 'https://api.example.com',
 				},
 			},
 			madekApi: {

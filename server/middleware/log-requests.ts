@@ -1,6 +1,6 @@
 if (import.meta.dev) {
 	const runtimeConfig = useRuntimeConfig();
-	console.info(`[MIDDLEWARE DEV] Madek API Base URL: ${runtimeConfig.public.madekApi.baseUrl}`);
+	console.info(`[MIDDLEWARE DEV] Madek API Base URL: ${runtimeConfig.public.madekApi.baseURL}`);
 }
 
 export default defineEventHandler((event) => {
