@@ -7,7 +7,7 @@ interface DebugLogger {
 
 export function createDebugLogger(event: H3Event): DebugLogger {
 	const runtimeConfig = useRuntimeConfig(event);
-	const isDebugLoggingEnabled = runtimeConfig.enableDebugLogging;
+	const isDebugLoggingEnabled = Boolean(runtimeConfig.enableDebugLogging);
 
 	return {
 		info(source: string, message: string, data?: unknown): void {
