@@ -5,7 +5,10 @@ import { defaultCache } from '../constants/cache';
 import { createMadekApiClient } from './madek-api';
 
 export async function getAppSettings(event: H3Event): Promise<AppSettings> {
+	const runtimeConfig = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekAppSettingsResponse>(event);
+
+	console.info('[getAppSettings] API baseURL:', runtimeConfig.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('/app-settings', {
