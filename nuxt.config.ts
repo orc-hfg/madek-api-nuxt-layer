@@ -74,7 +74,7 @@ export default defineNuxtConfig({
 		runtimeConfig: {
 			public: {
 				madekApi: {
-					baseURL: 'https://madek.hfg-karlsruhe.de/api-v2',
+					baseURL: 'https://dev.madek.hfg-karlsruhe.de/api-v2',
 				},
 			},
 		},
