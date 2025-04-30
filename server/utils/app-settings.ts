@@ -19,7 +19,16 @@ export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 			default_locale: response.default_locale,
 		};
 	}
-	catch {
+	catch (error) {
+		// Log detailed error information to the server logs
+		console.error('[getAppSettings] Failed with error:', error);
+
+		// Get more details if it's a FetchError
+		if (error instanceof Error) {
+			console.error('[getAppSettings] Error message:', error.message);
+			console.error('[getAppSettings] Error stack:', error.stack);
+		}
+
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
 			statusMessage: 'Failed to fetch app settings.',
