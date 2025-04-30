@@ -52,8 +52,10 @@ export default defineNuxtConfig({
 			baseURL: '',
 			token: '',
 		},
-		// It will only take effect in development mode, useful for testing.
+		// This will only take effect in development mode, useful for testing.
 		delayResponse: false,
+		// Enable detailed API debug logging
+		enableDebugLogging: false,
 		public: {
 			version: composeVersion(),
 			madekApi: {

@@ -2,13 +2,15 @@ import type { H3Event } from 'h3';
 import type { AppSettings, MadekAppSettingsResponse } from '../../shared/types/api/app-settings';
 import { StatusCodes } from 'http-status-codes';
 import { defaultCache } from '../constants/cache';
+import { createDebugLogger } from './debug-logger';
 import { createMadekApiClient } from './madek-api';
 
 export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 	const runtimeConfig = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekAppSettingsResponse>(event);
+	const logger = createDebugLogger(event);
 
-	console.info('[getAppSettings] API baseURL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('getAppSettings', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('/app-settings', {
@@ -23,18 +25,13 @@ export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 		};
 	}
 	catch (error) {
-		// Log detailed error information to the server logs
-		console.error('[getAppSettings] Failed with error:', error);
+		const errorMessage = 'Failed to fetch app settings.';
 
-		// Get more details if it's a FetchError
-		if (error instanceof Error) {
-			console.error('[getAppSettings] Error message:', error.message);
-			console.error('[getAppSettings] Error stack:', error.stack);
-		}
+		logger.error('getAppSettings', errorMessage, error);
 
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-			statusMessage: 'Failed to fetch app settings.',
+			statusMessage: errorMessage,
 		});
 	}
 }
