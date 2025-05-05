@@ -13,7 +13,7 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 	logger.info('getContexts', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
 
 	try {
-		const response = await fetchFromApi('/contexts', {
+		const response = await fetchFromApi('contexts', {
 			apiOptions: {
 				needsAuth: false,
 			},
