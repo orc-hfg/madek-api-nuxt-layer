@@ -13,7 +13,7 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 	logger.info('getAuthInfo', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
 
 	try {
-		const response = await fetchFromApi('/auth-info', {
+		const response = await fetchFromApi('auth-info', {
 			apiOptions: {
 				needsAuth: true,
 			},

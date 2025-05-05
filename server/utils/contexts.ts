@@ -46,7 +46,7 @@ export async function getContextById(event: H3Event, id: string): Promise<Contex
 	logger.info('getContextById', 'Context ID:', id);
 
 	try {
-		const response = await fetchFromApi(`/contexts/${id}`, {
+		const response = await fetchFromApi(`contexts/${id}`, {
 			apiOptions: {
 				needsAuth: false,
 			},

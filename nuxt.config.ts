@@ -49,11 +49,20 @@ export default defineNuxtConfig({
 		delayResponse: false,
 		// Enable detailed API debug logging
 		enableDebugLogging: false,
+		app: {
+			// Will be set via environment variables
+			baseURL: '/',
+		},
 		madekApi: {
+			// Will be set via environment variables
 			token: '',
 		},
 		public: {
 			version: composeVersion(),
+			madekApi: {
+				// Will be set via runtimeConfig
+				baseURL: '',
+			},
 		},
 	},
 	$development: {

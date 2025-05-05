@@ -14,7 +14,7 @@ export async function getCollections(event: H3Event, query: CollectionsUserQuery
 	logger.info('getCollections', 'Query params:', query);
 
 	try {
-		const response = await fetchFromApi('/collections', {
+		const response = await fetchFromApi('collections', {
 			apiOptions: {
 				needsAuth: false,
 				query,

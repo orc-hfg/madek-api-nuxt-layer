@@ -13,7 +13,7 @@ export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 	logger.info('getAppSettings', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
 
 	try {
-		const response = await fetchFromApi('/app-settings', {
+		const response = await fetchFromApi('app-settings', {
 			apiOptions: {
 				needsAuth: false,
 			},
