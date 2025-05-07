@@ -24,6 +24,7 @@ export default withNuxt(
 		{
 			files: ['**/*.ts'],
 			rules: {
+				'curly': 'error',
 				'no-console': [
 					'error',
 					{
