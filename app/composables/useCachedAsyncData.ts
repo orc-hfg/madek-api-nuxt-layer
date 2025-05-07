@@ -1,9 +1,5 @@
 import type { AsyncDataOptions } from '#app';
 
-/*
- * Issues with reactive keys: https://github.com/nuxt/nuxt/issues/21532
- * This PR should solve this and other issues: https://github.com/nuxt/nuxt/pull/31373
- */
 export function useCachedAsyncData<T = any>(
 	key: string,
 	handler: () => Promise<T>,
@@ -11,7 +7,12 @@ export function useCachedAsyncData<T = any>(
 ): ReturnType<typeof useAsyncData<T>> {
 	const asyncOptions: AsyncDataOptions<T> = { ...options };
 
-	asyncOptions.getCachedData = (key, nuxtApp): T | undefined => {
+	asyncOptions.getCachedData = (key, nuxtApp, context): T | undefined => {
+		// See: https://github.com/nuxt/nuxt/pull/31373
+		if (context.cause === 'refresh:manual') {
+			return undefined;
+		}
+
 		if (key in nuxtApp.payload.data) {
 			return nuxtApp.payload.data[key] as T;
 		}
