@@ -12,6 +12,9 @@ export default withNuxt(
 				// Enables type-aware linting
 				tsconfigPath: 'tsconfig.json',
 			},
+			vue: {
+				a11y: true,
+			},
 			unicorn: {
 				allRecommended: true,
 			},
@@ -254,7 +257,92 @@ export default withNuxt(
 		{
 			files: ['**/*.vue'],
 			rules: {
+				'vue/block-lang': [
+					'error',
+					{
+						script: {
+							lang: 'ts',
+						},
+					},
+				],
+				'vue/camelcase': 'error',
+				'vue/component-api-style': 'error',
+				'vue/define-emits-declaration': 'error',
+				'vue/define-props-declaration': 'error',
+				'vue/enforce-style-attribute': 'error',
+				'vue/func-call-spacing': 'error',
+				'vue/html-button-has-type': 'error',
+				'vue/html-comment-content-newline': 'error',
+				'vue/html-comment-indent': ['error', 'tab'],
+				'vue/max-props': [
+					'error',
+					{
+						maxProps: 5,
+					},
+				],
+				'vue/max-template-depth': [
+					'error',
+					{
+						maxDepth: 4,
+					},
+				],
+				'vue/new-line-between-multi-line-property': [
+					'error',
+					{
+						minLineOfMultilineProperty: 2,
+					},
+				],
+				'vue/next-tick-style': 'error',
+				'vue/no-boolean-default': 'error',
+				'vue/no-console': [
+					'error',
+					{
+						allow: ['info', 'warn', 'error'],
+					},
+				],
 				'vue/no-constant-condition': 'error',
+				'vue/no-custom-modifiers-on-v-model': 'error',
+				'vue/no-duplicate-attr-inheritance': 'error',
+				'vue/no-empty-component-block': 'error',
+				'vue/no-extra-parens': 'error',
+				'vue/no-implicit-coercion': 'error',
+				'vue/no-multiple-objects-in-class': 'error',
+				'vue/no-ref-object-reactivity-loss': 'error',
+				'vue/no-root-v-if': 'error',
+				'vue/no-static-inline-styles': 'error',
+				'vue/no-template-target-blank': 'error',
+				'vue/no-undef-properties': 'error',
+				'vue/no-use-v-else-with-v-for': 'error',
+				'vue/no-useless-concat': 'error',
+				'vue/no-useless-mustaches': 'error',
+				'vue/no-v-text': 'error',
+				'vue/padding-line-between-tags': [
+					'error',
+					[
+						{
+							blankLine: 'consistent',
+							prev: '*',
+							next: '*',
+						},
+					],
+				],
+				'vue/prefer-prop-type-boolean-first': 'error',
+				'vue/prefer-true-attribute-shorthand': 'error',
+				'vue/prefer-use-template-ref': 'error',
+				'vue/require-emit-validator': 'error',
+				'vue/require-macro-variable-name': 'error',
+				'vue/require-typed-ref': 'error',
+				'style/indent': 'off',
+				'vue/script-indent': [
+					'error',
+					'tab',
+					{
+						baseIndent: 1,
+					},
+				],
+				'vue/slot-name-casing': 'error',
+				'vue/v-for-delimiter-style': 'error',
+				'vue/v-on-handler-style': 'error',
 			},
 		},
 		{
