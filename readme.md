@@ -110,7 +110,7 @@ Die CI/CD-Pipeline (GitHub Actions) reagiert auf das Erstellen eines neuen Relea
 Die aktuelle Node-LTS-Version herausfinden:
 
 Per Skript:
-- `npm run check:node-version`
+- `npm run check:node`
 
 Manuell:
 - `nvm ls-remote --lts | tail -n 1` ausführen

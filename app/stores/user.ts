@@ -8,9 +8,7 @@ export const useUserStore = defineStore('user', () => {
 	const login = ref<AuthInfo['login']>();
 	const firstName = ref<AuthInfo['first_name']>();
 	const lastName = ref<AuthInfo['last_name']>();
-	const displayName = computed(() => {
-		return `${firstName.value} ${lastName.value}`;
-	});
+	const displayName = computed(() => `${firstName.value} ${lastName.value}`);
 
 	async function refreshData(): Promise<void> {
 		const userRepository = getUserRepository();

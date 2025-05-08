@@ -22,9 +22,11 @@ export async function getCollections(event: H3Event, query: CollectionsUserQuery
 			publicDataCache: noCache,
 		});
 
-		return response.collections.map(item => ({
-			id: item.id,
-		}));
+		return response.collections.map((item) => {
+			return {
+				id: item.id,
+			};
+		});
 	}
 	catch (error) {
 		const errorMessage = 'Failed to fetch collections.';

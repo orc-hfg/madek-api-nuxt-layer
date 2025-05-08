@@ -1,23 +1,23 @@
 import type { H3Event } from 'h3';
 import type { FetchError } from 'ofetch';
 import { mockNuxtImport } from '@nuxt/test-utils/runtime';
-import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { buildRequestConfig, createMadekApiClient, fetchData, generateCacheKey, getAuthHeader, handleFetchError, shouldUseCaching } from './madek-api';
+import { afterAll,	beforeEach,	describe,	expect,	it,	vi } from 'vitest';
+import { buildRequestConfig,	createMadekApiClient,	fetchData,	generateCacheKey,	getAuthHeader,	handleFetchError,	shouldUseCaching } from './madek-api';
 
-mockNuxtImport('useRuntimeConfig', () => {
-	return () => {
-		return {
-			public: {
-				madekApi: {
-					baseURL: 'https://api.example.com',
-				},
-			},
+function mockRuntimeConfig() {
+	return {
+		public: {
 			madekApi: {
-				token: 'test-api-token',
+				baseURL: 'https://api.example.com',
 			},
-		};
+		},
+		madekApi: {
+			token: 'test-api-token',
+		},
 	};
-});
+}
+
+mockNuxtImport('useRuntimeConfig', () => mockRuntimeConfig);
 
 describe('madek api client', () => {
 	describe('request configuration', () => {
@@ -289,9 +289,7 @@ describe('madek api client', () => {
 	describe('createMadekApiClient', () => {
 		beforeEach(() => {
 			const mockDefineCachedFunction = vi.fn();
-			mockDefineCachedFunction.mockImplementation(<T>(function_: () => T) => {
-				return () => function_();
-			});
+			mockDefineCachedFunction.mockImplementation(<T>(function_: () => T) => () => function_());
 			vi.stubGlobal('defineCachedFunction', mockDefineCachedFunction);
 		});
 

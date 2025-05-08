@@ -7,6 +7,8 @@ export function useCachedAsyncData<T = any>(
 ): ReturnType<typeof useAsyncData<T>> {
 	const asyncOptions: AsyncDataOptions<T> = { ...options };
 
+	// Using the same key name intentionally as it's semantically the same key
+	// eslint-disable-next-line no-shadow
 	asyncOptions.getCachedData = (key, nuxtApp, context): T | undefined => {
 		// See: https://github.com/nuxt/nuxt/pull/31373
 		if (context.cause === 'refresh:manual') {

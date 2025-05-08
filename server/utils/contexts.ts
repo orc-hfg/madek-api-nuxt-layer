@@ -20,10 +20,12 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 			publicDataCache: defaultCache,
 		});
 
-		return response.map((item: MadekContextsResponse[number]) => ({
-			id: item.id,
-			labels: item.labels,
-		}));
+		return response.map((item: MadekContextsResponse[number]) => {
+			return {
+				id: item.id,
+				labels: item.labels,
+			};
+		});
 	}
 	catch (error) {
 		const errorMessage = 'Failed to fetch contexts.';
