@@ -11,6 +11,15 @@ export default defineNuxtConfig({
 	future: {
 		compatibilityVersion: 4,
 	},
+	experimental: {
+
+		/*
+		 * Restore the old caching behaviour (before Nuxt 3.17) and wait for implementation of first-party caching strategies
+		 * See: https://github.com/nuxt/nuxt/issues/31949#issuecomment-2844391646
+		 */
+		purgeCachedData: false,
+		granularCachedData: false,
+	},
 	compatibilityDate: '2025-01-24',
 	devtools: {
 		enabled: true,
