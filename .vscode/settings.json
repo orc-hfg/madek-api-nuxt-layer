@@ -1,5 +1,13 @@
-// See: https://github.com/antfu/eslint-config?tab=readme-ov-file#ide-support-auto-fix-on-save
+// See https://github.com/antfu/eslint-config?tab=readme-ov-file#ide-support-auto-fix-on-save for some recommended settings
 {
+	// Tailwind CSS
+	"files.associations": {
+		"*.css": "tailwindcss"
+	},
+	"editor.quickSuggestions": {
+		"strings": true
+	},
+
 	// Disable the default formatter, use eslint instead
 	"prettier.enable": false,
 	"editor.formatOnSave": false,
@@ -48,7 +56,6 @@
 		"pcss",
 		"postcss"
 	],
-	"vue.server.hybridMode": "typeScriptPluginOnly",
 	"vue.inlayHints.destructuredProps": true,
 	"vue.inlayHints.inlineHandlerLeading": true,
 	"vue.inlayHints.missingProps": true,
