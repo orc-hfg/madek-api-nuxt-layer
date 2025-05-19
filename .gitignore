@@ -27,5 +27,4 @@ logs
 !.env.example
 
 # AI rulesets
-.windsurfrules
-.cursorrules
+.windsurf

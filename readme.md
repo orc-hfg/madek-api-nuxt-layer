@@ -129,5 +129,6 @@ Folgende Dateien entsprechend anpassen:
 ### 3. Aufgaben für das nächste Dependency Update bearbeiten und ggf. neue erstellen
 - wenn die neuen Caching-Strategien verfügbar sind, diese implementieren und diese Flags wieder entfernen `nuxt.config.ts`:
   - `experimental: { purgeCachedData: false, granularCachedData: false }`
+  - https://github.com/nuxt/nuxt/pull/32003
   - https://github.com/nuxt/nuxt/issues/31949#issuecomment-2844391646
   - https://github.com/nuxt/nuxt/pull/31373
