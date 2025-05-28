@@ -2,8 +2,8 @@ import type { Context, Contexts } from '../../shared/types/api/contexts';
 import type { ApiFunction } from '../types/api';
 
 interface ContextRepository {
-	getContextById: (id: string) => Promise<Context>;
 	getContexts: () => Promise<Contexts>;
+	getContextById: (id: string) => Promise<Context>;
 }
 
 function createContextsRepository($madekApi: ApiFunction): ContextRepository {

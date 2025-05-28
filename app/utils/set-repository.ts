@@ -2,8 +2,8 @@ import type { Collection, Collections, CollectionsUserQuery } from '../../shared
 import type { ApiFunction } from '../types/api';
 
 interface SetRepository {
-	getSetById: (id: string) => Promise<Collection>;
 	getSets: (query?: CollectionsUserQuery) => Promise<Collections>;
+	getSetById: (id: string) => Promise<Collection>;
 }
 
 function createSetRepository($madekApi: ApiFunction): SetRepository {
