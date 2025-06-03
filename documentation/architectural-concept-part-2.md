@@ -25,7 +25,7 @@ slide-transition: true
 ```typescript
 // Ansatz 1: Direkter API-Zugriff im Store (problematisch)
 export const useUserStore = defineStore('user', () => {
-  const authInfo = ref<AuthInfo | null>(null);
+  const authInfo = shallowRef<AuthInfo | null>(null);
 
   async function fetchAuthInfo() {
     try {
@@ -75,7 +75,7 @@ export const useUserStore = defineStore('user', () => {
 ```typescript
 // Store mit Repository Pattern (ohne BFF)
 export const useUserStore = defineStore('user', () => {
-  const authInfo = ref<AuthInfo | null>(null);
+  const authInfo = shallowRef<AuthInfo | null>(null);
 
   // Repository über Composable injizieren
   const userRepository = getUserRepository();

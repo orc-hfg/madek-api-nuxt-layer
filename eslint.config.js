@@ -25,6 +25,21 @@ export default withNuxt(
 			...eslintPluginSonarJs.configs.recommended,
 		},
 		{
+			files: ['**/*.ts', '**/*.vue'],
+			rules: {
+				'unicorn/prevent-abbreviations': [
+					'error',
+					{
+						replacements: {
+							props: {
+								properties: false,
+							},
+						},
+					},
+				],
+			},
+		},
+		{
 			files: ['**/*.ts'],
 			rules: {
 				'arrow-body-style': [

@@ -1,12 +1,11 @@
 import type { Collection } from '../../shared/types/api/collections';
 import { acceptHMRUpdate, defineStore } from 'pinia';
-import { ref } from 'vue';
 import { getSetRepository } from '../utils/set-repository';
 import { useUserStore } from './user';
 
 export const useUserSetsStore = defineStore('user-sets', () => {
-	const isInitialized = ref(false);
-	const sets = ref<Collection[]>([]);
+	const isInitialized = shallowRef(false);
+	const sets = shallowRef<Collection[]>([]);
 
 	async function refreshData(): Promise<void> {
 		const userStore = useUserStore();

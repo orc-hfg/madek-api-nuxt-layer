@@ -189,7 +189,7 @@ export function getUserRepository(): UserRepository {
 - **Schnittstelle**: Kommunikation mit Repositories für Datenabruf und -speicherung
 
 ```typescript
-const sets = ref<Collection[]>([]);
+const sets = shallowRef<Collection[]>([]);
 
 const userStore = useUserStore();
 const setRepository = getSetRepository();

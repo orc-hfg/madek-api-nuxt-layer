@@ -3,11 +3,11 @@ import { acceptHMRUpdate, defineStore } from 'pinia';
 import { getUserRepository } from '../utils/user-repository';
 
 export const useUserStore = defineStore('user', () => {
-	const isInitialized = ref(false);
-	const id = ref<AuthInfo['id']>();
-	const login = ref<AuthInfo['login']>();
-	const firstName = ref<AuthInfo['first_name']>();
-	const lastName = ref<AuthInfo['last_name']>();
+	const isInitialized = shallowRef(false);
+	const id = shallowRef<AuthInfo['id']>();
+	const login = shallowRef<AuthInfo['login']>();
+	const firstName = shallowRef<AuthInfo['first_name']>();
+	const lastName = shallowRef<AuthInfo['last_name']>();
 	const displayName = computed(() => `${firstName.value} ${lastName.value}`);
 
 	async function refreshData(): Promise<void> {
