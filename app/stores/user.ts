@@ -1,5 +1,4 @@
 import type { AuthInfo } from '../../shared/types/api/auth-info';
-import { acceptHMRUpdate, defineStore } from 'pinia';
 import { getUserRepository } from '../utils/user-repository';
 
 export const useUserStore = defineStore('user', () => {
