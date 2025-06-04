@@ -10,11 +10,19 @@
 		"server/**",
 		"shared/**"
 	],
-	"ignore": ["app/plugins/**", "app/composables/**", "app/utils/**", "shared/constants/**", "server/constants/**"],
+	"ignore": [
+		"app/composables/**",
+		"app/plugins/**",
+		"app/utils/**",
+		"shared/constants/**",
+		"server/constants/**"
+	],
 	"ignoreDependencies": [
 		"@nuxt/devtools",
 		"@nuxt/eslint",
 		"@pinia/nuxt",
+		"pinia",
+		"vue",
 		"vue-tsc"
 	]
 }

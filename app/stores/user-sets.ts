@@ -1,7 +1,5 @@
 import type { Collection } from '../../shared/types/api/collections';
-import { acceptHMRUpdate, defineStore } from 'pinia';
 import { getSetRepository } from '../utils/set-repository';
-import { useUserStore } from './user';
 
 export const useUserSetsStore = defineStore('user-sets', () => {
 	const isInitialized = shallowRef(false);
