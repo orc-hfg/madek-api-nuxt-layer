@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3';
 import { StatusCodes } from 'http-status-codes';
-import { getContextById } from '../../utils/contexts';
+import { getContextById } from '../../madek-api-services/contexts';
 
 export default defineEventHandler(async (event: H3Event) => {
 	const contextId = getRouterParam(event, 'id');

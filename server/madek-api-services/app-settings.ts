@@ -2,8 +2,8 @@ import type { H3Event } from 'h3';
 import type { AppSettings, MadekAppSettingsResponse } from '../../shared/types/api/app-settings';
 import { StatusCodes } from 'http-status-codes';
 import { defaultCache } from '../constants/cache';
-import { createDebugLogger } from './debug-logger';
-import { createMadekApiClient } from './madek-api';
+import { createDebugLogger } from '../utils/debug-logger';
+import { createMadekApiClient } from '../utils/madek-api';
 
 export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 	const runtimeConfig = useRuntimeConfig(event);
