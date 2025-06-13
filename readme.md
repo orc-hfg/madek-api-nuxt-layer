@@ -128,6 +128,7 @@ Folgende Dateien entsprechend anpassen:
 - Angaben zu Peer Dependencies in `package.json` mit neuen Versionen aktualisieren
 
 ### 3. Aufgaben für das nächste Dependency Update bearbeiten und ggf. neue erstellen
+- Testen, ob Knip in Version ab 5.58.0 (5.61.0 hat zuletzt noch nicht funktioniert) nun funktioniert und dieser Fehler nicht mehr auftritt: TypeError: Cannot assign to read only property 'defineNuxtConfig' of object '#<Object>'
 - wenn die neuen Caching-Strategien verfügbar sind (ab Nuxt 3.18?), diese implementieren und die experimentellen Flags `purgeCachedData` und `granularCachedData` aus `nuxt.config.ts` entfernen:
   - https://github.com/nuxt/nuxt/pull/32003
   - https://github.com/nuxt/nuxt/issues/31949#issuecomment-2844391646

@@ -55,7 +55,7 @@
 		"eslint-plugin-vuejs-accessibility": "2.4.1",
 		"happy-dom": "17.6.3",
 		"husky": "9.1.7",
-		"knip": "5.61.0",
+		"knip": "5.57.2",
 		"lint-staged": "16.1.0",
 		"npm-check-updates": "18.0.1",
 		"nuxt": "3.17.5",
