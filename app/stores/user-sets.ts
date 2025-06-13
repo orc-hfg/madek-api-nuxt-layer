@@ -1,5 +1,5 @@
 import type { Collection } from '../../shared/types/api/collections';
-import { getSetRepository } from '../utils/set-repository';
+import { getSetRepository } from '../repositories/set';
 
 export const useUserSetsStore = defineStore('user-sets', () => {
 	const isInitialized = shallowRef(false);

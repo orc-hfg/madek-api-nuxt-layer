@@ -1,5 +1,5 @@
 import type { AuthInfo } from '../../shared/types/api/auth-info';
-import { getUserRepository } from '../utils/user-repository';
+import { getUserRepository } from '../repositories/user';
 
 export const useUserStore = defineStore('user', () => {
 	const isInitialized = shallowRef(false);

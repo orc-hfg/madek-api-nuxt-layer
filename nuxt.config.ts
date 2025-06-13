@@ -28,9 +28,13 @@ export default defineNuxtConfig({
 		typeCheck: true,
 	},
 	modules: ['@pinia/nuxt', '@nuxt/eslint', '@nuxt/test-utils/module'],
-	// Support knip for unused imports
 	components: {
+		// Do not auto-import components and support knip for unused imports
 		dirs: [],
+	},
+	imports: {
+		// Auto-import from repositories folder
+		dirs: ['repositories'],
 	},
 	pinia: {
 
