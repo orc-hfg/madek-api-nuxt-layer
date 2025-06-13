@@ -34,7 +34,7 @@
 		"prepare": "husky && nuxt prepare"
 	},
 	"peerDependencies": {
-		"nuxt": ">=3.16 <4",
+		"nuxt": ">=3.17 <4",
 		"vue": "^3.5"
 	},
 	"dependencies": {
