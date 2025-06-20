@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import type { AuthInfo, MadekAuthInfoResponse } from '../../shared/types/api/auth-info';
+import type { AuthInfo, MadekAuthInfoResponse } from '../types/auth-info';
 import { StatusCodes } from 'http-status-codes';
 import { noCache } from '../constants/cache';
 import { createDebugLogger } from '../utils/debug-logger';

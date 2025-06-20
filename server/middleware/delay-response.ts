@@ -1,5 +1,5 @@
-import { MILLISECONDS_IN_SECOND } from '../../shared/constants/time';
-import { sleep } from '../../shared/utils/sleep';
+import { MILLISECONDS_IN_SECOND } from '../constants/time';
+import { sleep } from '../utils/sleep';
 
 export default defineEventHandler(async (event) => {
 	const runtimeConfig = useRuntimeConfig(event);

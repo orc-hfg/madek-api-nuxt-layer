@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import type { Context, Contexts, MadekContextsResponse } from '../../shared/types/api/contexts';
+import type { Context, Contexts, MadekContextsResponse } from '../types/contexts';
 import { StatusCodes } from 'http-status-codes';
 import { defaultCache } from '../constants/cache';
 import { createDebugLogger } from '../utils/debug-logger';

@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import type { AppSettings, MadekAppSettingsResponse } from '../../shared/types/api/app-settings';
+import type { AppSettings, MadekAppSettingsResponse } from '../types/app-settings';
 import { StatusCodes } from 'http-status-codes';
 import { defaultCache } from '../constants/cache';
 import { createDebugLogger } from '../utils/debug-logger';
