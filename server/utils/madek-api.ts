@@ -15,11 +15,6 @@ interface MadekApiRequestConfig {
 	publicDataCache?: CacheOptions;
 }
 
-export interface MadekApiConfig {
-	baseURL: string;
-	token?: string;
-}
-
 export function generateCacheKey(endpoint: string, query?: Record<string, string>): string {
 	// Ensure query parameters are consistently ordered by sorting them alphabetically
 	const sortedQuery: Record<string, string> = {};
@@ -103,9 +98,13 @@ export function shouldUseCaching(
 
 export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetchData): {
 	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
+	fetchFromApiWithPathParameters: (endpointTemplate: string, endpointPathParameters: Record<string, string>, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
 } {
 	const runtimeConfig = useRuntimeConfig(event);
-	const config: MadekApiConfig = {
+	const config: {
+		baseURL: string;
+		token?: string;
+	} = {
 		baseURL: runtimeConfig.public.madekApi.baseURL,
 		token: runtimeConfig.madekApi.token,
 	};
@@ -135,5 +134,15 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 		return fetchDataFunction<T>(url, apiRequestConfig.apiOptions ?? {}, config.token);
 	}
 
-	return { fetchFromApi };
+	async function fetchFromApiWithPathParameters(endpointTemplate: string, endpointPathParameters: Record<string, string>, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
+		let endpoint = endpointTemplate;
+
+		for (const [key, value] of Object.entries(endpointPathParameters)) {
+			endpoint = endpoint.replace(`:${key}`, value);
+		}
+
+		return fetchFromApi(endpoint, apiRequestConfig);
+	}
+
+	return { fetchFromApi, fetchFromApiWithPathParameters };
 }
