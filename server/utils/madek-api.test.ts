@@ -8,7 +8,8 @@ function mockRuntimeConfig() {
 	return {
 		public: {
 			madekApi: {
-				baseURL: 'https://api.example.com',
+				// A baseURL must always have a trailing slash
+				baseURL: 'https://api.example.com/',
 			},
 		},
 		madekApi: {
@@ -304,7 +305,7 @@ describe('madek api client', () => {
 				const mockEvent = {} as H3Event;
 
 				const client = createMadekApiClient(mockEvent, fetchDataFunctionMock);
-				const endpoint = '/resources/123';
+				const endpoint = 'resources/123';
 				const apiOptions = { needsAuth: true, query: { param: 'value' } };
 
 				await client.fetchFromApi(endpoint, { apiOptions });
@@ -316,6 +317,52 @@ describe('madek api client', () => {
 					'test-api-token',
 				);
 			});
+
+			it('correctly replaces path parameters in endpoint template', async () => {
+				const fetchDataFunctionMock = vi.fn();
+				const mockEvent = {} as H3Event;
+
+				const client = createMadekApiClient(mockEvent, fetchDataFunctionMock);
+
+				await client.fetchFromApiWithPathParameters(
+					'collection/:collectionId/meta-datum/:metaKeyId',
+					{
+						collectionId: 'abc-123',
+						metaKeyId: 'meta-key-456',
+					},
+					{
+						apiOptions: { needsAuth: true },
+					},
+				);
+
+				expect(fetchDataFunctionMock).toHaveBeenCalledWith(
+					'https://api.example.com/collection/abc-123/meta-datum/meta-key-456',
+					{ needsAuth: true },
+					'test-api-token',
+				);
+			});
+
+			it('handles multiple path parameters and preserves non-parameter parts of the URL', async () => {
+				const fetchDataFunctionMock = vi.fn();
+				const mockEvent = {} as H3Event;
+
+				const client = createMadekApiClient(mockEvent, fetchDataFunctionMock);
+
+				await client.fetchFromApiWithPathParameters(
+					'api/:version/collection/:collectionId/meta-datum/:metaKeyId',
+					{
+						version: 'v2',
+						collectionId: 'abc-123',
+						metaKeyId: 'meta_key.456',
+					},
+				);
+
+				expect(fetchDataFunctionMock).toHaveBeenCalledWith(
+					'https://api.example.com/api/v2/collection/abc-123/meta-datum/meta_key.456',
+					{},
+					'test-api-token',
+				);
+			});
 		});
 
 		describe('caching mechanism', () => {
@@ -324,7 +371,7 @@ describe('madek api client', () => {
 				const mockEvent = {} as H3Event;
 
 				const client = createMadekApiClient(mockEvent, fetchDataFunctionMock);
-				await client.fetchFromApi('/test-endpoint', {
+				await client.fetchFromApi('test-endpoint', {
 					apiOptions: { query: { param: 'value' } },
 					publicDataCache: { maxAge: 3600 },
 				});
@@ -345,7 +392,7 @@ describe('madek api client', () => {
 				const mockEvent = {} as H3Event;
 
 				const client = createMadekApiClient(mockEvent, fetchDataFunctionMock);
-				await client.fetchFromApi('/authenticated-endpoint', {
+				await client.fetchFromApi('authenticated-endpoint', {
 					apiOptions: { needsAuth: true },
 					publicDataCache: { maxAge: 3600 },
 				});
