@@ -1,11 +1,11 @@
 import type { H3Event } from 'h3';
-import type { MadekCollectionMetaDatumResponse, MetaDatumValue } from '../types/collection-meta-datum';
+import type { MadekCollectionMetaDatumResponse, MetaDatumString } from '../types/collection-meta-datum';
 import { StatusCodes } from 'http-status-codes';
 import { noCache } from '../constants/cache';
 import { createDebugLogger } from '../utils/debug-logger';
 import { createMadekApiClient } from '../utils/madek-api';
 
-export async function getCollectionMetaDatum(event: H3Event, collectionId: string, metaKeyId: string): Promise<MetaDatumValue> {
+export async function getCollectionMetaDatum(event: H3Event, collectionId: string, metaKeyId: string): Promise<MetaDatumString> {
 	const runtimeConfig = useRuntimeConfig(event);
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
 
@@ -30,7 +30,9 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: strin
 			},
 		);
 
-		return response['meta-data'].string;
+		return {
+			string: response['meta-data'].string,
+		};
 	}
 	catch (error) {
 		const errorMessage = 'Failed to fetch collection meta datum.';

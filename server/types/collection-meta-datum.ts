@@ -30,4 +30,4 @@ export interface MadekCollectionMetaDatumResponse {
 	'defaultdata': string;
 }
 
-export type MetaDatumValue = MadekCollectionMetaDatumResponse['meta-data']['string'];
+export type MetaDatumString = Pick<MadekCollectionMetaDatumResponse['meta-data'], 'string'>;
