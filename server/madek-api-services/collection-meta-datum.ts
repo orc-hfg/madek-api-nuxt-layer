@@ -2,14 +2,13 @@ import type { H3Event } from 'h3';
 import type { MadekCollectionMetaDatumResponse, MetaDatumString } from '../types/collection-meta-datum';
 import { StatusCodes } from 'http-status-codes';
 import { noCache } from '../constants/cache';
-import { createDebugLogger } from '../utils/debug-logger';
+import { createLogger } from '../utils/logger';
 import { createMadekApiClient } from '../utils/madek-api';
 
 export async function getCollectionMetaDatum(event: H3Event, collectionId: string, metaKeyId: string): Promise<MetaDatumString> {
 	const runtimeConfig = useRuntimeConfig(event);
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
-
-	const logger = createDebugLogger(event);
+	const logger = createLogger(event);
 
 	logger.info('getCollectionMetaDatum', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
 	logger.info('getCollectionMetaDatum', 'Collection ID:', collectionId);
