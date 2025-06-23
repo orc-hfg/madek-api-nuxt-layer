@@ -33,6 +33,37 @@ function setupApiClient() {
 	};
 }
 
+function createFetchError(options: {
+	message?: string;
+	statusCode?: number;
+	statusMessage?: string;
+	statusText?: string;
+}): FetchError {
+	const error = new Error(options.message ?? 'Error') as FetchError;
+	if (options.statusCode !== undefined) {
+		error.statusCode = options.statusCode;
+	}
+	if (options.statusMessage !== undefined) {
+		error.statusMessage = options.statusMessage;
+	}
+	if (options.statusText !== undefined) {
+		error.statusText = options.statusText;
+	}
+
+	return error;
+}
+
+function catchError(errorThrowingFunction: () => void): Error | undefined {
+	try {
+		errorThrowingFunction();
+
+		return undefined;
+	}
+	catch (error) {
+		return error as Error;
+	}
+}
+
 describe('request configuration', () => {
 	describe('getAuthHeader', () => {
 		it('returns undefined when token is undefined', () => {
@@ -133,62 +164,54 @@ describe('data fetching', () => {
 
 describe('error handling', () => {
 	it('passes FetchError status message correctly', () => {
-		const fetchError = new Error('Original message') as FetchError;
-		fetchError.statusCode = 401;
-		fetchError.statusMessage = 'Unauthorized';
+		const fetchError = createFetchError({
+			message: 'Original message',
+			statusCode: 401,
+			statusMessage: 'Unauthorized',
+		});
 
-		let caughtError;
-		try {
+		const caughtError = catchError(() => {
 			handleFetchError(fetchError);
-		}
-		catch (error) {
-			caughtError = error as Error;
-		}
+		});
 
 		expect(caughtError?.message).toBe('Unauthorized');
 	});
 
 	it('uses statusCode when no message is provided', () => {
-		const fetchError = new Error('Network Error') as FetchError;
-		fetchError.statusCode = 404;
+		const fetchError = createFetchError({
+			message: 'Network Error',
+			statusCode: 404,
+		});
 
-		let caughtError;
-		try {
+		const caughtError = catchError(() => {
 			handleFetchError(fetchError);
-		}
-		catch (error) {
-			caughtError = error as Error;
-		}
+		});
 
 		expect(caughtError?.message).toBe('Not Found');
 	});
 
 	it('handles FetchError without statusCode or statusMessage', () => {
-		const fetchError = new Error('Fetch Error') as FetchError;
+		const fetchError = createFetchError({
+			message: 'Fetch Error',
+		});
 
-		let caughtError;
-		try {
+		const caughtError = catchError(() => {
 			handleFetchError(fetchError);
-		}
-		catch (error) {
-			caughtError = error as Error;
-		}
+		});
 
 		expect(caughtError?.message).toBe('Internal Server Error');
 	});
 
 	it('uses statusText as fallback when statusMessage is missing', () => {
-		const fetchError = new Error('Network Error') as FetchError;
-		fetchError.statusCode = 403;
-		fetchError.statusText = 'Forbidden Access';
+		const fetchError = createFetchError({
+			message: 'Network Error',
+			statusCode: 403,
+			statusText: 'Forbidden Access',
+		});
 
-		let caughtError;
-		try {
+		const caughtError = catchError(() => {
 			handleFetchError(fetchError);
-		}
-		catch (error) {
-			caughtError = error as Error;
-		}
+		});
 
 		expect(caughtError?.message).toBe('Forbidden Access');
 	});
