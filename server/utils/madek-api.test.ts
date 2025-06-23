@@ -1,8 +1,16 @@
 import type { H3Event } from 'h3';
 import type { FetchError } from 'ofetch';
 import { mockNuxtImport } from '@nuxt/test-utils/runtime';
-import { afterAll,	beforeEach,	describe,	expect,	it,	vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildRequestConfig,	createMadekApiClient,	fetchData,	generateCacheKey,	getAuthHeader,	handleFetchError,	shouldUseCaching } from './madek-api';
+
+/**
+ * TODO: @upgrade-node24
+ * When we bump the project to Node ≥ 24 LTS:
+ *  1. Remove every beforeEach / afterEach that only calls createApiTestContext/ctx.dispose
+ *  2. Inside each test block add: `using apiTestContext = createApiTestContext();`
+ *  3. Drop the `dispose` property from the context (remove dispose: cleanup)
+ */
 
 function mockRuntimeConfig() {
 	return {
@@ -20,16 +28,32 @@ function mockRuntimeConfig() {
 
 mockNuxtImport('useRuntimeConfig', () => mockRuntimeConfig);
 
-function setupApiClient() {
+function createApiTestContext() {
+	const fetchMock = vi.fn();
 	const fetchDataFunctionMock = vi.fn();
 	const mockEvent = {} as H3Event;
 	const warnSpy = vi.spyOn(console, 'warn').mockReturnValue();
+
+	function cleanup() {
+		vi.restoreAllMocks();
+		vi.unstubAllGlobals();
+	}
+
+	vi.stubGlobal('defineCachedFunction', vi.fn().mockImplementation(
+		(function_: () => unknown) => () => function_(),
+	));
+
+	vi.stubGlobal('$fetch', fetchMock);
+
 	const client = createMadekApiClient(mockEvent, fetchDataFunctionMock);
 
 	return {
 		client,
+		fetchMock,
 		fetchDataFunctionMock,
 		warnSpy,
+		[Symbol.dispose]: cleanup,
+		dispose: cleanup,
 	};
 }
 
@@ -141,24 +165,29 @@ describe('request configuration', () => {
 });
 
 describe('data fetching', () => {
-	it('builds correct request configuration and calls $fetch', async () => {
-		const fetchFunctionMock = vi.fn();
-		vi.stubGlobal('$fetch', fetchFunctionMock);
+	let apiTestContext: ReturnType<typeof createApiTestContext>;
 
+	beforeEach(() => {
+		apiTestContext = createApiTestContext();
+	});
+
+	afterEach(() => {
+		apiTestContext.dispose();
+	});
+
+	it('builds correct request configuration and calls $fetch', async () => {
 		await fetchData('https://api.example.com/test', {
 			needsAuth: true,
 			query: { param: 'value' },
 		}, 'test-token');
 
-		expect(fetchFunctionMock).toHaveBeenCalledWith(
+		expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
 			'https://api.example.com/test',
 			expect.objectContaining({
 				headers: { Authorization: 'token test-token' },
 				query: { param: 'value' },
 			}),
 		);
-
-		vi.unstubAllGlobals();
 	});
 });
 
@@ -321,26 +350,25 @@ describe('caching mechanisms', () => {
 });
 
 describe('createMadekApiClient', () => {
-	beforeEach(() => {
-		const mockDefineCachedFunction = vi.fn();
-		mockDefineCachedFunction.mockImplementation(<T>(function_: () => T) => () => function_());
-		vi.stubGlobal('defineCachedFunction', mockDefineCachedFunction);
-	});
-
-	afterAll(() => {
-		vi.restoreAllMocks();
-	});
-
 	describe('basic API functionality', () => {
+		let apiTestContext: ReturnType<typeof createApiTestContext>;
+
+		beforeEach(() => {
+			apiTestContext = createApiTestContext();
+		});
+
+		afterEach(() => {
+			apiTestContext.dispose();
+		});
+
 		it('returns an object with fetchFromApi method that calls fetchData with correct parameters', async () => {
-			const { client, fetchDataFunctionMock, warnSpy } = setupApiClient();
 			const endpoint = 'resources/123';
 			const apiOptions = { needsAuth: true, query: { param: 'value' } };
 
-			await client.fetchFromApi(endpoint, { apiOptions });
+			await apiTestContext.client.fetchFromApi(endpoint, { apiOptions });
 
-			expect(warnSpy).toHaveBeenCalledTimes(1);
-			expect(fetchDataFunctionMock).toHaveBeenCalledWith(
+			expect(apiTestContext.warnSpy).toHaveBeenCalledTimes(1);
+			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 				'https://api.example.com/resources/123',
 				apiOptions,
 				'test-api-token',
@@ -348,30 +376,23 @@ describe('createMadekApiClient', () => {
 		});
 
 		it('correctly replaces path parameters in endpoint template', async () => {
-			const { client, fetchDataFunctionMock } = setupApiClient();
-
-			await client.fetchFromApiWithPathParameters(
+			await apiTestContext.client.fetchFromApiWithPathParameters(
 				'collection/:collectionId/meta-datum/:metaKeyId',
 				{
 					collectionId: 'abc-123',
-					metaKeyId: 'meta-key-456',
-				},
-				{
-					apiOptions: { needsAuth: true },
+					metaKeyId: 'meta_key.456',
 				},
 			);
 
-			expect(fetchDataFunctionMock).toHaveBeenCalledWith(
-				'https://api.example.com/collection/abc-123/meta-datum/meta-key-456',
-				{ needsAuth: true },
+			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+				'https://api.example.com/collection/abc-123/meta-datum/meta_key.456',
+				{},
 				'test-api-token',
 			);
 		});
 
 		it('handles multiple path parameters and preserves non-parameter parts of the URL', async () => {
-			const { client, fetchDataFunctionMock } = setupApiClient();
-
-			await client.fetchFromApiWithPathParameters(
+			await apiTestContext.client.fetchFromApiWithPathParameters(
 				'api/:version/collection/:collectionId/meta-datum/:metaKeyId',
 				{
 					version: 'v2',
@@ -380,7 +401,7 @@ describe('createMadekApiClient', () => {
 				},
 			);
 
-			expect(fetchDataFunctionMock).toHaveBeenCalledWith(
+			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 				'https://api.example.com/api/v2/collection/abc-123/meta-datum/meta_key.456',
 				{},
 				'test-api-token',
@@ -389,10 +410,18 @@ describe('createMadekApiClient', () => {
 	});
 
 	describe('caching mechanism', () => {
-		it('uses cachedFunction with correct parameters when caching is enabled', async () => {
-			const { client } = setupApiClient();
+		let apiTestContext: ReturnType<typeof createApiTestContext>;
 
-			await client.fetchFromApi('test-endpoint', {
+		beforeEach(() => {
+			apiTestContext = createApiTestContext();
+		});
+
+		afterEach(() => {
+			apiTestContext.dispose();
+		});
+
+		it('uses cachedFunction with correct parameters when caching is enabled', async () => {
+			await apiTestContext.client.fetchFromApi('test-endpoint', {
 				apiOptions: { query: { param: 'value' } },
 				publicDataCache: { maxAge: 3600 },
 			});
@@ -408,15 +437,13 @@ describe('createMadekApiClient', () => {
 		});
 
 		it('skips caching and directly calls fetchData when auth is needed', async () => {
-			const { client, fetchDataFunctionMock, warnSpy } = setupApiClient();
-
-			await client.fetchFromApi('authenticated-endpoint', {
+			await apiTestContext.client.fetchFromApi('authenticated-endpoint', {
 				apiOptions: { needsAuth: true },
 				publicDataCache: { maxAge: 3600 },
 			});
 
-			expect(warnSpy).toHaveBeenCalledTimes(1);
-			expect(fetchDataFunctionMock).toHaveBeenCalledWith(
+			expect(apiTestContext.warnSpy).toHaveBeenCalledTimes(1);
+			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 				'https://api.example.com/authenticated-endpoint',
 				{ needsAuth: true },
 				'test-api-token',
