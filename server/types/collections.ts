@@ -1,4 +1,4 @@
-import type { paths } from '../../../generated/api/schema';
+import type { paths } from '../../generated/api/schema';
 
 type MadekCollectionsQuery = paths['/api-v2/collections']['get']['parameters']['query'];
 export type CollectionsUserQuery = Pick<MadekCollectionsQuery, 'responsible_user_id'>;

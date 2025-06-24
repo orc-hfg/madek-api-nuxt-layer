@@ -1,11 +1,11 @@
 import type { H3Event } from 'h3';
 
-interface DebugLogger {
+interface Logger {
 	error: (source: string, message: string, error?: unknown) => void;
 	info: (source: string, message: string, data?: unknown) => void;
 }
 
-export function createDebugLogger(event: H3Event): DebugLogger {
+export function createLogger(event: H3Event): Logger {
 	const runtimeConfig = useRuntimeConfig(event);
 	const isDebugLoggingEnabled = Boolean(runtimeConfig.enableDebugLogging);
 

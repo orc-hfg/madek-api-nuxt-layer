@@ -1,4 +1,4 @@
-import type { Collection } from '../../shared/types/api/collections';
+import type { Collection } from '../../server/types/collections';
 import { getSetRepository } from '../repositories/set';
 
 export const useUserSetsStore = defineStore('user-sets', () => {

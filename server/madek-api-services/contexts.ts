@@ -1,14 +1,14 @@
 import type { H3Event } from 'h3';
-import type { Context, Contexts, MadekContextsResponse } from '../../shared/types/api/contexts';
+import type { Context, Contexts, MadekContextsResponse } from '../types/contexts';
 import { StatusCodes } from 'http-status-codes';
 import { defaultCache } from '../constants/cache';
-import { createDebugLogger } from '../utils/debug-logger';
+import { createLogger } from '../utils/logger';
 import { createMadekApiClient } from '../utils/madek-api';
 
 export async function getContexts(event: H3Event): Promise<Contexts> {
 	const runtimeConfig = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekContextsResponse>(event);
-	const logger = createDebugLogger(event);
+	const logger = createLogger(event);
 
 	logger.info('getContexts', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
 
@@ -42,7 +42,7 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 export async function getContextById(event: H3Event, id: string): Promise<Context> {
 	const runtimeConfig = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<Context>(event);
-	const logger = createDebugLogger(event);
+	const logger = createLogger(event);
 
 	logger.info('getContextById', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
 	logger.info('getContextById', 'Context ID:', id);

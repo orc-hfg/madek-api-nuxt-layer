@@ -1,14 +1,14 @@
 import type { H3Event } from 'h3';
-import type { AuthInfo, MadekAuthInfoResponse } from '../../shared/types/api/auth-info';
+import type { AuthInfo, MadekAuthInfoResponse } from '../types/auth-info';
 import { StatusCodes } from 'http-status-codes';
 import { noCache } from '../constants/cache';
-import { createDebugLogger } from '../utils/debug-logger';
+import { createLogger } from '../utils/logger';
 import { createMadekApiClient } from '../utils/madek-api';
 
 export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 	const runtimeConfig = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekAuthInfoResponse>(event);
-	const logger = createDebugLogger(event);
+	const logger = createLogger(event);
 
 	logger.info('getAuthInfo', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
 

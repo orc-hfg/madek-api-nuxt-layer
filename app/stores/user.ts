@@ -1,4 +1,4 @@
-import type { AuthInfo } from '../../shared/types/api/auth-info';
+import type { AuthInfo } from '../../server/types/auth-info';
 import { getUserRepository } from '../repositories/user';
 
 export const useUserStore = defineStore('user', () => {

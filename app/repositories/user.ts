@@ -1,4 +1,4 @@
-import type { AuthInfo } from '../../shared/types/api/auth-info';
+import type { AuthInfo } from '../../server/types/auth-info';
 import type { ApiFunction } from '../types/api';
 
 interface UserRepository {

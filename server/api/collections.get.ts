@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import type { CollectionsUserQuery } from '../../shared/types/api/collections';
+import type { CollectionsUserQuery } from '../types/collections';
 import { getCollections } from '../madek-api-services/collections';
 
 export default defineEventHandler(async (event: H3Event) => {

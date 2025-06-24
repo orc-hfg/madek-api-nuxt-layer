@@ -1,4 +1,4 @@
-import type { Collection, Collections, CollectionsUserQuery } from '../../shared/types/api/collections';
+import type { Collection, Collections, CollectionsUserQuery } from '../../server/types/collections';
 import type { ApiFunction } from '../types/api';
 
 interface SetRepository {
