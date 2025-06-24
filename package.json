@@ -26,7 +26,7 @@
 		"check:issues": "concurrently \"npm run lint\" \"npm run check:types\" \"npm run check:unused\" \"npm run test\"",
 		"check:node": "node ./scripts/check-node-version.mjs",
 		"check:updates": "npm-check-updates --interactive --format group",
-		"generate:api": "openapi-typescript ./resources/openapi/swagger.json -o ./generated/api/schema.d.ts",
+		"generate:api": "openapi-typescript ./resources/openapi.json -o ./generated/api/schema.d.ts",
 		"upgrade": "nuxt upgrade",
 		"release:patch": "npm version patch -m \"chore: release %s\" && git push --follow-tags",
 		"release:minor": "npm version minor -m \"chore: release %s\" && git push --follow-tags",
