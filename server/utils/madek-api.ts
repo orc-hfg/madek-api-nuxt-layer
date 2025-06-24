@@ -5,12 +5,12 @@ import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { FetchError } from 'ofetch';
 import { noCache } from '../constants/cache';
 
-interface MadekApiOptions {
+export interface MadekApiOptions {
 	needsAuth?: boolean;
 	query?: NitroFetchOptions<NitroFetchRequest>['query'];
 }
 
-interface MadekApiRequestConfig {
+export interface MadekApiRequestConfig {
 	apiOptions?: MadekApiOptions;
 	publicDataCache?: CacheOptions;
 }
