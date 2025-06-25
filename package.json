@@ -26,12 +26,12 @@
 		"check:issues": "concurrently \"npm run lint\" \"npm run check:types\" \"npm run check:unused\" \"npm run test\"",
 		"check:node": "node ./scripts/check-node-version.mjs",
 		"check:updates": "npm-check-updates --interactive --format group",
-		"generate:api": "openapi-typescript ./resources/openapi/swagger.json -o ./generated/api/schema.d.ts",
+		"generate:api": "openapi-typescript ./resources/openapi.json --output ./generated/api/madek-api.d.ts --immutable --export-type --alphabetize --additional-properties",
 		"upgrade": "nuxt upgrade",
 		"release:patch": "npm version patch -m \"chore: release %s\" && git push --follow-tags",
 		"release:minor": "npm version minor -m \"chore: release %s\" && git push --follow-tags",
 		"release:major": "npm version major -m \"chore: release %s\" && git push --follow-tags",
-		"prepare": "husky && nuxt prepare"
+		"prepare": "husky && nuxt prepare && npm run generate:api"
 	},
 	"peerDependencies": {
 		"nuxt": ">=3.17 <4",
@@ -59,7 +59,7 @@
 		"lint-staged": "16.1.0",
 		"npm-check-updates": "18.0.1",
 		"nuxt": "3.17.5",
-		"openapi-typescript": "5.4.2",
+		"openapi-typescript": "7.8.0",
 		"typescript": "5.8.3",
 		"vitest": "3.2.3",
 		"vue": "3.5.16",

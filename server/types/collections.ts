@@ -1,9 +1,10 @@
-import type { paths } from '../../generated/api/schema';
+import type { paths } from '../../generated/api/madek-api';
 
-type MadekCollectionsQuery = paths['/api-v2/collections']['get']['parameters']['query'];
+// Correct access path to nested query object
+type MadekCollectionsQuery = NonNullable<paths['/api-v2/collections']['get']['parameters']['query']>;
 export type CollectionsUserQuery = Pick<MadekCollectionsQuery, 'responsible_user_id'>;
 
-type MadekCollectionsArray = paths['/api-v2/collections']['get']['responses']['200']['schema']['collections'];
+type MadekCollectionsArray = paths['/api-v2/collections']['get']['responses']['200']['content']['application/json']['groups'];
 export interface MadekCollectionsResponse {
 	collections: MadekCollectionsArray;
 }
