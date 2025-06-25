@@ -1,4 +1,4 @@
-import type { paths } from '../../generated/api/schema';
+import type { paths } from '../../generated/api/madek-api';
 
 export type MadekCollectionMetaDatumPathParameters = paths['/api-v2/collection/{collection_id}/meta-datum/{meta_key_id}']['get']['parameters']['path'];
 
