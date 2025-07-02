@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3';
-import type { FetchError } from 'ofetch';
 import type { MadekApiRequestConfig } from '../../madek-api';
+import { FetchError } from 'ofetch';
 import { vi } from 'vitest';
 import * as loggerModule from '../../logger';
 import { createMadekApiClient } from '../../madek-api';
@@ -74,21 +74,14 @@ export function createApiTestContext(): ApiTestContext {
 	};
 }
 
-export function createFetchError(options: {
-	message?: string;
-	statusCode?: number;
-	statusMessage?: string;
-	statusText?: string;
-}): FetchError {
-	const error = new Error(options.message ?? 'Error') as FetchError;
+export function createFetchError(options: Partial<Pick<FetchError, 'statusCode' | 'statusMessage'>> = {}): FetchError {
+	const error = new FetchError(options.statusMessage ?? 'Error');
+
 	if (options.statusCode !== undefined) {
 		error.statusCode = options.statusCode;
 	}
 	if (options.statusMessage !== undefined) {
 		error.statusMessage = options.statusMessage;
-	}
-	if (options.statusText !== undefined) {
-		error.statusText = options.statusText;
 	}
 
 	return error;

@@ -11,7 +11,7 @@ export default defineEventHandler(async (event: H3Event) => {
 	if (!isValidRouteParameter(collectionId) || !isValidRouteParameter(metaKeyId)) {
 		throw createError({
 			statusCode: 400,
-			message: 'Missing required URL parameters',
+			statusMessage: 'Missing required URL parameters',
 		});
 	}
 

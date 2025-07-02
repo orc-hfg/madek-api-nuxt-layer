@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3';
 
-interface Logger {
+export interface Logger {
 	info: (source: string, message: string, data?: unknown) => void;
 	warn: (source: string, message: string, data?: unknown) => void;
 	error: (source: string, message: string, error?: unknown) => void;

@@ -1,7 +1,5 @@
 import type { H3Event } from 'h3';
 import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
-import { createError } from 'h3';
-import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { FetchError } from 'ofetch';
 import { noCache } from '../constants/cache';
 import { createLogger } from './logger';
@@ -39,16 +37,6 @@ export function generateCacheKey(endpoint: string, query?: Record<string, string
 		.replaceAll('&', ':');
 
 	return safeKey;
-}
-
-export function handleFetchError(error: FetchError): void {
-	throw createError({
-		statusCode: error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR,
-		statusMessage:
-			error.statusMessage
-			?? error.statusText
-			?? getReasonPhrase(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR),
-	});
 }
 
 export function getAuthHeader(apiToken?: string): Record<string, string> | undefined {
@@ -95,8 +83,9 @@ export async function fetchData<T>(
 	}
 	catch (error) {
 		if (error instanceof FetchError) {
-			handleFetchError(error);
+			throw convertFetchToH3Error(error);
 		}
+
 		throw error;
 	}
 }
