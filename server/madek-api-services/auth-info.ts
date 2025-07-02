@@ -9,7 +9,7 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 	const { fetchFromApi } = createMadekApiClient<MadekAuthInfoResponse>(event);
 	const logger = createLogger(event);
 
-	logger.info('API service: getAuthInfo', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('Service: getAuthInfo', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('auth-info', {
@@ -38,7 +38,7 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 			}
 		}
 
-		logger.error('API service: getAuthInfo', errorMessage, error);
+		logger.error('Service: getAuthInfo', errorMessage, error);
 
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,

@@ -57,7 +57,7 @@ export function getAuthHeader(apiToken?: string): Record<string, string> | undef
 
 	const logger = createLogger();
 
-	logger.info('API utils: madekApi', 'getAuthHeader called with API token.');
+	logger.info('Utility: madekApi', 'getAuthHeader called with API token.');
 
 	return { Authorization: `token ${apiToken}` };
 }
@@ -124,7 +124,7 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 		if (isAuthNeeded && apiRequestConfig.publicDataCache !== noCache) {
 			const logger = createLogger();
 
-			logger.warn('API utils: madekApi', 'Authenticated requests should only use \'noCache\' for publicDataCache (or none at all). Other cache configurations are ignored.', endpoint);
+			logger.warn('Utility: madekApi', 'Authenticated requests should only use \'noCache\' for publicDataCache (or none at all). Other cache configurations are ignored.', endpoint);
 		}
 
 		if (shouldUseCaching(isAuthNeeded, cacheOptions)) {

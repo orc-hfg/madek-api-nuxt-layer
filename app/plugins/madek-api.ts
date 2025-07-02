@@ -9,7 +9,7 @@ export default defineNuxtPlugin({
 			async onResponseError({ response }) {
 				const logger = createLogger();
 
-				logger.error('App plugin: madek-api', 'API request failed.', response);
+				logger.error('Plugin: madek-api', 'API request failed.', response);
 			},
 		});
 

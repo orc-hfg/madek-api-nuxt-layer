@@ -8,7 +8,7 @@ export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 	const { fetchFromApi } = createMadekApiClient<MadekAppSettingsResponse>(event);
 	const logger = createLogger(event);
 
-	logger.info('API service: getAppSettings', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('Service: getAppSettings', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('app-settings', {
@@ -25,7 +25,7 @@ export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 	catch (error) {
 		const errorMessage = 'Failed to fetch app settings.';
 
-		logger.error('API service: getAppSettings', errorMessage, error);
+		logger.error('Service: getAppSettings', errorMessage, error);
 
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,

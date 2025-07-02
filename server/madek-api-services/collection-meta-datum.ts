@@ -8,9 +8,9 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: strin
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
 	const logger = createLogger(event);
 
-	logger.info('API service: getCollectionMetaDatum', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
-	logger.info('API service: getCollectionMetaDatum', 'Collection ID:', collectionId);
-	logger.info('API service: getCollectionMetaDatum', 'Meta Key ID:', metaKeyId);
+	logger.info('Service: getCollectionMetaDatum', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('Service: getCollectionMetaDatum', 'Collection ID:', collectionId);
+	logger.info('Service: getCollectionMetaDatum', 'Meta Key ID:', metaKeyId);
 
 	try {
 		const response = await fetchFromApiWithPathParameters(
@@ -34,7 +34,7 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: strin
 	catch (error) {
 		const errorMessage = 'Failed to fetch collection meta datum.';
 
-		logger.error('API service: getCollectionMetaDatum', errorMessage, error);
+		logger.error('Service: getCollectionMetaDatum', errorMessage, error);
 
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,

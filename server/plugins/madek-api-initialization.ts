@@ -4,7 +4,7 @@ export default defineNitroPlugin(() => {
 	const runtimeConfig = useRuntimeConfig();
 	const logger = createLogger();
 
-	logger.info('Server plugin: madek-api-initialization', 'Madek API Base URL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('Plugin: madek-api-initialization', 'Madek API Base URL:', runtimeConfig.public.madekApi.baseURL);
 
 	if (import.meta.dev && Boolean(runtimeConfig.isMainApp) && !runtimeConfig.madekApi.token) {
 		throw createError({

@@ -8,7 +8,7 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 	const { fetchFromApi } = createMadekApiClient<MadekContextsResponse>(event);
 	const logger = createLogger(event);
 
-	logger.info('API service: getContexts', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('Service: getContexts', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('contexts', {
@@ -28,7 +28,7 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 	catch (error) {
 		const errorMessage = 'Failed to fetch contexts.';
 
-		logger.error('API service: getContexts', errorMessage, error);
+		logger.error('Service: getContexts', errorMessage, error);
 
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
@@ -42,8 +42,8 @@ export async function getContextById(event: H3Event, id: string): Promise<Contex
 	const { fetchFromApi } = createMadekApiClient<Context>(event);
 	const logger = createLogger(event);
 
-	logger.info('API service: getContextById', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
-	logger.info('API service: getContextById', 'Context ID:', id);
+	logger.info('Service: getContextById', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('Service: getContextById', 'Context ID:', id);
 
 	try {
 		const response = await fetchFromApi(`contexts/${id}`, {
@@ -61,7 +61,7 @@ export async function getContextById(event: H3Event, id: string): Promise<Contex
 	catch (error) {
 		const errorMessage = 'Failed to fetch context by ID.';
 
-		logger.error('API service: getContextById', errorMessage, error);
+		logger.error('Service: getContextById', errorMessage, error);
 
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,

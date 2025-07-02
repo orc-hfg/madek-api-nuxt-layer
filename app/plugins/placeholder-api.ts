@@ -7,7 +7,7 @@ export default defineNuxtPlugin({
 			async onResponseError({ response }) {
 				const logger = createLogger();
 
-				logger.error('App plugin: placeholder-api', 'API request failed.', response);
+				logger.error('Plugin: placeholder-api', 'API request failed.', response);
 			},
 		});
 
