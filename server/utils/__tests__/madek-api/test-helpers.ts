@@ -3,6 +3,7 @@ import type { FetchError } from 'ofetch';
 import type { MadekApiRequestConfig } from '../../madek-api';
 import { vi } from 'vitest';
 import * as loggerModule from '../../logger';
+import { createMadekApiClient } from '../../madek-api';
 
 /**
  * TODO: @upgrade-node24

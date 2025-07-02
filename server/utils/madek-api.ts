@@ -4,6 +4,7 @@ import { createError } from 'h3';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { FetchError } from 'ofetch';
 import { noCache } from '../constants/cache';
+import { createLogger } from './logger';
 
 export interface MadekApiOptions {
 	needsAuth?: boolean;

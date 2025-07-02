@@ -29,7 +29,7 @@ export default defineNuxtConfig({
 	},
 	modules: ['@pinia/nuxt', '@nuxt/eslint', '@nuxt/test-utils/module'],
 	components: {
-		// Do not auto-import components and support knip for unused imports
+		// Do not auto-import components to support knip for unused imports
 		dirs: [],
 	},
 	imports: {
