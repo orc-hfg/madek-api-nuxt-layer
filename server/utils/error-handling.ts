@@ -5,9 +5,19 @@ import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { FetchError } from 'ofetch';
 
 export function convertFetchToH3Error(error: FetchError): H3Error {
+	const statusCode = error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR;
+	const statusMessage = error.statusMessage ?? getReasonPhrase(statusCode);
+
+	let data: unknown;
+
+	if (error.data !== undefined) {
+		data = typeof error.data === 'string' ? error.data : JSON.stringify(error.data);
+	}
+
 	return createError({
-		statusCode: error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR,
-		statusMessage: error.statusMessage ?? getReasonPhrase(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR),
+		statusCode,
+		statusMessage,
+		data,
 	});
 }
 
