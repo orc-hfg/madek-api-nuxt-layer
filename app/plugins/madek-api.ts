@@ -7,7 +7,9 @@ export default defineNuxtPlugin({
 			baseURL: `${runtimeConfig.app.baseURL}api`,
 			// eslint-disable-next-line ts/require-await
 			async onResponseError({ response }) {
-				console.error('Fetch response error:', response);
+				const logger = createLogger();
+
+				logger.error('App plugin: madek-api', 'API request failed.', response);
 			},
 		});
 
