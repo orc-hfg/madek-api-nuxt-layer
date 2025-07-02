@@ -23,20 +23,42 @@ describe('data fetching', () => {
 		apiTestContext.dispose();
 	});
 
-	it('builds correct request configuration and calls $fetch', async () => {
-		await fetchData(
-			'https://api.example.com/test',
-			{ needsAuth: true, query: { param: 'value' } },
-			'test-token',
-			apiTestContext.fetchMock as unknown as $Fetch,
-		);
+	describe('in development mode', () => {
+		it('builds correct request configuration with auth headers and calls $fetch', async () => {
+			await fetchData(
+				'https://api.example.com/test',
+				{ needsAuth: true, query: { param: 'value' } },
+				'test-token',
+				apiTestContext.fetchMock as unknown as $Fetch,
+				true,
+			);
 
-		expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
-			'https://api.example.com/test',
-			expect.objectContaining({
-				headers: { Authorization: 'token test-token' },
-				query: { param: 'value' },
-			}),
-		);
+			expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
+				'https://api.example.com/test',
+				expect.objectContaining({
+					headers: { Authorization: 'token test-token' },
+					query: { param: 'value' },
+				}),
+			);
+		});
+	});
+
+	describe('in production mode', () => {
+		it('builds correct request configuration without auth headers and calls $fetch', async () => {
+			await fetchData(
+				'https://api.example.com/test',
+				{ needsAuth: true, query: { param: 'value' } },
+				'test-token',
+				apiTestContext.fetchMock as unknown as $Fetch,
+				false,
+			);
+
+			expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
+				'https://api.example.com/test',
+				expect.objectContaining({
+					query: { param: 'value' },
+				}),
+			);
+		});
 	});
 });

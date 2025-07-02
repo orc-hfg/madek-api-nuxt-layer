@@ -25,44 +25,76 @@ describe('request configuration', () => {
 	});
 
 	describe('buildRequestConfig', () => {
-		it('returns empty config when no options are provided', () => {
-			const result = buildRequestConfig();
+		describe('in development mode', () => {
+			it('returns empty config when no options are provided', () => {
+				const result = buildRequestConfig({}, undefined, true);
 
-			expect(result).toStrictEqual({ headers: undefined, query: undefined });
-		});
+				expect(result).toStrictEqual({ headers: undefined, query: undefined });
+			});
 
-		it('includes auth header when needsAuth is true', () => {
-			const token = 'test-token';
-			const result = buildRequestConfig({ needsAuth: true }, token);
+			it('includes auth header when needsAuth is true', () => {
+				const token = 'test-token';
+				const result = buildRequestConfig({ needsAuth: true }, token, true);
 
-			expect(result).toStrictEqual({
-				headers: { Authorization: `token ${token}` },
-				query: undefined,
+				expect(result).toStrictEqual({
+					headers: { Authorization: `token ${token}` },
+					query: undefined,
+				});
+			});
+
+			it('does not include auth header when needsAuth is false', () => {
+				const token = 'test-token';
+				const result = buildRequestConfig({ needsAuth: false }, token, true);
+
+				expect(result).toStrictEqual({ headers: undefined, query: undefined });
+			});
+
+			it('includes query parameters when provided', () => {
+				const query = { parameter1: 'value1', parameter2: 'value2' };
+				const result = buildRequestConfig({ query }, undefined, true);
+
+				expect(result).toStrictEqual({ headers: undefined, query });
+			});
+
+			it('combines auth headers and query parameters when both are provided', () => {
+				const token = 'test-token';
+				const query = { parameter1: 'value1', parameter2: 'value2' };
+				const result = buildRequestConfig({ needsAuth: true, query }, token, true);
+
+				expect(result).toStrictEqual({
+					headers: { Authorization: `token ${token}` },
+					query,
+				});
 			});
 		});
 
-		it('does not include auth header when needsAuth is false', () => {
-			const token = 'test-token';
-			const result = buildRequestConfig({ needsAuth: false }, token);
+		describe('in production mode', () => {
+			it('returns config with only query parameter when no options are provided', () => {
+				const result = buildRequestConfig({}, undefined, false);
 
-			expect(result).toStrictEqual({ headers: undefined, query: undefined });
-		});
+				expect(result).toStrictEqual({ query: undefined });
+			});
 
-		it('includes query parameters when provided', () => {
-			const query = { parameter1: 'value1', parameter2: 'value2' };
-			const result = buildRequestConfig({ query });
+			it('does not include auth header even when needsAuth is true', () => {
+				const token = 'test-token';
+				const result = buildRequestConfig({ needsAuth: true }, token, false);
 
-			expect(result).toStrictEqual({ headers: undefined, query });
-		});
+				expect(result).toStrictEqual({ query: undefined });
+			});
 
-		it('combines auth headers and query parameters when both are provided', () => {
-			const token = 'test-token';
-			const query = { parameter1: 'value1', parameter2: 'value2' };
-			const result = buildRequestConfig({ needsAuth: true, query }, token);
+			it('includes only query parameters', () => {
+				const query = { parameter1: 'value1', parameter2: 'value2' };
+				const result = buildRequestConfig({ query }, undefined, false);
 
-			expect(result).toStrictEqual({
-				headers: { Authorization: `token ${token}` },
-				query,
+				expect(result).toStrictEqual({ query });
+			});
+
+			it('includes only query parameters even when auth is requested', () => {
+				const token = 'test-token';
+				const query = { parameter1: 'value1', parameter2: 'value2' };
+				const result = buildRequestConfig({ needsAuth: true, query }, token, false);
+
+				expect(result).toStrictEqual({ query });
 			});
 		});
 	});

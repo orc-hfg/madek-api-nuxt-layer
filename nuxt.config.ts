@@ -67,17 +67,20 @@ export default defineNuxtConfig({
 		// Enable detailed API debug logging
 		enableDebugLogging: false,
 		app: {
-			// Will be set via environment variables
 			baseURL: '/',
 		},
 		madekApi: {
-			// Will be set via environment variables
+
+			/*
+			 * Set via environment variables (.env file)
+			 * Token-based authentication is only used in development environment (localhost server)
+			 * For production environments, API authentication is session-based
+			 */
 			token: '',
 		},
 		public: {
 			version: composeVersion(),
 			madekApi: {
-				// Will be set via runtimeConfig
 				baseURL: '',
 			},
 		},

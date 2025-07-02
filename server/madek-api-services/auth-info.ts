@@ -1,6 +1,7 @@
 import type { H3Event } from 'h3';
 import type { AuthInfo, MadekAuthInfoResponse } from '../types/auth-info';
 import { StatusCodes } from 'http-status-codes';
+import { FetchError } from 'ofetch';
 import { noCache } from '../constants/cache';
 
 export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
@@ -27,12 +28,22 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 	}
 	catch (error) {
 		const errorMessage = 'Failed to fetch auth info.';
+		let errorDetails = 'Unknown error';
+
+		if (error instanceof FetchError) {
+			const errorText = error.statusMessage ?? error.statusText;
+
+			if (errorText !== undefined && errorText.trim() !== '') {
+				errorDetails = errorText.trim();
+			}
+		}
 
 		logger.error('API service: getAuthInfo', errorMessage, error);
 
 		throw createError({
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
 			statusMessage: errorMessage,
+			message: errorDetails,
 		});
 	}
 }

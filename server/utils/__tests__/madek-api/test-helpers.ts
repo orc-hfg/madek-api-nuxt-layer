@@ -2,7 +2,7 @@ import type { H3Event } from 'h3';
 import type { FetchError } from 'ofetch';
 import type { MadekApiRequestConfig } from '../../madek-api';
 import { vi } from 'vitest';
-import { createMadekApiClient } from '../../madek-api';
+import * as loggerModule from '../../logger';
 
 /**
  * TODO: @upgrade-node24
@@ -25,7 +25,9 @@ interface ApiTestContext {
 	fetchMock: ReturnType<typeof vi.fn>;
 	fetchDataFunctionMock: ReturnType<typeof vi.fn>;
 	defineCachedFunctionMock: ReturnType<typeof vi.fn>;
-	warnSpy: ReturnType<typeof vi.spyOn>;
+	loggerInfoSpy: ReturnType<typeof vi.spyOn>;
+	loggerWarnSpy: ReturnType<typeof vi.spyOn>;
+	loggerErrorSpy: ReturnType<typeof vi.spyOn>;
 	[Symbol.dispose]: () => void;
 	dispose: () => void;
 }
@@ -37,7 +39,16 @@ export function createApiTestContext(): ApiTestContext {
 		(cacheableFunction: () => unknown): (() => unknown) => (): unknown => cacheableFunction(),
 	);
 	const mockEvent = {} as H3Event;
-	const warnSpy = vi.spyOn(console, 'warn').mockReturnValue();
+
+	const mockLogger = {
+		info: vi.fn(),
+		warn: vi.fn(),
+		error: vi.fn(),
+	};
+	const loggerInfoSpy = vi.spyOn(mockLogger, 'info');
+	const loggerWarnSpy = vi.spyOn(mockLogger, 'warn');
+	const loggerErrorSpy = vi.spyOn(mockLogger, 'error');
+	vi.spyOn(loggerModule, 'createLogger').mockReturnValue(mockLogger);
 
 	function cleanup(): void {
 		vi.restoreAllMocks();
@@ -54,7 +65,9 @@ export function createApiTestContext(): ApiTestContext {
 		fetchMock,
 		fetchDataFunctionMock,
 		defineCachedFunctionMock,
-		warnSpy,
+		loggerInfoSpy,
+		loggerWarnSpy,
+		loggerErrorSpy,
 		[Symbol.dispose]: cleanup,
 		dispose: cleanup,
 	};

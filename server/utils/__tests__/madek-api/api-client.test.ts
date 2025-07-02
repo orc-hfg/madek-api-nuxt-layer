@@ -27,7 +27,7 @@ describe('createMadekApiClient', () => {
 
 		await apiTestContext.client.fetchFromApi(endpoint, { apiOptions });
 
-		expect(apiTestContext.warnSpy).toHaveBeenCalledTimes(1);
+		expect(apiTestContext.loggerWarnSpy).toHaveBeenCalledTimes(1);
 		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 			'https://api.example.com/resources/123',
 			apiOptions,
@@ -92,7 +92,7 @@ describe('createMadekApiClient', () => {
 				publicDataCache: { maxAge: 3600 },
 			});
 
-			expect(apiTestContext.warnSpy).toHaveBeenCalledTimes(1);
+			expect(apiTestContext.loggerWarnSpy).toHaveBeenCalledTimes(1);
 			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 				'https://api.example.com/authenticated-endpoint',
 				{ needsAuth: true },
