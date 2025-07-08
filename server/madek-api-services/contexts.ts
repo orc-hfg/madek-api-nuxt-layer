@@ -6,11 +6,11 @@ import { createLogger } from '../utils/logger';
 import { createMadekApiClient } from '../utils/madek-api';
 
 export async function getContexts(event: H3Event): Promise<Contexts> {
-	const runtimeConfig = useRuntimeConfig(event);
+	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekContextsResponse>(event);
 	const logger = createLogger(event);
 
-	logger.info('Service: getContexts', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('Service: getContexts', 'API baseURL:', config.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('contexts', {
@@ -40,11 +40,11 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 }
 
 export async function getContextById(event: H3Event, id: string): Promise<Context> {
-	const runtimeConfig = useRuntimeConfig(event);
+	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<Context>(event);
 	const logger = createLogger(event);
 
-	logger.info('Service: getContextById', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('Service: getContextById', 'API baseURL:', config.public.madekApi.baseURL);
 	logger.info('Service: getContextById', 'Context ID:', id);
 
 	try {

@@ -6,11 +6,11 @@ import { createLogger } from '../utils/logger';
 import { createMadekApiClient } from '../utils/madek-api';
 
 export async function getAppSettings(event: H3Event): Promise<AppSettings> {
-	const runtimeConfig = useRuntimeConfig(event);
+	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekAppSettingsResponse>(event);
 	const logger = createLogger(event);
 
-	logger.info('Service: getAppSettings', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('Service: getAppSettings', 'API baseURL:', config.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('app-settings', {

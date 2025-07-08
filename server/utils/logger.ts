@@ -8,8 +8,8 @@ export interface Logger {
 }
 
 export function createLogger(event?: H3Event): Logger {
-	const runtimeConfig = useRuntimeConfig(event);
-	const isDebugLoggingEnabled = Boolean(runtimeConfig.enableDebugLogging);
+	const config = useRuntimeConfig(event);
+	const isDebugLoggingEnabled = Boolean(config.enableDebugLogging);
 
 	// See: https://github.com/unjs/consola?tab=readme-ov-file#log-level
 	const LOG_LEVEL_DEFAULT = 3;

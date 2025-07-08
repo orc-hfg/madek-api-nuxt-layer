@@ -31,10 +31,10 @@ export const useUserStore = defineStore('user', () => {
     try {
       // 1. Direkter API-Aufruf
       const response = await $fetch(
-        `${runtimeConfig.public.madekApi.baseURL}/auth-info`,
+        `${config.public.madekApi.baseURL}/auth-info`,
         {
           headers: {
-            Authorization: `token ${runtimeConfig.madekApi.token}`
+            Authorization: `token ${config.madekApi.token}`
           }
         }
       );

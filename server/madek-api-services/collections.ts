@@ -6,11 +6,11 @@ import { createLogger } from '../utils/logger';
 import { createMadekApiClient } from '../utils/madek-api';
 
 export async function getCollections(event: H3Event, query: CollectionsUserQuery): Promise<Collections> {
-	const runtimeConfig = useRuntimeConfig(event);
+	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekCollectionsResponse>(event);
 	const logger = createLogger(event);
 
-	logger.info('Service: getCollections', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('Service: getCollections', 'API baseURL:', config.public.madekApi.baseURL);
 	logger.info('Service: getCollections', 'Query params:', query);
 
 	try {

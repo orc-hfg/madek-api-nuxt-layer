@@ -102,9 +102,9 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
 	fetchFromApiWithPathParameters: (endpointTemplate: string, endpointPathParameters: Record<string, string>, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
 } {
-	const runtimeConfig = useRuntimeConfig(event);
-	const apiBaseURL = runtimeConfig.public.madekApi.baseURL;
-	const apiToken = runtimeConfig.madekApi.token;
+	const config = useRuntimeConfig(event);
+	const apiBaseURL = config.public.madekApi.baseURL;
+	const apiToken = config.madekApi.token;
 
 	async function fetchFromApi(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
 		const url = `${apiBaseURL}${endpoint}`;
