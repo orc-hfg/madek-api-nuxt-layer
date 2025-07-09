@@ -62,10 +62,16 @@ export function buildRequestConfig(
 			query: apiOptions.query,
 		};
 	}
-
-	return {
+	const options = {
+		headers: apiOptions.headers || {},
+		// TODO crsf token
 		query: apiOptions.query,
-	};
+		//credentials: 'omit',
+	}
+	if (apiOptions.needsAuth) {
+		options.credentials = 'include'
+	}
+	return options;
 }
 
 export async function fetchData<T>(

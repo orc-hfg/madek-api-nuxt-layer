@@ -8,7 +8,10 @@ interface UserRepository {
 function createUserRepository($madekApi: ApiFunction): UserRepository {
 	return {
 		async getAuthInfo(): Promise<AuthInfo> {
-			return $madekApi('/auth-info');
+			// hier wären RequestOptions nötig
+			return $madekApi('/auth-info', {
+				// anti crsf
+			});
 		},
 	};
 }
