@@ -1,6 +1,5 @@
 import type { H3Event } from 'h3';
 import type { AppSettings, MadekAppSettingsResponse } from '../types/app-settings';
-import { StatusCodes } from 'http-status-codes';
 import { defaultCache } from '../constants/cache';
 import { createLogger } from '../utils/logger';
 import { createMadekApiClient } from '../utils/madek-api';
@@ -25,13 +24,6 @@ export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 		};
 	}
 	catch (error) {
-		const errorMessage = 'Failed to fetch app settings.';
-
-		logger.error('Service: getAppSettings', errorMessage, error);
-
-		throw createError({
-			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-			statusMessage: errorMessage,
-		});
+		return handleServiceError(error, logger, 'getAppSettings', 'Failed to fetch app settings.');
 	}
 }

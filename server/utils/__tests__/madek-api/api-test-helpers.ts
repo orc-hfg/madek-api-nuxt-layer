@@ -1,9 +1,9 @@
 import type { H3Event } from 'h3';
 import type { MadekApiRequestConfig } from '../../madek-api';
-import { FetchError } from 'ofetch';
 import { vi } from 'vitest';
 import * as loggerModule from '../../logger';
 import { createMadekApiClient } from '../../madek-api';
+import { createMockLogger } from '../helpers';
 
 /**
  * TODO: @upgrade-node24
@@ -41,15 +41,8 @@ export function createApiTestContext(): ApiTestContext {
 	);
 	const mockEvent = {} as H3Event;
 
-	const mockLogger = {
-		info: vi.fn(),
-		warn: vi.fn(),
-		error: vi.fn(),
-	};
-	const loggerInfoSpy = vi.spyOn(mockLogger, 'info');
-	const loggerWarnSpy = vi.spyOn(mockLogger, 'warn');
-	const loggerErrorSpy = vi.spyOn(mockLogger, 'error');
-	vi.spyOn(loggerModule, 'createLogger').mockReturnValue(mockLogger);
+	const { logger, infoSpy, warnSpy, errorSpy } = createMockLogger();
+	vi.spyOn(loggerModule, 'createLogger').mockReturnValue(logger);
 
 	function cleanup(): void {
 		vi.restoreAllMocks();
@@ -66,34 +59,10 @@ export function createApiTestContext(): ApiTestContext {
 		fetchMock,
 		fetchDataFunctionMock,
 		defineCachedFunctionMock,
-		loggerInfoSpy,
-		loggerWarnSpy,
-		loggerErrorSpy,
+		loggerInfoSpy: infoSpy,
+		loggerWarnSpy: warnSpy,
+		loggerErrorSpy: errorSpy,
 		[Symbol.dispose]: cleanup,
 		dispose: cleanup,
 	};
-}
-
-export function createFetchError(options: Partial<Pick<FetchError, 'statusCode' | 'statusMessage'>> = {}): FetchError {
-	const error = new FetchError(options.statusMessage ?? 'Error');
-
-	if (options.statusCode !== undefined) {
-		error.statusCode = options.statusCode;
-	}
-	if (options.statusMessage !== undefined) {
-		error.statusMessage = options.statusMessage;
-	}
-
-	return error;
-}
-
-export function catchError(errorThrowingFunction: () => void): Error | undefined {
-	try {
-		errorThrowingFunction();
-
-		return undefined;
-	}
-	catch (error) {
-		return error as Error;
-	}
 }

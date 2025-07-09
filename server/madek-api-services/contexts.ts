@@ -1,6 +1,5 @@
 import type { H3Event } from 'h3';
 import type { Context, Contexts, MadekContextsResponse } from '../types/contexts';
-import { StatusCodes } from 'http-status-codes';
 import { defaultCache } from '../constants/cache';
 import { createLogger } from '../utils/logger';
 import { createMadekApiClient } from '../utils/madek-api';
@@ -28,14 +27,7 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 		});
 	}
 	catch (error) {
-		const errorMessage = 'Failed to fetch contexts.';
-
-		logger.error('Service: getContexts', errorMessage, error);
-
-		throw createError({
-			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-			statusMessage: errorMessage,
-		});
+		return handleServiceError(error, logger, 'getContexts', 'Failed to fetch contexts.');
 	}
 }
 
@@ -61,13 +53,6 @@ export async function getContextById(event: H3Event, id: string): Promise<Contex
 		};
 	}
 	catch (error) {
-		const errorMessage = 'Failed to fetch context by ID.';
-
-		logger.error('Service: getContextById', errorMessage, error);
-
-		throw createError({
-			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-			statusMessage: errorMessage,
-		});
+		return handleServiceError(error, logger, 'getContextById', 'Failed to fetch context by ID.');
 	}
 }

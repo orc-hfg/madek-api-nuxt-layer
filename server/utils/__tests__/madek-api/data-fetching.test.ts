@@ -1,7 +1,7 @@
 import type { $Fetch } from 'nitropack';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { fetchData } from '../../madek-api';
-import { createApiTestContext } from './test-helpers';
+import { createApiTestContext } from './api-test-helpers';
 
 /**
  * TODO: @upgrade-node24
@@ -12,7 +12,7 @@ import { createApiTestContext } from './test-helpers';
  *  See: https://www.epicweb.dev/better-test-setup-with-disposable-objects
  */
 
-describe('data fetching', () => {
+describe('fetchData()', () => {
 	let apiTestContext: ReturnType<typeof createApiTestContext>;
 
 	beforeEach(() => {
