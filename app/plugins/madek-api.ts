@@ -1,17 +1,39 @@
+import { defineNuxtPlugin } from '#app';
 import { createLogger } from '../../server/utils/logger';
 
 export default defineNuxtPlugin({
 	name: 'madek-api',
 	setup() {
-		// See: https://nuxt.com/docs/guide/recipes/custom-usefetch#custom-fetch
 		const config = useRuntimeConfig();
+
+		/*
+		 * See:
+		 * https://nuxt.com/docs/guide/recipes/custom-usefetch#custom-fetch
+		 * https://github.com/nuxt/nuxt/issues/27996#issuecomment-2211864930
+		 */
 		const madekApi = $fetch.create({
 			baseURL: `${config.app.baseURL}api`,
-			// eslint-disable-next-line ts/require-await
-			async onResponseError({ response }) {
+
+			onRequest(context) {
+				if (import.meta.server) {
+					const cookieHeaders = useRequestHeaders(['cookie']);
+
+					if (typeof cookieHeaders.cookie === 'string' && cookieHeaders.cookie !== '') {
+						context.options.headers.set('cookie', cookieHeaders.cookie);
+					}
+				}
+
 				const logger = createLogger();
 
-				logger.error('Plugin: madek-api', 'API request failed.', response);
+				logger.info('Plugin: madek-api', 'API request started.', context.request);
+				logger.info('Plugin: madek-api options', 'API request started.', context.options);
+				logger.info('Plugin: madek-api error', 'API request started.', context.error);
+			},
+
+			onResponseError(context) {
+				const logger = createLogger();
+
+				logger.error('Plugin: madek-api', 'API request failed.', context.response);
 			},
 		});
 
