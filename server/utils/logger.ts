@@ -8,6 +8,8 @@ export interface Logger {
 	error: (source: string, message: string, error?: unknown) => void;
 }
 
+let hasLoggedStatus = false;
+
 export function createLogger(event?: H3Event): Logger {
 	const config = useRuntimeConfig(event);
 	const isDebugLoggingEnabled = Boolean(config.debugLogging);
@@ -19,6 +21,13 @@ export function createLogger(event?: H3Event): Logger {
 	const logger = createConsola({
 		level: isDebugLoggingEnabled ? LOG_LEVEL_DEFAULT : LOG_LEVEL_SILENT,
 	});
+
+	if (!hasLoggedStatus) {
+		const statusLogger = createConsola({ level: 3 });
+		statusLogger.info(`[Logger] Debug logging is ${isDebugLoggingEnabled ? 'enabled' : 'disabled'}.`);
+
+		hasLoggedStatus = true;
+	}
 
 	return {
 		debug(source: string, message: string, data?: unknown): void {
