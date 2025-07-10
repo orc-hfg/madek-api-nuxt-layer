@@ -4,25 +4,29 @@ import { FetchError } from 'ofetch';
 import { vi } from 'vitest';
 
 export function createMockLogger(): {
-	errorSpy: ReturnType<typeof vi.spyOn>;
+	debugSpy: ReturnType<typeof vi.spyOn>;
 	infoSpy: ReturnType<typeof vi.spyOn>;
-	logger: Logger;
 	warnSpy: ReturnType<typeof vi.spyOn>;
+	errorSpy: ReturnType<typeof vi.spyOn>;
+	logger: Logger;
 } {
 	const mockLogger = {
+		debug: vi.fn(),
 		info: vi.fn(),
 		warn: vi.fn(),
 		error: vi.fn(),
 	};
+	const debugSpy = vi.spyOn(mockLogger, 'debug');
 	const infoSpy = vi.spyOn(mockLogger, 'info');
 	const warnSpy = vi.spyOn(mockLogger, 'warn');
 	const errorSpy = vi.spyOn(mockLogger, 'error');
 
 	return {
-		logger: mockLogger as unknown as Logger,
+		debugSpy,
 		infoSpy,
 		warnSpy,
 		errorSpy,
+		logger: mockLogger as unknown as Logger,
 	};
 }
 

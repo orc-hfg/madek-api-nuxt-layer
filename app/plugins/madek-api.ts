@@ -25,9 +25,9 @@ export default defineNuxtPlugin({
 
 				const logger = createLogger();
 
-				logger.info('Plugin: madek-api', 'API request started.', context.request);
-				logger.info('Plugin: madek-api options', 'API request started.', context.options);
-				logger.info('Plugin: madek-api error', 'API request started.', context.error);
+				logger.debug('Plugin: madek-api', 'API request started.', context.request);
+				logger.debug('Plugin: madek-api options', 'API request started.', context.options);
+				logger.debug('Plugin: madek-api error', 'API request started.', context.error);
 			},
 
 			onResponseError(context) {
