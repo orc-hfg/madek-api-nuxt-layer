@@ -9,7 +9,7 @@ export interface Logger {
 
 export function createLogger(event?: H3Event): Logger {
 	const config = useRuntimeConfig(event);
-	const isDebugLoggingEnabled = Boolean(config.enableDebugLogging);
+	const isDebugLoggingEnabled = Boolean(config.debugLogging);
 
 	// See: https://github.com/unjs/consola?tab=readme-ov-file#log-level
 	const LOG_LEVEL_DEFAULT = 3;

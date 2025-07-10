@@ -65,7 +65,7 @@ export default defineNuxtConfig({
 		// This will only take effect in development mode, useful for testing.
 		delayResponse: false,
 		// Enable detailed API debug logging
-		enableDebugLogging: false,
+		debugLogging: false,
 		app: {
 			baseURL: '/',
 		},
@@ -87,7 +87,7 @@ export default defineNuxtConfig({
 	},
 	$development: {
 		runtimeConfig: {
-			enableDebugLogging: true,
+			debugLogging: true,
 			public: {
 				madekApi: {
 					baseURL: 'https://dev.madek.hfg-karlsruhe.de/api-v2/',
