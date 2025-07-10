@@ -26,6 +26,7 @@ describe('fetchData()', () => {
 	describe('in development mode', () => {
 		it('builds correct request configuration with auth headers and calls $fetch', async () => {
 			await fetchData(
+				apiTestContext.mockEvent,
 				'https://api.example.com/test',
 				{ needsAuth: true, query: { param: 'value' } },
 				'test-token',
@@ -46,6 +47,7 @@ describe('fetchData()', () => {
 	describe('in production mode', () => {
 		it('builds correct request configuration without auth headers and calls $fetch', async () => {
 			await fetchData(
+				apiTestContext.mockEvent,
 				'https://api.example.com/test',
 				{ needsAuth: true, query: { param: 'value' } },
 				'test-token',

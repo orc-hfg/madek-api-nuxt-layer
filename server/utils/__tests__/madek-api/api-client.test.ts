@@ -29,6 +29,7 @@ describe('createMadekApiClient()', () => {
 
 		expect(apiTestContext.loggerWarnSpy).toHaveBeenCalledTimes(1);
 		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+			apiTestContext.mockEvent,
 			'https://api.example.com/resources/123',
 			apiOptions,
 			'test-api-token',
@@ -42,6 +43,7 @@ describe('createMadekApiClient()', () => {
 		);
 
 		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+			apiTestContext.mockEvent,
 			'https://api.example.com/collection/abc-123/meta-datum/meta_key.456',
 			{},
 			'test-api-token',
@@ -55,6 +57,7 @@ describe('createMadekApiClient()', () => {
 		);
 
 		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+			apiTestContext.mockEvent,
 			'https://api.example.com/api/v2/collection/abc-123/meta-datum/meta_key.456',
 			{},
 			'test-api-token',
@@ -94,6 +97,7 @@ describe('createMadekApiClient()', () => {
 
 			expect(apiTestContext.loggerWarnSpy).toHaveBeenCalledTimes(1);
 			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+				apiTestContext.mockEvent,
 				'https://api.example.com/authenticated-endpoint',
 				{ needsAuth: true },
 				'test-api-token',

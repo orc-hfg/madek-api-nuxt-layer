@@ -26,6 +26,7 @@ interface ApiTestContext {
 	fetchMock: ReturnType<typeof vi.fn>;
 	fetchDataFunctionMock: ReturnType<typeof vi.fn>;
 	defineCachedFunctionMock: ReturnType<typeof vi.fn>;
+	mockEvent: H3Event;
 	loggerInfoSpy: ReturnType<typeof vi.spyOn>;
 	loggerWarnSpy: ReturnType<typeof vi.spyOn>;
 	loggerErrorSpy: ReturnType<typeof vi.spyOn>;
@@ -39,7 +40,7 @@ export function createApiTestContext(): ApiTestContext {
 	const defineCachedFunctionMock = vi.fn().mockImplementation(
 		(cacheableFunction: () => unknown): (() => unknown) => (): unknown => cacheableFunction(),
 	);
-	const mockEvent = {} as H3Event;
+	const mockEvent = { headers: {} } as H3Event;
 
 	const { logger, infoSpy, warnSpy, errorSpy } = createMockLogger();
 	vi.spyOn(loggerModule, 'createLogger').mockReturnValue(logger);
@@ -62,6 +63,7 @@ export function createApiTestContext(): ApiTestContext {
 		loggerInfoSpy: infoSpy,
 		loggerWarnSpy: warnSpy,
 		loggerErrorSpy: errorSpy,
+		mockEvent,
 		[Symbol.dispose]: cleanup,
 		dispose: cleanup,
 	};

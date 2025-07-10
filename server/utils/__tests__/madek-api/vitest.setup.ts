@@ -1,4 +1,6 @@
+import type { RequestHeaders } from 'h3';
 import { mockNuxtImport } from '@nuxt/test-utils/runtime';
+import { vi } from 'vitest';
 
 interface RuntimeConfig {
 	public: {
@@ -24,4 +26,15 @@ function runtimeConfigMock(): RuntimeConfig {
 	};
 }
 
+function getRequestHeadersMock(): RequestHeaders {
+	return {
+		cookie: 'test-cookie=123',
+	};
+}
+
 mockNuxtImport('useRuntimeConfig', () => runtimeConfigMock);
+vi.mock('h3', () => {
+	return {
+		getRequestHeaders: (): RequestHeaders => getRequestHeadersMock(),
+	};
+});

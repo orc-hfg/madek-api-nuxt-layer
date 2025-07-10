@@ -1,5 +1,6 @@
 import type { H3Event } from 'h3';
 import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
+import { getRequestHeaders } from 'h3';
 import { FetchError } from 'ofetch';
 import { noCache } from '../constants/cache';
 import { createLogger } from './logger';
@@ -68,6 +69,7 @@ export function buildRequestConfig(
 }
 
 export async function fetchData<T>(
+	event: H3Event,
 	url: string,
 	apiOptions: MadekApiOptions = {},
 	apiToken?: string,
@@ -79,6 +81,13 @@ export async function fetchData<T>(
 
 		const logger = createLogger();
 		logger.debug('Utility: madekApi', 'Request config:', requestConfig);
+
+		const headers = getRequestHeaders(event);
+
+		if (requestConfig.headers instanceof Headers && headers.cookie !== undefined) {
+			requestConfig.headers.set('cookie', headers.cookie);
+			logger.debug('Utility: madekApi', 'Forwarding request headers', requestConfig.headers);
+		}
 
 		const response = await fetchFunction<T>(url, requestConfig);
 
@@ -124,7 +133,7 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 
 		if (shouldUseCaching(isAuthNeeded, cacheOptions)) {
 			return defineCachedFunction(
-				async () => fetchDataFunction<T>(url, apiRequestConfig.apiOptions ?? {}, apiToken),
+				async () => fetchDataFunction<T>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken),
 				{
 					...cacheOptions,
 					name: 'madek-api',
@@ -133,7 +142,7 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 			)();
 		}
 
-		return fetchDataFunction<T>(url, apiRequestConfig.apiOptions ?? {}, apiToken);
+		return fetchDataFunction<T>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken);
 	}
 
 	async function fetchFromApiWithPathParameters(endpointTemplate: string, endpointPathParameters: Record<string, string>, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
