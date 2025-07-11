@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { createLogger } from '../utils/logger';
+import { createLogger } from '../../app/utils/logger';
 
 export default defineNitroPlugin(() => {
 	const config = useRuntimeConfig();

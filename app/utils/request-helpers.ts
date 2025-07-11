@@ -1,6 +1,6 @@
 import type { FetchContext } from 'ofetch';
-import type { Logger } from '../../server/utils/logger';
-import { createLogger } from '../../server/utils/logger';
+import type { Logger } from './logger';
+import { createLogger } from './logger';
 
 export function forwardCookieHeaders(
 	context: FetchContext,

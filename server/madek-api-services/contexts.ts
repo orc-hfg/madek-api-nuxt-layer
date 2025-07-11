@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3';
 import type { Context, Contexts, MadekContextsResponse } from '../types/contexts';
+import { createLogger } from '../../app/utils/logger';
 import { defaultCache } from '../constants/cache';
-import { createLogger } from '../utils/logger';
 import { createMadekApiClient } from '../utils/madek-api';
 
 export async function getContexts(event: H3Event): Promise<Contexts> {

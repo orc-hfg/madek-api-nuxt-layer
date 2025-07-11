@@ -1,4 +1,4 @@
-import { createLogger } from '../../server/utils/logger';
+import { createLogger } from '../utils/logger';
 
 export default defineNuxtPlugin({
 	name: 'placeholder-api',

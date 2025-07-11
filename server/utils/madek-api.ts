@@ -2,8 +2,8 @@ import type { H3Event } from 'h3';
 import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
 import { getRequestHeaders } from 'h3';
 import { FetchError } from 'ofetch';
+import { createLogger } from '../../app/utils/logger';
 import { noCache } from '../constants/cache';
-import { createLogger } from './logger';
 
 export interface MadekApiOptions {
 	isAuthenticationNeeded?: boolean;

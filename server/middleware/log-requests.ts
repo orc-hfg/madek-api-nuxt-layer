@@ -1,4 +1,4 @@
-import { createLogger } from '../utils/logger';
+import { createLogger } from '../../app/utils/logger';
 
 export default defineEventHandler((event) => {
 	const logger = createLogger(event);
