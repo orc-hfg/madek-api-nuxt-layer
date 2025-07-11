@@ -14,7 +14,7 @@ export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 	try {
 		const response = await fetchFromApi('app-settings', {
 			apiOptions: {
-				needsAuth: false,
+				isAuthenticationNeeded: false,
 			},
 			publicDataCache: defaultCache,
 		});

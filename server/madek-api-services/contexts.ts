@@ -14,7 +14,7 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 	try {
 		const response = await fetchFromApi('contexts', {
 			apiOptions: {
-				needsAuth: false,
+				isAuthenticationNeeded: false,
 			},
 			publicDataCache: defaultCache,
 		});
@@ -42,7 +42,7 @@ export async function getContextById(event: H3Event, id: string): Promise<Contex
 	try {
 		const response = await fetchFromApi(`contexts/${id}`, {
 			apiOptions: {
-				needsAuth: false,
+				isAuthenticationNeeded: false,
 			},
 			publicDataCache: defaultCache,
 		});

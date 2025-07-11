@@ -28,7 +28,7 @@ describe('fetchData()', () => {
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',
-				{ needsAuth: true, query: { param: 'value' } },
+				{ isAuthenticationNeeded: true, query: { param: 'value' } },
 				'test-token',
 				apiTestContext.fetchMock as unknown as $Fetch,
 				true,
@@ -49,7 +49,7 @@ describe('fetchData()', () => {
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',
-				{ needsAuth: true, query: { param: 'value' } },
+				{ isAuthenticationNeeded: true, query: { param: 'value' } },
 				'test-token',
 				apiTestContext.fetchMock as unknown as $Fetch,
 				false,

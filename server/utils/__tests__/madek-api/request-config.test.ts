@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildRequestConfig, getAuthHeader } from '../../madek-api';
+import { mockEvent } from './api-test-helpers';
 
 describe('getAuthHeader()', () => {
 	it('returns undefined when token is undefined', () => {
@@ -26,39 +27,38 @@ describe('getAuthHeader()', () => {
 describe('buildRequestConfig()', () => {
 	describe('in development mode', () => {
 		it('returns empty config when no options are provided', () => {
-			const result = buildRequestConfig({}, undefined, true);
+			const result = buildRequestConfig(mockEvent, {}, undefined, true);
 
-			expect(result).toStrictEqual({ headers: undefined, query: undefined });
+			expect(result).toStrictEqual({});
 		});
 
-		it('includes auth header when needsAuth is true', () => {
+		it('includes auth header when isAuthenticationNeeded is true', () => {
 			const token = 'test-token';
-			const result = buildRequestConfig({ needsAuth: true }, token, true);
+			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: true }, token, true);
 
 			expect(result).toStrictEqual({
 				headers: { Authorization: `token ${token}` },
-				query: undefined,
 			});
 		});
 
-		it('does not include auth header when needsAuth is false', () => {
+		it('does not include auth header when isAuthenticationNeeded is false', () => {
 			const token = 'test-token';
-			const result = buildRequestConfig({ needsAuth: false }, token, true);
+			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: false }, token, true);
 
-			expect(result).toStrictEqual({ headers: undefined, query: undefined });
+			expect(result).toStrictEqual({});
 		});
 
 		it('includes query parameters when provided', () => {
 			const query = { parameter1: 'value1', parameter2: 'value2' };
-			const result = buildRequestConfig({ query }, undefined, true);
+			const result = buildRequestConfig(mockEvent, { query }, undefined, true);
 
-			expect(result).toStrictEqual({ headers: undefined, query });
+			expect(result).toStrictEqual({ query });
 		});
 
 		it('combines auth headers and query parameters when both are provided', () => {
 			const token = 'test-token';
 			const query = { parameter1: 'value1', parameter2: 'value2' };
-			const result = buildRequestConfig({ needsAuth: true, query }, token, true);
+			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: true, query }, token, true);
 
 			expect(result).toStrictEqual({
 				headers: { Authorization: `token ${token}` },
@@ -68,32 +68,37 @@ describe('buildRequestConfig()', () => {
 	});
 
 	describe('in production mode', () => {
-		it('returns config with only query parameter when no options are provided', () => {
-			const result = buildRequestConfig({}, undefined, false);
+		it('returns empty config when no options are provided', () => {
+			const result = buildRequestConfig(mockEvent, {}, undefined, false);
 
-			expect(result).toStrictEqual({ query: undefined });
+			expect(result).toStrictEqual({});
 		});
 
-		it('does not include auth header even when needsAuth is true', () => {
+		it('includes cookie header when isAuthenticationNeeded is true', () => {
 			const token = 'test-token';
-			const result = buildRequestConfig({ needsAuth: true }, token, false);
+			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: true }, token, false);
 
-			expect(result).toStrictEqual({ query: undefined });
+			expect(result).toStrictEqual({
+				headers: { cookie: 'test-cookie=123' },
+			});
 		});
 
-		it('includes only query parameters', () => {
+		it('includes only query parameters when authentication is not needed', () => {
 			const query = { parameter1: 'value1', parameter2: 'value2' };
-			const result = buildRequestConfig({ query }, undefined, false);
+			const result = buildRequestConfig(mockEvent, { query }, undefined, false);
 
 			expect(result).toStrictEqual({ query });
 		});
 
-		it('includes only query parameters even when auth is requested', () => {
+		it('includes both query parameters and cookie headers when authentication is needed', () => {
 			const token = 'test-token';
 			const query = { parameter1: 'value1', parameter2: 'value2' };
-			const result = buildRequestConfig({ needsAuth: true, query }, token, false);
+			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: true, query }, token, false);
 
-			expect(result).toStrictEqual({ query });
+			expect(result).toStrictEqual({
+				headers: { cookie: 'test-cookie=123' },
+				query,
+			});
 		});
 	});
 });

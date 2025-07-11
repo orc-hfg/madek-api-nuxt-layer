@@ -162,7 +162,7 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
     // Serverseitiger API-Aufruf mit Caching und sicherem Token-Handling
     const response = await fetchFromApi('/auth-info', {
       apiOptions: {
-        needsAuth: true,
+        isAuthenticationNeeded: true,
       },
       cache: freshOneHourCache,
     });

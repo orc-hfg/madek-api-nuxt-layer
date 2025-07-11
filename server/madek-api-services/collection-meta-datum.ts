@@ -22,7 +22,7 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: strin
 			},
 			{
 				apiOptions: {
-					needsAuth: true,
+					isAuthenticationNeeded: true,
 				},
 				publicDataCache: noCache,
 			},

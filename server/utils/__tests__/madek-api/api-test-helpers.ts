@@ -5,6 +5,8 @@ import * as loggerModule from '../../logger';
 import { createMadekApiClient } from '../../madek-api';
 import { createMockLogger } from '../helpers';
 
+export const mockEvent = { headers: {} } as H3Event;
+
 /**
  * TODO: @upgrade-node24
  * When we bump the project to Node ≥ 24 LTS:
@@ -40,8 +42,6 @@ export function createApiTestContext(): ApiTestContext {
 	const defineCachedFunctionMock = vi.fn().mockImplementation(
 		(cacheableFunction: () => unknown): (() => unknown) => (): unknown => cacheableFunction(),
 	);
-	const mockEvent = { headers: {} } as H3Event;
-
 	const { logger, infoSpy, warnSpy, errorSpy } = createMockLogger();
 	vi.spyOn(loggerModule, 'createLogger').mockReturnValue(logger);
 

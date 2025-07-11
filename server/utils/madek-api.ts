@@ -6,7 +6,7 @@ import { noCache } from '../constants/cache';
 import { createLogger } from './logger';
 
 export interface MadekApiOptions {
-	needsAuth?: boolean;
+	isAuthenticationNeeded?: boolean;
 	query?: NitroFetchOptions<NitroFetchRequest>['query'];
 }
 
@@ -52,20 +52,44 @@ export function getAuthHeader(apiToken?: string): Record<string, string> | undef
 }
 
 export function buildRequestConfig(
+	event: H3Event,
 	apiOptions: MadekApiOptions = {},
 	apiToken?: string,
 	isDevelopment = import.meta.dev,
 ): NitroFetchOptions<NitroFetchRequest> {
-	if (isDevelopment) {
-		return {
-			headers: apiOptions.needsAuth ? getAuthHeader(apiToken) : undefined,
-			query: apiOptions.query,
-		};
+	const { isAuthenticationNeeded, query } = apiOptions;
+	const config: NitroFetchOptions<NitroFetchRequest> = {};
+
+	if (query !== undefined) {
+		config.query = query;
 	}
 
-	return {
-		query: apiOptions.query,
-	};
+	// Development environment: use API token for authentication
+	if (isDevelopment) {
+		if (isAuthenticationNeeded && apiToken !== undefined) {
+			config.headers = getAuthHeader(apiToken);
+
+			return config;
+		}
+
+		return config;
+	}
+
+	// Production environment: forward cookie for authentication
+	if (isAuthenticationNeeded) {
+		const { cookie } = getRequestHeaders(event);
+
+		if (cookie !== undefined) {
+			config.headers = {
+				cookie,
+			};
+
+			return config;
+		}
+	}
+
+	// Default case: no authentication
+	return config;
 }
 
 export async function fetchData<T>(
@@ -77,17 +101,10 @@ export async function fetchData<T>(
 	isDevelopment = import.meta.dev,
 ): Promise<T> {
 	try {
-		const requestConfig = buildRequestConfig(apiOptions, apiToken, isDevelopment);
+		const requestConfig = buildRequestConfig(event, apiOptions, apiToken, isDevelopment);
 
 		const logger = createLogger();
 		logger.debug('Utility: madekApi', 'Request config:', requestConfig);
-
-		const headers = getRequestHeaders(event);
-
-		if (requestConfig.headers instanceof Headers && headers.cookie !== undefined) {
-			requestConfig.headers.set('cookie', headers.cookie);
-			logger.debug('Utility: madekApi', 'Forwarding request headers', requestConfig.headers);
-		}
 
 		const response = await fetchFunction<T>(url, requestConfig);
 
@@ -123,7 +140,7 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 
 	async function fetchFromApi(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
 		const url = `${apiBaseURL}${endpoint}`;
-		const isAuthNeeded = apiRequestConfig.apiOptions?.needsAuth === true;
+		const isAuthNeeded = apiRequestConfig.apiOptions?.isAuthenticationNeeded === true;
 		const cacheOptions = apiRequestConfig.publicDataCache;
 
 		if (isAuthNeeded && apiRequestConfig.publicDataCache !== noCache) {

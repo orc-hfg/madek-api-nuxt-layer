@@ -23,7 +23,7 @@ describe('createMadekApiClient()', () => {
 
 	it('returns an object with fetchFromApi method that calls fetchData with correct parameters', async () => {
 		const endpoint = 'resources/123';
-		const apiOptions = { needsAuth: true, query: { param: 'value' } };
+		const apiOptions = { isAuthenticationNeeded: true, query: { param: 'value' } };
 
 		await apiTestContext.client.fetchFromApi(endpoint, { apiOptions });
 
@@ -91,7 +91,7 @@ describe('createMadekApiClient()', () => {
 
 		it('skips caching and directly calls fetchData when auth is needed', async () => {
 			await apiTestContext.client.fetchFromApi('authenticated-endpoint', {
-				apiOptions: { needsAuth: true },
+				apiOptions: { isAuthenticationNeeded: true },
 				publicDataCache: { maxAge: 3600 },
 			});
 
@@ -99,7 +99,7 @@ describe('createMadekApiClient()', () => {
 			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 				apiTestContext.mockEvent,
 				'https://api.example.com/authenticated-endpoint',
-				{ needsAuth: true },
+				{ isAuthenticationNeeded: true },
 				'test-api-token',
 			);
 			expect(apiTestContext.defineCachedFunctionMock).not.toHaveBeenCalled();
