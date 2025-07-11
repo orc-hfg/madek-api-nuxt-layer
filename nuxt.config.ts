@@ -1,5 +1,5 @@
 import { createResolver } from '@nuxt/kit';
-import packageJson from './package.json' with { type: 'json' };
+import packageJson from './package.json';
 
 function composeVersion(): string {
 	return packageJson.version ? `v${packageJson.version}` : 'Unknown Version';
@@ -62,10 +62,8 @@ export default defineNuxtConfig({
 	 * https://nuxt.com/docs/getting-started/configuration#environment-overrides
 	 */
 	runtimeConfig: {
-		// This will only take effect in development mode, useful for testing.
+		// This will only take effect in development mode, useful for testing
 		delayResponse: false,
-		// Enable detailed API debug logging
-		debugLogging: false,
 		app: {
 			baseURL: '/',
 		},
@@ -79,6 +77,8 @@ export default defineNuxtConfig({
 			token: '',
 		},
 		public: {
+			// Enable detailed API debug logging
+			debugLogging: false,
 			version: composeVersion(),
 			madekApi: {
 				baseURL: '',
@@ -87,8 +87,8 @@ export default defineNuxtConfig({
 	},
 	$development: {
 		runtimeConfig: {
-			debugLogging: true,
 			public: {
+				debugLogging: true,
 				madekApi: {
 					baseURL: 'https://dev.madek.hfg-karlsruhe.de/api-v2/',
 				},
