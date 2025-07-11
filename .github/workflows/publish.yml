@@ -22,7 +22,7 @@ jobs:
         run: npm run lint
       - name: Type check
         run: npm run check:types
-      - name: Check unused code and dependencies
+      - name: Check for unused code and dependencies
         run: npm run check:unused
       - name: Run tests
         run: npm run test
