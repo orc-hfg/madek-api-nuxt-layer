@@ -5,7 +5,7 @@ export interface Logger {
 	debug: (source: string, message: string, data?: unknown) => void;
 	info: (source: string, message: string, data?: unknown) => void;
 	warn: (source: string, message: string, data?: unknown) => void;
-	error: (source: string, message: string, error?: unknown) => void;
+	error: (source: string, message: string, data?: unknown) => void;
 }
 
 let hasLoggedStatus = false;
@@ -16,7 +16,7 @@ export function createLogger(event?: H3Event): Logger {
 
 	if (!hasLoggedStatus) {
 		const statusLogger = createConsola();
-		statusLogger.log(`[Logger] Debug logging is ${isDebugLoggingEnabled ? 'enabled' : 'disabled'}.`);
+		statusLogger.info(`[Logger] Debug logging is ${isDebugLoggingEnabled ? 'enabled' : 'disabled'}.`);
 
 		hasLoggedStatus = true;
 	}
@@ -42,12 +42,6 @@ export function createLogger(event?: H3Event): Logger {
 		debug: (source: string, message: string, data?: unknown): void => { log('debug', source, message, data); },
 		info: (source: string, message: string, data?: unknown): void => { log('info', source, message, data); },
 		warn: (source: string, message: string, data?: unknown): void => { log('warn', source, message, data); },
-		error: (source: string, message: string, error?: unknown): void => {
-			logger.error(`[${source}] ${message}`);
-
-			if (error !== undefined) {
-				logger.error(`[${source}] Error details:`, error);
-			}
-		},
+		error: (source: string, message: string, data?: unknown): void => { log('error', source, message, data); },
 	};
 }
