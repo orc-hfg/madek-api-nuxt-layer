@@ -15,24 +15,24 @@ export default defineNuxtPlugin({
 			baseURL: `${config.app.baseURL}api`,
 
 			onRequest(context) {
-				if (import.meta.server) {
-					const cookieHeaders = useRequestHeaders(['cookie']);
-
-					if (typeof cookieHeaders.cookie === 'string' && cookieHeaders.cookie !== '') {
-						context.options.headers.set('cookie', cookieHeaders.cookie);
-					}
-				}
-
 				const logger = createLogger();
 
-				logger.debug('Plugin: madek-api', 'API request started.', context.request);
-				logger.debug('Plugin: madek-api options', 'API request started.', context.options);
-				logger.debug('Plugin: madek-api error', 'API request started.', context.error);
+				if (import.meta.server) {
+					const { cookie } = useRequestHeaders(['cookie']);
+
+					if (cookie !== undefined) {
+						const headers = new Headers(context.options.headers);
+						headers.set('cookie', cookie);
+
+						context.options.headers = headers;
+
+						logger.debug('Plugin: madek-api', 'Cookie header forwarded', cookie);
+					}
+				}
 			},
 
 			onResponseError(context) {
 				const logger = createLogger();
-
 				logger.error('Plugin: madek-api', 'API request failed.', context.response);
 			},
 		});
