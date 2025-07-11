@@ -1,4 +1,4 @@
-import type { Logger } from '../../app/utils/logger';
+import type { Logger } from '../../shared/utils/logger';
 import { vi } from 'vitest';
 
 export interface MockLoggerResult {

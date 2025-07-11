@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3';
 import type { Context, Contexts, MadekContextsResponse } from '../types/contexts';
-import { createLogger } from '../../app/utils/logger';
+import { createLogger } from '../../shared/utils/logger';
 import { defaultCache } from '../constants/cache';
 import { createMadekApiClient } from '../utils/madek-api';
 

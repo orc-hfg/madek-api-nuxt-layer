@@ -1,5 +1,5 @@
 import type { H3Error } from 'h3';
-import type { Logger } from '../../app/utils/logger';
+import type { Logger } from '../../shared/utils/logger';
 import { createError } from 'h3';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { FetchError } from 'ofetch';

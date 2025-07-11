@@ -1,4 +1,4 @@
-import { createLogger } from '../utils/logger';
+import { createLogger } from '../../shared/utils/logger';
 import { forwardCookieHeaders } from '../utils/request-helpers';
 
 export default defineNuxtPlugin({

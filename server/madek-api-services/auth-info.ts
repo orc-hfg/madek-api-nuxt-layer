@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3';
 import type { AuthInfo, MadekAuthInfoResponse } from '../types/auth-info';
-import { createLogger } from '../../app/utils/logger';
+import { createLogger } from '../../shared/utils/logger';
 import { noCache } from '../constants/cache';
 import { handleServiceError } from '../utils/error-handling';
 import { createMadekApiClient } from '../utils/madek-api';
