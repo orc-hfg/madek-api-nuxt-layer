@@ -34,18 +34,40 @@ describe('fetchData()', () => {
 				true,
 			);
 
+			const expectedConfig = {
+				headers: { Authorization: 'token test-token' },
+				query: { param: 'value' },
+			};
+
 			expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
 				'https://api.example.com/test',
-				expect.objectContaining({
-					headers: { Authorization: 'token test-token' },
-					query: { param: 'value' },
-				}),
+				expectedConfig,
+			);
+		});
+
+		it('builds request configuration without headers when authentication is not needed', async () => {
+			await fetchData(
+				apiTestContext.mockEvent,
+				'https://api.example.com/test',
+				{ isAuthenticationNeeded: false, query: { param: 'value' } },
+				'test-token',
+				apiTestContext.fetchMock as unknown as $Fetch,
+				true,
+			);
+
+			const expectedConfig = {
+				query: { param: 'value' },
+			};
+
+			expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
+				'https://api.example.com/test',
+				expectedConfig,
 			);
 		});
 	});
 
 	describe('in production mode', () => {
-		it('builds correct request configuration without auth headers and calls $fetch', async () => {
+		it('builds correct request configuration with cookie headers when authentication is needed', async () => {
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',
@@ -55,11 +77,34 @@ describe('fetchData()', () => {
 				false,
 			);
 
+			const expectedConfig = {
+				headers: { cookie: 'test-cookie=123' },
+				query: { param: 'value' },
+			};
+
 			expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
 				'https://api.example.com/test',
-				expect.objectContaining({
-					query: { param: 'value' },
-				}),
+				expectedConfig,
+			);
+		});
+
+		it('builds request configuration without headers when authentication is not needed', async () => {
+			await fetchData(
+				apiTestContext.mockEvent,
+				'https://api.example.com/test',
+				{ isAuthenticationNeeded: false, query: { param: 'value' } },
+				'test-token',
+				apiTestContext.fetchMock as unknown as $Fetch,
+				false,
+			);
+
+			const expectedConfig = {
+				query: { param: 'value' },
+			};
+
+			expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
+				'https://api.example.com/test',
+				expectedConfig,
 			);
 		});
 	});
