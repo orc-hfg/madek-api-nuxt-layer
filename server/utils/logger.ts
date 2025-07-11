@@ -12,7 +12,7 @@ let hasLoggedStatus = false;
 
 export function createLogger(event?: H3Event): Logger {
 	const config = useRuntimeConfig(event);
-	const isDebugLoggingEnabled = Boolean(config.debugLogging);
+	const isDebugLoggingEnabled = Boolean(config.public.debugLogging);
 
 	if (!hasLoggedStatus) {
 		const statusLogger = createConsola();
