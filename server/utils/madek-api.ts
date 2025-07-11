@@ -103,18 +103,12 @@ export async function fetchData<T>(
 	try {
 		const requestConfig = buildRequestConfig(event, apiOptions, apiToken, isDevelopment);
 
-		const logger = createLogger();
-		logger.debug('Utility: madekApi', 'Request config:', requestConfig);
-
 		const response = await fetchFunction<T>(url, requestConfig);
 
 		return response as T;
 	}
 	catch (error) {
 		if (error instanceof FetchError) {
-			const logger = createLogger();
-			logger.debug('Utility: madekApi', 'Failed to fetch data.', error);
-
 			throw convertFetchToH3Error(error);
 		}
 

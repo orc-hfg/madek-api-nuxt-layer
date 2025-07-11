@@ -1,6 +1,7 @@
 import type { Logger } from './logger';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { catchH3Error, createFetchError, createMockLogger } from './__tests__/helpers';
+import { createMockLoggerWithSpies } from '../../test/helpers/logger-mocks';
+import { catchH3Error, createFetchError } from './__tests__/helpers';
 import { convertFetchToH3Error, handleServiceError } from './error-handling';
 
 describe('convertFetchToH3Error()', () => {
@@ -80,7 +81,7 @@ describe('handleServiceError()', () => {
 	let loggerErrorSpy: ReturnType<typeof vi.spyOn>;
 
 	beforeEach(() => {
-		const mockLoggerSetup = createMockLogger();
+		const mockLoggerSetup = createMockLoggerWithSpies();
 
 		mockLogger = mockLoggerSetup.logger;
 		loggerErrorSpy = mockLoggerSetup.errorSpy;

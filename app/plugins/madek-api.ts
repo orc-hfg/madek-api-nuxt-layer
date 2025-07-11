@@ -1,10 +1,11 @@
-import { defineNuxtPlugin } from '#app';
 import { createLogger } from '../../server/utils/logger';
+import { forwardCookieHeaders } from '../utils/request-helpers';
 
 export default defineNuxtPlugin({
 	name: 'madek-api',
 	setup() {
 		const config = useRuntimeConfig();
+		const logger = createLogger();
 
 		/*
 		 * See:
@@ -15,24 +16,10 @@ export default defineNuxtPlugin({
 			baseURL: `${config.app.baseURL}api`,
 
 			onRequest(context) {
-				const logger = createLogger();
-
-				if (import.meta.server) {
-					const { cookie } = useRequestHeaders(['cookie']);
-
-					if (cookie !== undefined) {
-						const headers = new Headers(context.options.headers);
-						headers.set('cookie', cookie);
-
-						context.options.headers = headers;
-
-						logger.debug('Plugin: madek-api', 'Cookie header forwarded', cookie);
-					}
-				}
+				forwardCookieHeaders(context, { logger });
 			},
 
 			onResponseError(context) {
-				const logger = createLogger();
 				logger.error('Plugin: madek-api', 'API request failed.', context.response);
 			},
 		});

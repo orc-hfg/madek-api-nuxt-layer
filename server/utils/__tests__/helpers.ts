@@ -1,34 +1,5 @@
 import type { H3Error } from 'h3';
-import type { Logger } from '../logger';
 import { FetchError } from 'ofetch';
-import { vi } from 'vitest';
-
-export function createMockLogger(): {
-	debugSpy: ReturnType<typeof vi.spyOn>;
-	infoSpy: ReturnType<typeof vi.spyOn>;
-	warnSpy: ReturnType<typeof vi.spyOn>;
-	errorSpy: ReturnType<typeof vi.spyOn>;
-	logger: Logger;
-} {
-	const mockLogger = {
-		debug: vi.fn(),
-		info: vi.fn(),
-		warn: vi.fn(),
-		error: vi.fn(),
-	};
-	const debugSpy = vi.spyOn(mockLogger, 'debug');
-	const infoSpy = vi.spyOn(mockLogger, 'info');
-	const warnSpy = vi.spyOn(mockLogger, 'warn');
-	const errorSpy = vi.spyOn(mockLogger, 'error');
-
-	return {
-		debugSpy,
-		infoSpy,
-		warnSpy,
-		errorSpy,
-		logger: mockLogger as unknown as Logger,
-	};
-}
 
 export function createFetchError(options: Partial<Pick<FetchError, 'statusCode' | 'statusMessage'>> = {}): FetchError {
 	const error = new FetchError(options.statusMessage ?? 'Error');

@@ -29,20 +29,20 @@ export function createLogger(event?: H3Event): Logger {
 		level: isDebugLoggingEnabled ? LOG_LEVEL_DEFAULT : LOG_LEVEL_SILENT,
 	});
 
+	function log(level: 'debug' | 'info' | 'warn' | 'error', source: string, message: string, data?: unknown): void {
+		if (data === undefined) {
+			logger[level](`[${source}] ${message}`);
+		}
+		else {
+			logger[level](`[${source}] ${message}`, data);
+		}
+	};
+
 	return {
-		debug(source: string, message: string, data?: unknown): void {
-			logger.debug(`[${source}] ${message}`, data);
-		},
-
-		info(source: string, message: string, data?: unknown): void {
-			logger.info(`[${source}] ${message}`, data);
-		},
-
-		warn(source: string, message: string, data?: unknown): void {
-			logger.warn(`[${source}] ${message}`, data);
-		},
-
-		error(source: string, message: string, error?: unknown): void {
+		debug: (source: string, message: string, data?: unknown): void => { log('debug', source, message, data); },
+		info: (source: string, message: string, data?: unknown): void => { log('info', source, message, data); },
+		warn: (source: string, message: string, data?: unknown): void => { log('warn', source, message, data); },
+		error: (source: string, message: string, error?: unknown): void => {
 			logger.error(`[${source}] ${message}`);
 
 			if (error !== undefined) {
