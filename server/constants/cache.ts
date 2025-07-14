@@ -41,6 +41,7 @@ export const defaultCache: CacheOptions = twentyFourHoursCache;
 
 export const freshOneHourCache: CacheOptions = {
 	maxAge: ONE_HOUR_IN_SECONDS,
+
 	// No stale-while-revalidate - ensures freshness for sensitive data
 	swr: false,
 };
