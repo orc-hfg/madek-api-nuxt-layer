@@ -2,8 +2,10 @@ import { createLogger } from '../../shared/utils/logger';
 
 export default defineEventHandler((event) => {
 	const logger = createLogger(event);
-	const forwardedHost = event.node.req.headers['x-forwarded-host'];
-	const { host } = event.node.req.headers;
+
+	const { headers } = event.node.req;
+	const forwardedHost = headers['x-forwarded-host'];
+	const { host } = headers;
 
 	/*
 	 * When running behind a reverse proxy (like Nginx), external requests will include the x-forwarded-host header.
@@ -12,5 +14,6 @@ export default defineEventHandler((event) => {
 	 */
 	const isInternalCall = forwardedHost === undefined && host === 'localhost';
 
-	logger.info('Middleware: log-requests', 'Request URL:', isInternalCall ? `[Internal API Call] ${getRequestURL(event).href}` : getRequestURL(event).href);
+	const requestURL = getRequestURL(event);
+	logger.info('Middleware: log-requests', 'Request URL:', isInternalCall ? `[SSR request] ${requestURL.href}` : requestURL.href);
 });
