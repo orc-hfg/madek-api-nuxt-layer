@@ -6,12 +6,8 @@ interface UserRepository {
 }
 
 function createUserRepository($madekApi: ApiFunction): UserRepository {
-	const logger = createLogger();
-
 	return {
 		async getAuthInfo(): Promise<AuthInfo> {
-			logger.debug('Repository: user', 'Fetching auth info...');
-
 			return $madekApi('/auth-info');
 		},
 	};

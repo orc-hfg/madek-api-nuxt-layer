@@ -31,8 +31,6 @@ export function forwardCookieHeaders(
 		const headers = new Headers(context.options.headers);
 		headers.set('cookie', cookie);
 
-		logger.debug('Utility: request-helpers', 'Request context:', context);
-
 		context.options.headers = headers;
 
 		logger.info('Utility: request-helpers', 'Cookie header forwarded.');
