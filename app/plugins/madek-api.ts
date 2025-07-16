@@ -16,6 +16,7 @@ export default defineNuxtPlugin({
 			baseURL: `${config.app.baseURL}api`,
 
 			onRequest(context) {
+				logger.debug('Plugin: madek-api', 'Request context (custom fetch):', context);
 				forwardCookieHeaders(context, { logger });
 			},
 
