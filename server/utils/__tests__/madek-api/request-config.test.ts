@@ -1,26 +1,37 @@
 import { describe, expect, it } from 'vitest';
-import { buildRequestConfig, getAuthHeader } from '../../madek-api';
+import { buildRequestConfig, getAuthenticationHeaders } from '../../madek-api';
 import { mockEvent } from './api-test-helpers';
 
-describe('getAuthHeader()', () => {
-	it('returns undefined when token is undefined', () => {
-		const result = getAuthHeader();
+describe('getAuthenticationHeaders()', () => {
+	it('returns empty object when token is undefined in development mode', () => {
+		const result = getAuthenticationHeaders(mockEvent, undefined, true);
 
-		expect(result).toBeUndefined();
+		expect(result).toBeDefined();
+		expect(Object.keys(result)).toHaveLength(0);
+		expect(result).toStrictEqual({});
 	});
 
-	it('returns undefined when token is empty string', () => {
-		const result = getAuthHeader('');
+	it('returns empty object when token is empty string in development mode', () => {
+		const result = getAuthenticationHeaders(mockEvent, '', true);
 
-		expect(result).toBeUndefined();
+		expect(result).toBeDefined();
+		expect(Object.keys(result)).toHaveLength(0);
+		expect(result).toStrictEqual({});
 	});
 
-	it('returns correctly formatted auth header when token is provided', () => {
+	it('returns Authorization header when token is provided in development mode', () => {
 		const token = 'test-token-123';
-		const result = getAuthHeader(token);
+		const result = getAuthenticationHeaders(mockEvent, token, true);
 
 		expect(result).toBeDefined();
 		expect(result).toStrictEqual({ Authorization: `token ${token}` });
+	});
+
+	it('returns cookie header in production mode', () => {
+		const result = getAuthenticationHeaders(mockEvent, undefined, false);
+
+		expect(result).toBeDefined();
+		expect(result).toStrictEqual({ cookie: 'test-cookie=123' });
 	});
 });
 

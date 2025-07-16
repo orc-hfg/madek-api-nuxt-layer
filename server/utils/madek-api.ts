@@ -40,15 +40,30 @@ export function generateCacheKey(endpoint: string, query?: Record<string, string
 	return safeKey;
 }
 
-export function getAuthHeader(apiToken?: string): Record<string, string> | undefined {
-	if (apiToken === undefined || apiToken === '') {
-		return undefined;
+export function getAuthenticationHeaders(
+	event: H3Event,
+	apiToken?: string,
+	isDevelopment = import.meta.dev,
+): Record<string, string> {
+	const logger = createLogger();
+	const headers: Record<string, string> = {};
+
+	// For development: use API token if available
+	if (isDevelopment && apiToken !== undefined && apiToken !== '') {
+		logger.info('Utility: madekApi', 'Using API token for authentication.');
+		headers.Authorization = `token ${apiToken}`;
 	}
 
-	const logger = createLogger();
-	logger.info('Utility: madekApi', 'getAuthHeader called with API token.');
+	// For production: forward cookie from request if available
+	else if (!isDevelopment) {
+		const { cookie } = getRequestHeaders(event);
+		if (cookie !== undefined) {
+			logger.info('Utility: madekApi', 'Using cookie for authentication.');
+			headers.cookie = cookie;
+		}
+	}
 
-	return { Authorization: `token ${apiToken}` };
+	return headers;
 }
 
 export function buildRequestConfig(
@@ -64,31 +79,13 @@ export function buildRequestConfig(
 		config.query = query;
 	}
 
-	// Development environment: use API token for authentication
-	if (isDevelopment) {
-		if (isAuthenticationNeeded && apiToken !== undefined) {
-			config.headers = getAuthHeader(apiToken);
-
-			return config;
-		}
-
-		return config;
-	}
-
-	// Production environment: forward cookie for authentication
 	if (isAuthenticationNeeded) {
-		const { cookie } = getRequestHeaders(event);
-
-		if (cookie !== undefined) {
-			config.headers = {
-				cookie,
-			};
-
-			return config;
+		const authenticationHeaders = getAuthenticationHeaders(event, apiToken, isDevelopment);
+		if (Object.keys(authenticationHeaders).length > 0) {
+			config.headers = authenticationHeaders;
 		}
 	}
 
-	// Default case: no authentication
 	return config;
 }
 
