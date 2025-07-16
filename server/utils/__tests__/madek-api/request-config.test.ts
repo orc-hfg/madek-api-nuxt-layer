@@ -31,7 +31,7 @@ describe('getAuthenticationHeaders()', () => {
 		const result = getAuthenticationHeaders(mockEvent, undefined, false);
 
 		expect(result).toBeDefined();
-		expect(result).toStrictEqual({ cookie: 'test-cookie=123' });
+		expect(result).toStrictEqual({ cookie: 'test-cookie=value123' });
 	});
 });
 
@@ -90,7 +90,7 @@ describe('buildRequestConfig()', () => {
 			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: true }, token, false);
 
 			expect(result).toStrictEqual({
-				headers: { cookie: 'test-cookie=123' },
+				headers: { cookie: 'test-cookie=value123' },
 			});
 		});
 
@@ -107,7 +107,7 @@ describe('buildRequestConfig()', () => {
 			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: true, query }, token, false);
 
 			expect(result).toStrictEqual({
-				headers: { cookie: 'test-cookie=123' },
+				headers: { cookie: 'test-cookie=value123' },
 				query,
 			});
 		});

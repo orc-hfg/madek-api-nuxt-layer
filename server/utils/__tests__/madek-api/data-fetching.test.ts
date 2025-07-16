@@ -78,7 +78,7 @@ describe('fetchData()', () => {
 			);
 
 			const expectedConfig = {
-				headers: { cookie: 'test-cookie=123' },
+				headers: { cookie: 'test-cookie=value123' },
 				query: { param: 'value' },
 			};
 

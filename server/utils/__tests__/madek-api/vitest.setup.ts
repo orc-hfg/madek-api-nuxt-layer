@@ -1,6 +1,7 @@
 import type { RequestHeaders } from 'h3';
 import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { vi } from 'vitest';
+import { TEST_COOKIE } from '../../../../test/helpers/test-constants';
 
 interface RuntimeConfig {
 	public: {
@@ -28,7 +29,7 @@ function runtimeConfigMock(): RuntimeConfig {
 
 function getRequestHeadersMock(): RequestHeaders {
 	return {
-		cookie: 'test-cookie=123',
+		cookie: TEST_COOKIE,
 	};
 }
 

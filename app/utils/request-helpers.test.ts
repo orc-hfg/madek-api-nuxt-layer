@@ -1,11 +1,12 @@
 import type { FetchContext, FetchRequest } from 'ofetch';
 import { describe, expect, it, vi } from 'vitest';
 import { createMockLogger } from '../../test/helpers/logger-mocks';
+import { TEST_COOKIE } from '../../test/helpers/test-constants';
 import { forwardCookieHeaders } from './request-helpers';
 
 function setupTestContext({
 	initialHeaders = new Headers(),
-	cookies = 'test-cookie=value123',
+	cookie = TEST_COOKIE,
 	hasCookie = true,
 } = {}) {
 	const mockContext: FetchContext = {
@@ -22,13 +23,7 @@ function setupTestContext({
 
 		if (headers?.includes('cookie')) {
 			return {
-				cookie: cookies,
-			};
-		}
-
-		if (!headers) {
-			return {
-				cookie: cookies,
+				cookie,
 			};
 		}
 
@@ -41,7 +36,7 @@ function setupTestContext({
 		mockContext,
 		mockGetRequestHeaders,
 		mockLogger,
-		testCookie: cookies,
+		testCookie: cookie,
 	};
 }
 
