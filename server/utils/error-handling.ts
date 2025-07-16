@@ -27,9 +27,12 @@ export function handleServiceError(
 	serviceName: string,
 	message = 'Failed to complete operation',
 ): never {
+	logger.debug(serviceName, 'handleServiceError');
+	logger.debug(serviceName, 'handleServiceError type:', typeof error);
 	logger.error(serviceName, message, error);
 
 	if (error instanceof FetchError) {
+		logger.debug(serviceName, 'handleServiceError / instanceof');
 		throw convertFetchToH3Error(error);
 	}
 
