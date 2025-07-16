@@ -11,6 +11,11 @@ export function forwardCookieHeaders(
 	} = {},
 ): boolean {
 	const {
+		/*
+		 * See:
+		 * https://nuxt.com/docs/4.x/api/composables/use-request-headers
+		 * https://github.com/nuxt/nuxt/issues/27996#issuecomment-2211864930
+		 */
 		getRequestHeaders = useRequestHeaders,
 		isServerEnvironment = import.meta.server,
 		logger = createLogger(),
