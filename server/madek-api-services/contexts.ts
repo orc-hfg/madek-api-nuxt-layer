@@ -27,7 +27,7 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 		});
 	}
 	catch (error) {
-		return handleServiceError(error, logger, 'getContexts', 'Failed to fetch contexts.');
+		return handleServiceError(error, 'getContexts', logger, 'Failed to fetch contexts.');
 	}
 }
 
@@ -53,6 +53,6 @@ export async function getContextById(event: H3Event, id: string): Promise<Contex
 		};
 	}
 	catch (error) {
-		return handleServiceError(error, logger, 'getContextById', 'Failed to fetch context by ID.');
+		return handleServiceError(error, 'getContextById', logger, 'Failed to fetch context by ID.');
 	}
 }

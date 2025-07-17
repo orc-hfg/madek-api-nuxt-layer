@@ -28,6 +28,6 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 		};
 	}
 	catch (error) {
-		return handleServiceError(error, logger, 'getAuthInfo', 'Failed to fetch auth info.');
+		return handleServiceError(error, 'getAuthInfo', logger, 'Failed to fetch auth info.');
 	}
 }

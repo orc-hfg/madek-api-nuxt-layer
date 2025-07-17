@@ -33,6 +33,6 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: strin
 		};
 	}
 	catch (error) {
-		return handleServiceError(error, logger, 'getCollectionMetaDatum', 'Failed to fetch collection meta datum.');
+		return handleServiceError(error, 'getCollectionMetaDatum', logger, 'Failed to fetch collection meta datum.');
 	}
 }

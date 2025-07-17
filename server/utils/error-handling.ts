@@ -1,8 +1,8 @@
 import type { H3Error } from 'h3';
+import type { FetchError } from 'ofetch';
 import type { Logger } from '../../shared/utils/logger';
 import { createError } from 'h3';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
-import { FetchError } from 'ofetch';
 
 export function convertFetchToH3Error(error: FetchError): H3Error {
 	const statusCode = error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR;
@@ -23,22 +23,11 @@ export function convertFetchToH3Error(error: FetchError): H3Error {
 
 export function handleServiceError(
 	error: unknown,
-	logger: Logger,
 	serviceName: string,
+	logger: Logger,
 	message = 'Failed to complete operation',
 ): never {
-	logger.debug(serviceName, 'handleServiceError');
-	logger.debug(serviceName, 'Error type:', typeof error);
-	logger.debug(serviceName, 'Error constructor:', error?.constructor?.name);
-	logger.debug(serviceName, 'Is FetchError:', error instanceof FetchError);
-	logger.debug(serviceName, 'Error object:', error);
-
 	logger.error(serviceName, message, error);
-
-	if (error instanceof FetchError) {
-		logger.debug(serviceName, 'handleServiceError / instanceof');
-		throw convertFetchToH3Error(error);
-	}
 
 	throw error;
 }

@@ -1,6 +1,7 @@
 import type { H3Event } from 'h3';
 import type { MadekCollectionMetaDatumPathParameters } from '../../../../../types/collection-meta-datum';
 import { createError, getRouterParam } from 'h3';
+import { StatusCodes } from 'http-status-codes';
 import { getCollectionMetaDatum } from '../../../../../madek-api-services/collection-meta-datum';
 import { isValidRouteParameter } from '../../../../../utils/validation';
 
@@ -10,7 +11,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
 	if (!isValidRouteParameter(collectionId) || !isValidRouteParameter(metaKeyId)) {
 		throw createError({
-			statusCode: 400,
+			statusCode: StatusCodes.BAD_REQUEST,
 			statusMessage: 'Missing required URL parameters',
 		});
 	}

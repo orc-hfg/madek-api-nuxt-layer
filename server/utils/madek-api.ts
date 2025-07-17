@@ -105,10 +105,7 @@ export async function fetchData<T>(
 		return response as T;
 	}
 	catch (error) {
-		const logger = createLogger(event);
-		logger.debug('Utility: fetchData', 'Failed to fetch data from API.', error);
 		if (error instanceof FetchError) {
-			logger.debug('Utility: fetchData', 'Convert FetchError to H3Error.');
 			throw convertFetchToH3Error(error);
 		}
 

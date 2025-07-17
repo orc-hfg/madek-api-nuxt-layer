@@ -24,6 +24,6 @@ export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 		};
 	}
 	catch (error) {
-		return handleServiceError(error, logger, 'getAppSettings', 'Failed to fetch app settings.');
+		return handleServiceError(error, 'getAppSettings', logger, 'Failed to fetch app settings.');
 	}
 }

@@ -28,6 +28,6 @@ export async function getCollections(event: H3Event, query: CollectionsUserQuery
 		});
 	}
 	catch (error) {
-		return handleServiceError(error, logger, 'getCollections', 'Failed to fetch collections.');
+		return handleServiceError(error, 'getCollections', logger, 'Failed to fetch collections.');
 	}
 }
