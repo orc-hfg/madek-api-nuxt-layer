@@ -1,7 +1,7 @@
 import type { $Fetch } from 'nitropack';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { fetchData } from '../../madek-api';
-import { setupApiTestContext } from './api-test-helpers';
+import { fetchData } from '../../../server/utils/madek-api';
+import { setupApiTestContext } from '../helpers/madek-api';
 
 /**
  * TODO: @upgrade-node24

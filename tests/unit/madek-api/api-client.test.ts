@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { setupApiTestContext } from './api-test-helpers';
+import { setupApiTestContext } from '../helpers/madek-api';
 
 /**
  * TODO: @upgrade-node24

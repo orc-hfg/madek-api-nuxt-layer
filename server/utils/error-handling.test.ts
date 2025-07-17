@@ -1,7 +1,7 @@
 import type { Logger } from '../../shared/utils/logger';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMockLoggerWithSpies } from '../../tests/helpers/logger-mocks';
-import { catchH3Error, createFetchError } from './__tests__/helpers';
+import { createMockLoggerWithSpies } from '../../tests/mocks/logger';
+import { catchH3Error, createFetchError } from '../../tests/unit/helpers/error';
 import { convertFetchToH3Error, handleServiceError } from './error-handling';
 
 describe('convertFetchToH3Error()', () => {

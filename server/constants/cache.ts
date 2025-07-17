@@ -8,7 +8,7 @@ import {
 	ONE_DAY_IN_SECONDS,
 	ONE_HOUR_IN_SECONDS,
 	TWELVE_HOURS_IN_SECONDS,
-} from './time';
+} from '../../shared/constants/time';
 
 // Standard cache configurations
 export const noCache: CacheOptions = {
