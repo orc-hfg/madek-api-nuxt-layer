@@ -1,7 +1,7 @@
 import type { RequestHeaders } from 'h3';
 import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { vi } from 'vitest';
-import { TEST_COOKIE } from '../../../../test/helpers/test-constants';
+import { TEST_COOKIE } from '../../../../test/helpers/constants';
 
 interface RuntimeConfig {
 	public: {

@@ -1,7 +1,7 @@
 import type { FetchContext, FetchRequest } from 'ofetch';
 import { describe, expect, it, vi } from 'vitest';
+import { TEST_COOKIE } from '../../test/helpers/constants';
 import { createMockLogger } from '../../test/helpers/logger-mocks';
-import { TEST_COOKIE } from '../../test/helpers/test-constants';
 import { forwardCookieHeaders } from './request-helpers';
 
 function setupTestContext({
