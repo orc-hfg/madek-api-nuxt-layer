@@ -22,7 +22,7 @@
 		"test:watch": "vitest watch",
 		"check:eslint": "npx @eslint/config-inspector@latest",
 		"check:types": "nuxt typecheck",
-		"check:unused": "knip --include dependencies,duplicates,exports,types",
+		"check:unused": "NODE_NO_WARNINGS=1 knip --include dependencies,duplicates,exports,types",
 		"check:issues": "concurrently \"npm run lint\" \"npm run check:types\" \"npm run check:unused\" \"npm run test\"",
 		"check:node": "node ./scripts/check-node-version.mjs",
 		"check:updates": "npm-check-updates --interactive --format group",
