@@ -2,7 +2,7 @@ import type { H3Event } from 'h3';
 import type { MadekApiRequestConfig } from '../../madek-api';
 import { vi } from 'vitest';
 import * as loggerModule from '../../../../shared/utils/logger';
-import { createMockLoggerWithSpies } from '../../../../test/helpers/logger-mocks';
+import { createMockLoggerWithSpies } from '../../../../tests/helpers/logger-mocks';
 import { createMadekApiClient } from '../../madek-api';
 
 export const mockEvent = { headers: {} } as H3Event;

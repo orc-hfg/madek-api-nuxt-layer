@@ -1,6 +1,6 @@
 import type { Logger } from '../../shared/utils/logger';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMockLoggerWithSpies } from '../../test/helpers/logger-mocks';
+import { createMockLoggerWithSpies } from '../../tests/helpers/logger-mocks';
 import { catchH3Error, createFetchError } from './__tests__/helpers';
 import { convertFetchToH3Error, handleServiceError } from './error-handling';
 
