@@ -28,7 +28,11 @@ export function handleServiceError(
 	message = 'Failed to complete operation',
 ): never {
 	logger.debug(serviceName, 'handleServiceError');
-	logger.debug(serviceName, 'handleServiceError type:', typeof error);
+	logger.debug(serviceName, 'Error type:', typeof error);
+	logger.debug(serviceName, 'Error constructor:', error?.constructor?.name);
+	logger.debug(serviceName, 'Is FetchError:', error instanceof FetchError);
+	logger.debug(serviceName, 'Error object:', error);
+
 	logger.error(serviceName, message, error);
 
 	if (error instanceof FetchError) {
