@@ -1,31 +1,64 @@
-name: Publish package to GitHub Packages
+name: Publish Package to GitHub Packages
+
 on:
   release:
     types: [published]
+
 jobs:
-  build:
+  validate-and-publish:
+    name: Validate and Publish Package
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
+          cache: npm
           registry-url: 'https://npm.pkg.github.com'
+
       - name: Install dependencies
         run: npm ci
-      - name: Run build
-        run: npm run build
+
+      - name: Validate package version
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          RELEASE_TAG=${GITHUB_REF#refs/tags/}
+          echo "Package version: v$PACKAGE_VERSION"
+          echo "Release tag: $RELEASE_TAG"
+          if [ "v$PACKAGE_VERSION" != "$RELEASE_TAG" ]; then
+            echo " Package version v$PACKAGE_VERSION doesn't match release tag $RELEASE_TAG"
+            exit 1
+          fi
+          echo " Version validation passed"
+
+      - name: Prepare Nuxt environment
+        run: npm run dev:prepare
+
+      - name: Generate API types
+        run: npm run generate:api
+
       - name: Run linting
         run: npm run lint
+
       - name: Type check
         run: npm run check:types
+
       - name: Check for unused code and dependencies
         run: npm run check:unused
-      - name: Run tests
+
+      - name: Run unit tests
         run: npm run test
+
+      - name: Build playground
+        run: npm run build
+
       - name: Publish package
         run: npm publish
         env:
