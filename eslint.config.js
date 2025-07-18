@@ -404,7 +404,7 @@ export default withNuxt(
 			},
 		},
 		{
-			files: ['**/*.test.ts'],
+			files: ['**/*.test.ts', 'tests/**/*.setup.ts'],
 			rules: {
 				'test/consistent-test-filename': 'error',
 				'test/consistent-test-it': ['error', { fn: 'it' }],
