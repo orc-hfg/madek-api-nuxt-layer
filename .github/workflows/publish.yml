@@ -41,9 +41,6 @@ jobs:
       - name: Prepare Nuxt environment
         run: npm run dev:prepare
 
-      - name: Generate API types
-        run: npm run generate:api
-
       - name: Run linting
         run: npm run lint
 
