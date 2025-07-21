@@ -78,7 +78,7 @@ export default defineNuxtConfig({
 		},
 		public: {
 			// Enable detailed API debug logging
-			debugLogging: false,
+			enableDebugLogging: false,
 			version: composeVersion(),
 			madekApi: {
 				baseURL: '',
@@ -88,7 +88,7 @@ export default defineNuxtConfig({
 	$development: {
 		runtimeConfig: {
 			public: {
-				debugLogging: true,
+				enableDebugLogging: true,
 				madekApi: {
 					baseURL: 'https://dev.madek.hfg-karlsruhe.de/api-v2/',
 				},
