@@ -6,7 +6,7 @@ on:
 
 jobs:
   validate-and-publish:
-    name: Validate and Publish Package
+    name: Validate and Publish
     runs-on: ubuntu-latest
     permissions:
       contents: read
