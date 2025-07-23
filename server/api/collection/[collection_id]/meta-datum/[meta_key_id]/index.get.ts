@@ -1,9 +1,7 @@
 import type { H3Event } from 'h3';
 import type { MadekCollectionMetaDatumPathParameters } from '../../../../../types/collection-meta-datum';
-import { createError, getRouterParam } from 'h3';
 import { StatusCodes } from 'http-status-codes';
 import { getCollectionMetaDatum } from '../../../../../madek-api-services/collection-meta-datum';
-import { isValidRouteParameter } from '../../../../../utils/validation';
 
 export default defineEventHandler(async (event: H3Event) => {
 	const collectionId = getRouterParam(event, 'collection_id');

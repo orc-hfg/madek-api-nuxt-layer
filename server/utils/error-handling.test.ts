@@ -1,5 +1,3 @@
-import type { Logger } from '../../shared/utils/logger';
-import { createError } from 'h3';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMockLoggerWithSpies } from '../../tests/mocks/logger';

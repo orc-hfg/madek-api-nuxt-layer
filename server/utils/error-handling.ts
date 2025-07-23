@@ -1,7 +1,5 @@
 import type { H3Error } from 'h3';
 import type { FetchError } from 'ofetch';
-import type { Logger } from '../../shared/utils/logger';
-import { createError } from 'h3';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 
 export function convertFetchToH3Error(error: FetchError): H3Error {

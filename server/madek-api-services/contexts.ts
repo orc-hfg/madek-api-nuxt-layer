@@ -1,8 +1,6 @@
 import type { H3Event } from 'h3';
 import type { Context, Contexts, MadekContextsResponse } from '../types/contexts';
-import { createLogger } from '../../shared/utils/logger';
-import { defaultCache } from '../constants/cache';
-import { createMadekApiClient } from '../utils/madek-api';
+import { twentyFourHoursCache } from '../constants/cache';
 
 export async function getContexts(event: H3Event): Promise<Contexts> {
 	const config = useRuntimeConfig(event);
@@ -16,7 +14,7 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 			apiOptions: {
 				isAuthenticationNeeded: false,
 			},
-			publicDataCache: defaultCache,
+			publicDataCache: twentyFourHoursCache,
 		});
 
 		return response.map((item: MadekContextsResponse[number]) => {
@@ -44,7 +42,7 @@ export async function getContextById(event: H3Event, id: string): Promise<Contex
 			apiOptions: {
 				isAuthenticationNeeded: false,
 			},
-			publicDataCache: defaultCache,
+			publicDataCache: twentyFourHoursCache,
 		});
 
 		return {

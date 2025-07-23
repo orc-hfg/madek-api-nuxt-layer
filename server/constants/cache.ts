@@ -1,7 +1,3 @@
-/**
- * Cache configuration constants for API requests
- */
-
 import type { CacheOptions } from 'nitropack';
 import {
 	FIVE_MINUTES_IN_SECONDS,
@@ -37,8 +33,6 @@ export const twentyFourHoursCache: CacheOptions = {
 };
 
 // Specialized cache configurations
-export const defaultCache: CacheOptions = twentyFourHoursCache;
-
 export const freshOneHourCache: CacheOptions = {
 	maxAge: ONE_HOUR_IN_SECONDS,
 

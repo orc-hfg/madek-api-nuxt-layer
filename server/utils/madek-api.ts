@@ -2,7 +2,6 @@ import type { H3Event } from 'h3';
 import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
 import { getRequestHeaders } from 'h3';
 import { FetchError } from 'ofetch';
-import { createLogger } from '../../shared/utils/logger';
 import { noCache } from '../constants/cache';
 
 export interface MadekApiOptions {

@@ -1,8 +1,6 @@
 import type { H3Event } from 'h3';
 import type { Collections, CollectionsUserQuery, MadekCollectionsResponse } from '../types/collections';
-import { createLogger } from '../../shared/utils/logger';
 import { noCache } from '../constants/cache';
-import { createMadekApiClient } from '../utils/madek-api';
 
 export async function getCollections(event: H3Event, query: CollectionsUserQuery): Promise<Collections> {
 	const config = useRuntimeConfig(event);

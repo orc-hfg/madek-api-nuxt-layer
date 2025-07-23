@@ -1,8 +1,6 @@
 import type { H3Event } from 'h3';
 import type { MadekCollectionMetaDatumResponse, MetaDatumString } from '../types/collection-meta-datum';
-import { createLogger } from '../../shared/utils/logger';
 import { noCache } from '../constants/cache';
-import { createMadekApiClient } from '../utils/madek-api';
 
 export async function getCollectionMetaDatum(event: H3Event, collectionId: string, metaKeyId: string): Promise<MetaDatumString> {
 	const config = useRuntimeConfig(event);
