@@ -3,19 +3,15 @@
 	"entry": [
 		"app/stores/**/*.ts",
 		"server/api/*.ts",
-		"server/utils/*.ts"
+		"server/constants/*.ts",
+		"server/utils/*.ts",
+		"shared/constants/*.ts",
+		"shared/utils/*.ts"
 	],
 	"project": [
 		"app/**",
 		"server/**",
 		"shared/**"
-	],
-	"ignore": [
-		"app/composables/**",
-		"app/plugins/**",
-		"app/utils/**",
-		"shared/constants/**",
-		"server/constants/**"
 	],
 	"ignoreDependencies": [
 		"@nuxt/devtools",
