@@ -64,9 +64,6 @@ export default defineNuxtConfig({
 	runtimeConfig: {
 		// This will only take effect in development mode, useful for testing
 		delayResponse: false,
-		app: {
-			baseURL: '/',
-		},
 		madekApi: {
 
 			/*
@@ -77,7 +74,7 @@ export default defineNuxtConfig({
 			token: '',
 		},
 		public: {
-			// Enable detailed API debug logging
+			// Enable debug logging (logger)
 			enableDebugLogging: false,
 			version: composeVersion(),
 			madekApi: {
