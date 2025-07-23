@@ -1,4 +1,5 @@
 import { MILLISECONDS_IN_SECOND } from '../../shared/constants/time';
+import { createLogger } from '../../shared/utils/logger';
 
 async function sleep(milliseconds: number): Promise<void> {
 	return new Promise((resolve, _reject) => {
@@ -8,8 +9,11 @@ async function sleep(milliseconds: number): Promise<void> {
 
 export default defineEventHandler(async (event) => {
 	const config = useRuntimeConfig(event);
+	const isResponseDelayEnabled = Boolean(config.public.enableResponseDelay);
 
-	if (import.meta.dev && config.delayResponse) {
+	if (import.meta.dev && isResponseDelayEnabled) {
+		const logger = createLogger(event);
+		logger.info('Middleware: delay-response', `Delaying response by ${MILLISECONDS_IN_SECOND}ms`);
 		await sleep(MILLISECONDS_IN_SECOND);
 	}
 });

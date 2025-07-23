@@ -63,7 +63,7 @@ export default defineNuxtConfig({
 	 */
 	runtimeConfig: {
 		// This will only take effect in development mode, useful for testing
-		delayResponse: false,
+		enableResponseDelay: false,
 		madekApi: {
 
 			/*
