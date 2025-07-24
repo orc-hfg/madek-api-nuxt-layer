@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import { execSync, readFileSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import process, { exit } from 'node:process';
 
 const RELEASE_TYPES = new Set(['patch', 'minor', 'major']);
