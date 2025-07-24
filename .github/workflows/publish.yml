@@ -5,58 +5,60 @@ on:
     types: [published]
 
 jobs:
-  validate-and-publish:
-    name: Validate and Publish
+  publish:
+    name: 📦 Validate & Publish
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 🟢 Setup Node.js + npm cache
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: npm
-          registry-url: 'https://npm.pkg.github.com'
+          cache-dependency-path: package-lock.json
+          registry-url: https://npm.pkg.github.com
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: Validate package version
+      - name: 🔖 Validate package version vs. release tag
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           RELEASE_TAG=${GITHUB_REF#refs/tags/}
           echo "Package version: v$PACKAGE_VERSION"
-          echo "Release tag: $RELEASE_TAG"
+          echo "Release tag:     $RELEASE_TAG"
           if [ "v$PACKAGE_VERSION" != "$RELEASE_TAG" ]; then
-            echo " Package version v$PACKAGE_VERSION doesn't match release tag $RELEASE_TAG"
+            echo "::error::Package version and git tag differ!"
             exit 1
           fi
-          echo " Version validation passed"
+          echo "Version validation passed ✅"
 
-      - name: Prepare Nuxt environment
+      - name: 🏗️ Prepare Nuxt (dev:prepare)
         run: npm run dev:prepare
 
-      - name: Run linting
+      - name: ✨ Run ESLint
         run: npm run lint
 
-      - name: Type check
+      - name: 🔎 Type-check
         run: npm run check:types
 
-      - name: Check for unused code and dependencies
+      - name: 🧹 Check unused code / deps
         run: npm run check:unused
 
-      - name: Run unit tests
+      - name: 🧪 Unit tests
         run: npm run test
 
-      - name: Build playground
+      - name: 🏗️ Build playground
         run: npm run build
 
-      - name: Publish package
-        run: npm publish
+      - name: 🚀 Publish package to GitHub Packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm publish --access public
