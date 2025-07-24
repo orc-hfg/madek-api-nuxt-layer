@@ -41,7 +41,7 @@ jobs:
             echo "::error::Package version and git tag differ!"
             exit 1
           fi
-          echo "Version validation passed "
+          echo "Version validation passed"
 
       - name: Run linting
         run: npm run lint
@@ -63,4 +63,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm publish --access public
-          echo " Package published successfully to GitHub Packages"
+          echo "Package published successfully to GitHub Packages"
