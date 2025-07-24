@@ -1,4 +1,4 @@
-name: Auto-Create GitHub Release
+name: Release & Publish Package
 
 on:
   push:
@@ -6,18 +6,27 @@ on:
       - 'v*'
 
 jobs:
-  create-release:
-    name: Create GitHub Release
+  release-and-publish:
+    name: Create Release & Publish Package
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
+      packages: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup Node.js + npm cache
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+          registry-url: https://npm.pkg.github.com
 
       - name: Get tag info
         id: tag_info
@@ -35,6 +44,39 @@ jobs:
             echo "release_title=$TAG_NAME" >> $GITHUB_OUTPUT
             echo "release_body=🎉 **Stable Release** - This release has been tested and is ready for production use." >> $GITHUB_OUTPUT
           fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare Nuxt environment
+        run: npm run dev:prepare
+
+      - name: Validate package version vs. release tag
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          RELEASE_TAG=${GITHUB_REF#refs/tags/}
+          echo "Package version: v$PACKAGE_VERSION"
+          echo "Release tag:     $RELEASE_TAG"
+          if [ "v$PACKAGE_VERSION" != "$RELEASE_TAG" ]; then
+            echo "::error::Package version and git tag differ!"
+            exit 1
+          fi
+          echo "Version validation passed"
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Type check
+        run: npm run check:types
+
+      - name: Check for unused code & dependencies
+        run: npm run check:unused
+
+      - name: Run unit tests
+        run: npm run test
+
+      - name: Build application
+        run: npm run build
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -60,3 +102,11 @@ jobs:
           draft: false
           prerelease: ${{ steps.tag_info.outputs.is_prerelease == 'true' }}
           generate_release_notes: true
+          make_latest: ${{ steps.tag_info.outputs.is_prerelease == 'false' }}
+
+      - name: Publish package to GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm publish --access public
+          echo "Package published successfully to GitHub Packages"
