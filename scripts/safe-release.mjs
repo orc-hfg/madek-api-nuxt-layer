@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execSync } from 'node:child_process';
-import { exit, process } from 'node:process';
+import process, { exit } from 'node:process';
 
 const RELEASE_TYPES = new Set(['patch', 'minor', 'major']);
 
@@ -22,21 +22,27 @@ function validateArguments() {
 }
 
 /**
- * Ensures we're on the main branch
+ * Ensures we're on the correct branch for the release type
  */
-function checkCurrentBranch(isDevelopmentRelease) {
+function checkCurrentBranch(isDevelopmentRelease = false) {
 	// Note: Using git command is safe in this development script context
 	// eslint-disable-next-line sonarjs/no-os-command-from-path
 	const currentBranch = execSync('git branch --show-current', { encoding: 'utf8' }).trim();
 
-	if (currentBranch !== 'main' && !isDevelopmentRelease) {
-		console.error(`❌ Error: Releases must be created from main branch.`);
+	if (!isDevelopmentRelease && currentBranch !== 'main') {
+		console.error(`❌ Error: Production releases must be created from main branch.`);
 		console.error(`   Current branch: ${currentBranch}`);
 		console.error(`   Please switch to main: git checkout main`);
+		console.error(`   Or use --development flag for development releases`);
 		exit(1);
 	}
 
-	console.log('✅ Branch check passed: on main branch');
+	if (isDevelopmentRelease && currentBranch !== 'main') {
+		console.log(`✅ Branch check passed: creating development release from ${currentBranch}`);
+	}
+	else {
+		console.log('✅ Branch check passed: on main branch');
+	}
 }
 
 /**
