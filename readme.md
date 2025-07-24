@@ -127,15 +127,16 @@ Jedes Release-Skript führt folgende Schritte automatisch aus:
 Nach der Ausführung eines Release-Skripts passiert folgendes automatisch:
 
 1. **Git-Tag wird gepusht**: Das Release-Skript erstellt und pusht den Git-Tag
-2. **GitHub Actions startet**: Der `auto-release.yml` Workflow wird durch den Tag-Push ausgelöst
-3. **Release wird erstellt**: GitHub Release wird automatisch mit korrekten Einstellungen erstellt:
+2. **GitHub Actions startet**: Der `release-and-publish.yml` Workflow wird durch den Tag-Push ausgelöst
+3. **Tests laufen**: Linting, Type-Checking, Unit-Tests und Build werden ausgeführt
+4. **Release wird erstellt**: GitHub Release wird automatisch mit korrekten Einstellungen erstellt:
    - **Production Releases**: Werden als "Latest release" markiert
    - **Development Releases**: Werden automatisch als "Pre-release" markiert
-4. **Package Publishing**: Der bestehende `publish.yml` Workflow publiziert das Package auf GitHub Packages
+5. **Package Publishing**: Das Package wird direkt im selben Workflow zu GitHub Packages publiziert
 
 **Keine manuellen Schritte mehr erforderlich!**
 
-Die CI/CD-Pipeline (GitHub Actions) übernimmt die komplette Release-Erstellung und Package-Publishing automatisch.
+Die CI/CD-Pipeline (GitHub Actions) übernimmt die komplette Release-Erstellung und Package-Publishing automatisch in einem einzigen, atomaren Workflow.
 
 ## Dependency Updates
 
