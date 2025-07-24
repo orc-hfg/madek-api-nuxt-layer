@@ -28,12 +28,12 @@
 		"check:updates": "npm-check-updates --interactive --format group",
 		"generate:api": "openapi-typescript ./resources/openapi.json --output ./generated/api/madek-api.d.ts --immutable --export-type --alphabetize --additional-properties",
 		"upgrade": "nuxt upgrade",
-		"release:patch": "node ./scripts/safe-release.mjs patch",
-		"release:minor": "node ./scripts/safe-release.mjs minor",
-		"release:major": "node ./scripts/safe-release.mjs major",
-		"release:dev:patch": "node ./scripts/safe-release.mjs patch --development",
-		"release:dev:minor": "node ./scripts/safe-release.mjs minor --development",
-		"release:dev:major": "node ./scripts/safe-release.mjs major --development",
+		"release:patch": "node ./scripts/safe-package-release.mjs patch",
+		"release:minor": "node ./scripts/safe-package-release.mjs minor",
+		"release:major": "node ./scripts/safe-package-release.mjs major",
+		"release:dev:patch": "node ./scripts/safe-package-release.mjs patch --development",
+		"release:dev:minor": "node ./scripts/safe-package-release.mjs minor --development",
+		"release:dev:major": "node ./scripts/safe-package-release.mjs major --development",
 		"prepare": "husky && nuxt prepare && npm run generate:api"
 	},
 	"peerDependencies": {
