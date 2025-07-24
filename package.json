@@ -28,9 +28,12 @@
 		"check:updates": "npm-check-updates --interactive --format group",
 		"generate:api": "openapi-typescript ./resources/openapi.json --output ./generated/api/madek-api.d.ts --immutable --export-type --alphabetize --additional-properties",
 		"upgrade": "nuxt upgrade",
-		"release:patch": "npm version patch -m \"chore: release v%s\" && git push --follow-tags && echo \"✅ Release created and pushed! Next: Create GitHub release manually → Package will be published automatically.\"",
-		"release:minor": "npm version minor -m \"chore: release v%s\" && git push --follow-tags && echo \"✅ Release created and pushed! Next: Create GitHub release manually → Package will be published automatically.\"",
-		"release:major": "npm version major -m \"chore: release v%s\" && git push --follow-tags && echo \"✅ Release created and pushed! Next: Create GitHub release manually → Package will be published automatically.\"",
+		"release:patch": "node ./scripts/safe-release.mjs patch",
+		"release:minor": "node ./scripts/safe-release.mjs minor",
+		"release:major": "node ./scripts/safe-release.mjs major",
+		"release:dev:patch": "node ./scripts/safe-release.mjs patch --development",
+		"release:dev:minor": "node ./scripts/safe-release.mjs minor --development",
+		"release:dev:major": "node ./scripts/safe-release.mjs major --development",
 		"prepare": "husky && nuxt prepare && npm run generate:api"
 	},
 	"peerDependencies": {

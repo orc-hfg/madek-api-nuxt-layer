@@ -64,11 +64,20 @@ Wenn sich die OpenAPI-Spezifikation ändert, können die Typen neu generiert wer
 
 ## Release Management
 
-Das Projekt verwendet semantische Versionierung und bietet Skripte für die automatisierte Erstellung von Releases.
+Das Projekt verwendet semantische Versionierung und bietet Skripte für die automatisierte Erstellung von Production- und Development-Releases.
 
-### Release-Skripte
+### Sicherheitschecks
 
-Für die Erstellung von Releases stehen drei Skripte zur Verfügung:
+Alle Release-Skripte verwenden das `safe-release.mjs` Skript, das folgende Sicherheitschecks durchführt:
+
+- **Branch-Überprüfung**: Production Releases nur von main Branch
+- **Working Directory Check**: Keine uncommitted Änderungen erlaubt
+- **Git Pull**: Automatisches Holen der neuesten Änderungen
+- **Fehlerbehandlung**: Automatischer Abbruch bei Problemen
+
+### Production Releases (nur von main Branch)
+
+Für die Erstellung von Production-Releases stehen drei Skripte zur Verfügung:
 
 ```bash
 # Patch-Release (z.B. 1.0.0 → 1.0.1)
@@ -80,6 +89,27 @@ npm run release:minor
 # Major-Release (z.B. 1.0.0 → 2.0.0)
 npm run release:major
 ```
+
+### Development Releases (von jedem Branch)
+
+Für die Entwicklung und das Testen von Features können Development-Releases von jedem Branch erstellt werden:
+
+```bash
+# Development Patch-Release (z.B. 1.0.0 → 1.0.1-feature-xyz-2025-01-24T14-35-00.0)
+npm run release:dev:patch
+
+# Development Minor-Release (z.B. 1.0.0 → 1.1.0-feature-xyz-2025-01-24T14-35-00.0)
+npm run release:dev:minor
+
+# Development Major-Release (z.B. 1.0.0 → 2.0.0-feature-xyz-2025-01-24T14-35-00.0)
+npm run release:dev:major
+```
+
+**Verwendung von Development-Releases:**
+- Ermöglicht schnelle Iteration während der Feature-Entwicklung
+- Kann direkt in der Haupt-App getestet werden, ohne in main zu mergen
+- Versionen enthalten Branch-Name und Timestamp für eindeutige Identifikation
+- Werden als pre-release markiert
 
 ### Was passiert bei einem Release?
 
@@ -94,16 +124,33 @@ Jedes Release-Skript führt folgende Schritte automatisch aus:
 
 Nach der Ausführung eines Release-Skripts sind noch folgende manuelle Schritte erforderlich:
 
+**Für Production Releases:**
+
 1. **Releases-Seite öffnen**
-   Gehe im Repository in den Abschnitt **„Releases“**.
+   Gehe im Repository in den Abschnitt **„Releases"**.
 2. **Neues Release erstellen**
-   Klicke auf **„Draft a new release“**
+   Klicke auf **„Draft a new release"**
 3. **Tag auswählen**
    Wähle den eben erstellten Tag (z.B. `1.1.0`) aus der Dropdown-Liste aus.
 4. **Release Details**
    Gib einen Titel (z.B. `1.1.0`) ein und ergänze bei Bedarf Release Notes.
 5. **Veröffentlichen**
-   Klicke auf **„Publish release”**.
+   Klicke auf **„Publish release"**.
+
+**Für Development Releases:**
+
+1. **Releases-Seite öffnen**
+   Gehe im Repository in den Abschnitt **„Releases"**.
+2. **Neues Release erstellen**
+   Klicke auf **„Draft a new release"**
+3. **Tag auswählen**
+   Wähle den eben erstellten Development-Tag (z.B. `1.1.0-feature-xyz-2025-01-24T14-35-00`) aus.
+4. **Pre-release markieren**
+   **Wichtig:** Aktiviere die Checkbox **„Set as a pre-release"**
+5. **Release Details**
+   Gib einen beschreibenden Titel ein (z.B. `1.1.0-feature-xyz (Development Release)`) und ergänze Informationen zum getesteten Feature.
+6. **Veröffentlichen**
+   Klicke auf **„Publish release"**.
 
 Die CI/CD-Pipeline (GitHub Actions) reagiert auf das Erstellen eines neuen Releases und stellt es auf GitHub Packages zur Verwendung in der Haupt-App bereit.
 
