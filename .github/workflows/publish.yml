@@ -6,7 +6,7 @@ on:
 
 jobs:
   publish:
-    name: 📦 Validate & Publish
+    name: Validate & Publish
     runs-on: ubuntu-latest
 
     permissions:
@@ -14,10 +14,10 @@ jobs:
       packages: write
 
     steps:
-      - name: 📥 Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🟢 Setup Node.js + npm cache
+      - name: Setup Node.js + npm cache
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -25,10 +25,10 @@ jobs:
           cache-dependency-path: package-lock.json
           registry-url: https://npm.pkg.github.com
 
-      - name: 📦 Install dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: 🔖 Validate package version vs. release tag
+      - name: Validate package version vs. release tag
         run: |
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           RELEASE_TAG=${GITHUB_REF#refs/tags/}
@@ -40,25 +40,24 @@ jobs:
           fi
           echo "Version validation passed ✅"
 
-      - name: 🏗️ Prepare Nuxt (dev:prepare)
-        run: npm run dev:prepare
-
-      - name: ✨ Run ESLint
+      - name: Run linting
         run: npm run lint
 
-      - name: 🔎 Type-check
+      - name: Type check
         run: npm run check:types
 
-      - name: 🧹 Check unused code / deps
+      - name: Check for unused code & dependencies
         run: npm run check:unused
 
-      - name: 🧪 Unit tests
+      - name: Run unit tests
         run: npm run test
 
-      - name: 🏗️ Build playground
+      - name: Build application
         run: npm run build
 
-      - name: 🚀 Publish package to GitHub Packages
+      - name: Publish package to GitHub Packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish --access public
+        run: |
+          npm publish --access public
+          echo "✅ Package published successfully to GitHub Packages"
