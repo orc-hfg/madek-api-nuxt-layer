@@ -96,15 +96,10 @@ function createRelease(releaseType, isDevelopmentRelease) {
 		console.log(`📝 Bumping ${releaseTypeLabel} version...`);
 
 		if (isDevelopmentRelease) {
-			// For development releases, create a pre-release version with branch name
-			// Note: Using git command is safe in this development script context
-			// eslint-disable-next-line sonarjs/no-os-command-from-path
-			const currentBranch = execSync('git branch --show-current', { encoding: 'utf8' }).trim();
-			const branchName = currentBranch.replaceAll(/[^a-z0-9]/gi, '-'); // Sanitize branch name
-
+			// For development releases, create a pre-release version with 'dev' prefix
 			// Note: Using npm command is safe in this development script context
 			// eslint-disable-next-line sonarjs/os-command
-			execSync(`npm version pre${releaseType} --preid=${branchName} -m "chore: development release %s"`, { stdio: 'inherit' });
+			execSync(`npm version pre${releaseType} --preid=dev -m "chore: development release %s"`, { stdio: 'inherit' });
 		}
 		else {
 			// Note: Using npm command is safe in this development script context
