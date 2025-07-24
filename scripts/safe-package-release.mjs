@@ -101,11 +101,10 @@ function createRelease(releaseType, isDevelopmentRelease) {
 			// eslint-disable-next-line sonarjs/no-os-command-from-path
 			const currentBranch = execSync('git branch --show-current', { encoding: 'utf8' }).trim();
 			const branchName = currentBranch.replaceAll(/[^a-z0-9]/gi, '-'); // Sanitize branch name
-			const timestamp = new Date().toISOString().replaceAll(/[:.]/g, '-').slice(0, 19); // YYYY-MM-DDTHH-MM-SS
 
 			// Note: Using npm command is safe in this development script context
 			// eslint-disable-next-line sonarjs/os-command
-			execSync(`npm version pre${releaseType} --preid=${branchName}-${timestamp} -m "chore: development release %s"`, { stdio: 'inherit' });
+			execSync(`npm version pre${releaseType} --preid=${branchName} -m "chore: development release %s"`, { stdio: 'inherit' });
 		}
 		else {
 			// Note: Using npm command is safe in this development script context
