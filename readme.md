@@ -8,7 +8,7 @@
 
 ## Lokale Entwicklung des madek-api-nuxt-layer und Integration in ein Hauptprojekt
 
-Damit neue oder geänderte Funktionen dieses Layers lokal in einer Nuxt-App (z.B. dem „Uploader“) getestet werden können, ohne für jede Änderung ein neues Release zu erstellen, empfiehlt sich das Vorgehen mit `npm link` (https://docs.npmjs.com/cli/v9/commands/npm-link).
+Damit neue oder geänderte Funktionen dieses Layers lokal in einer Nuxt-App (z.B. dem „Uploader“) getestet werden können, ohne für jede Änderung ein neues Release zu erstellen, kann `npm link` (https://docs.npmjs.com/cli/v9/commands/npm-link) verwendet werden.
 
 ### Voraussetzungen:
 
@@ -37,7 +37,7 @@ Damit wird das Paket global per Symlink registriert, so dass es in anderen Proje
 
 Dadurch wird das lokale Layer-Projekt anstelle der in der package.json angegebenen (veröffentlichten) Version genutzt.
 
-**Hinweis:** Im Hauptprojekt gibt es NPM-Skripte, die das Linking/Unlinking automatisieren.
+**Hinweis:** Im Hauptprojekt gibt es NPM-Skripte, die das Linking/Unlinking automatisieren (`npm run madek-api-nuxt-layer:link` und `npm run madek-api-nuxt-layer:unlink`).
 
 ### 3. Lokale Weiterentwicklung
 
@@ -51,39 +51,48 @@ Dadurch wird das lokale Layer-Projekt anstelle der in der package.json angegeben
 
 Wenn wieder die offizielle (z.B. auf npm oder Git referenzierte) Version verwenden werden soll:
 
-- siehe `readme` im Hauptprojekt (es steht ein Skript in der `package.json` des Hauptprojekts bereit)
-- optional kann zusätzlich der globale Link für das Layer-Projekt entfernt werden: `npm unlink` im Layer-Projekt ausführen
+- im Hauptprojekt das Skript `npm run madek-api-nuxt-layer:unlink` ausführen
+- oder `npm install` im Hauptprojekt ausführen, dabei wird der Link automatisch aufgelöst
 
 ## API-Typen-Generierung
 
 Die API-Typen in `generated/api` werden aus der OpenAPI-Spezifikation in `resources/openapi.json` generiert. Diese Dateien werden im Repository versioniert, um Konsistenz im Team zu gewährleisten.
 
-Bitte beachten: Unser Ziel ist es, dass wir uns an den Nuxt-Konventionen orientieren, also z.B. im Kern `$fetch` statt natives `fetch` für Server Requests verwenden.
-
 ### API-Typen aktualisieren
 
 Wenn sich die OpenAPI-Spezifikation ändert, können die Typen neu generiert werden: `npm run generate:api`
 
-## Neue Version erstellen und veröffentlichen
+## Release Management
 
-Um schnell neue Versionen zu veröffentlichen, stehen in der `package.json` drei Skripte zur Verfügung:
+Das Projekt verwendet semantische Versionierung und bietet Skripte für die automatisierte Erstellung von Releases.
 
-1. **Patch-Release** (z.B. `1.0.2` → `1.0.3`): `npm run release:patch`
-2. **Minor-Release** (z.B. `1.0.2` → `1.1.0`): `npm run release:minor`
-3. **Major-Release** (z.B. `1.0.2` → `2.0.0`): `npm run release:major`
+### Release-Skripte
 
-### Was passiert dabei?
+Für die Erstellung von Releases stehen drei Skripte zur Verfügung:
 
-1. **Versionsnummer aktualisieren**
-   Je nachdem, welches Skript aufgerufen wird, passt `npm version` den entsprechenden Teil der Versionsnummer an (Patch, Minor oder Major).
-   Gleichzeitig erzeugt es einen neuen Commit und erstellt einen Git-Tag (z.B. `1.0.3`).
+```bash
+# Patch-Release (z.B. 1.0.0 → 1.0.1)
+npm run release:patch
 
-2. **Automatisches Pushen**
-   Danach wird sowohl der neue Commit als auch der Tag direkt ins GitHub-Repository gepusht (via `git push --follow-tags`).
+# Minor-Release (z.B. 1.0.0 → 1.1.0)
+npm run release:minor
+
+# Major-Release (z.B. 1.0.0 → 2.0.0)
+npm run release:major
+```
+
+### Was passiert bei einem Release?
+
+Jedes Release-Skript führt folgende Schritte automatisch aus:
+
+1. **Version erhöhen**: Die Versionsnummer in `package.json` wird entsprechend erhöht
+2. **Git-Commit**: Ein Commit mit der Nachricht `chore: release vX.X.X` wird erstellt
+3. **Git-Tag**: Ein entsprechender Git-Tag wird erstellt
+4. **Push**: Sowohl Commit als auch Tag werden zum Repository gepusht
 
 ### GitHub-Release anlegen
 
-Nach dem erfolgreichen Push des Tags kann du auf GitHub ein neues Release erstellt werden:
+Nach der Ausführung eines Release-Skripts sind noch folgende manuelle Schritte erforderlich:
 
 1. **Releases-Seite öffnen**
    Gehe im Repository in den Abschnitt **„Releases“**.
@@ -94,7 +103,7 @@ Nach dem erfolgreichen Push des Tags kann du auf GitHub ein neues Release erstel
 4. **Release Details**
    Gib einen Titel (z.B. `1.1.0`) ein und ergänze bei Bedarf Release Notes.
 5. **Veröffentlichen**
-   Klicke auf **„Publish release“**.
+   Klicke auf **„Publish release”**.
 
 Die CI/CD-Pipeline (GitHub Actions) reagiert auf das Erstellen eines neuen Releases und stellt es auf GitHub Packages zur Verwendung in der Haupt-App bereit.
 
