@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { execSync } from 'node:child_process';
+import { execSync, readFileSync } from 'node:child_process';
 import process, { exit } from 'node:process';
 
 const RELEASE_TYPES = new Set(['patch', 'minor', 'major']);
@@ -96,10 +96,22 @@ function createRelease(releaseType, isDevelopmentRelease) {
 		console.log(`📝 Bumping ${releaseTypeLabel} version...`);
 
 		if (isDevelopmentRelease) {
-			// For development releases, create a pre-release version with 'dev' prefix
-			// Note: Using npm command is safe in this development script context
-			// eslint-disable-next-line sonarjs/os-command
-			execSync(`npm version pre${releaseType} --preid=dev -m "chore: development release %s"`, { stdio: 'inherit' });
+			// For development releases, check if we're already in a pre-release state
+			const currentVersion = JSON.parse(readFileSync('./package.json', 'utf8')).version;
+			const isAlreadyPrerelease = currentVersion.includes('-dev.');
+
+			if (isAlreadyPrerelease) {
+				// If already a pre-release, just increment the pre-release counter
+				// Note: Using npm command is safe in this development script context
+
+				execSync(`npm version prerelease --preid=dev -m "chore: development release %s"`, { stdio: 'inherit' });
+			}
+			else {
+				// If not a pre-release, create new pre-release with specified release type
+				// Note: Using npm command is safe in this development script context
+				// eslint-disable-next-line sonarjs/os-command
+				execSync(`npm version pre${releaseType} --preid=dev -m "chore: development release %s"`, { stdio: 'inherit' });
+			}
 		}
 		else {
 			// Note: Using npm command is safe in this development script context
