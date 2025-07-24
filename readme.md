@@ -122,37 +122,20 @@ Jedes Release-Skript führt folgende Schritte automatisch aus:
 
 ### GitHub-Release anlegen
 
-Nach der Ausführung eines Release-Skripts sind noch folgende manuelle Schritte erforderlich:
+**GitHub Releases werden automatisch erstellt!**
 
-**Für Production Releases:**
+Nach der Ausführung eines Release-Skripts passiert folgendes automatisch:
 
-1. **Releases-Seite öffnen**
-   Gehe im Repository in den Abschnitt **„Releases"**.
-2. **Neues Release erstellen**
-   Klicke auf **„Draft a new release"**
-3. **Tag auswählen**
-   Wähle den eben erstellten Tag (z.B. `1.1.0`) aus der Dropdown-Liste aus.
-4. **Release Details**
-   Gib einen Titel (z.B. `1.1.0`) ein und ergänze bei Bedarf Release Notes.
-5. **Veröffentlichen**
-   Klicke auf **„Publish release"**.
+1. **Git-Tag wird gepusht**: Das Release-Skript erstellt und pusht den Git-Tag
+2. **GitHub Actions startet**: Der `auto-release.yml` Workflow wird durch den Tag-Push ausgelöst
+3. **Release wird erstellt**: GitHub Release wird automatisch mit korrekten Einstellungen erstellt:
+   - **Production Releases**: Werden als "Latest release" markiert
+   - **Development Releases**: Werden automatisch als "Pre-release" markiert
+4. **Package Publishing**: Der bestehende `publish.yml` Workflow publiziert das Package auf GitHub Packages
 
-**Für Development Releases:**
+**Keine manuellen Schritte mehr erforderlich!**
 
-1. **Releases-Seite öffnen**
-   Gehe im Repository in den Abschnitt **„Releases"**.
-2. **Neues Release erstellen**
-   Klicke auf **„Draft a new release"**
-3. **Tag auswählen**
-   Wähle den eben erstellten Development-Tag (z.B. `1.1.0-feature-xyz-2025-01-24T14-35-00`) aus.
-4. **Pre-release markieren**
-   **Wichtig:** Aktiviere die Checkbox **„Set as a pre-release"**
-5. **Release Details**
-   Gib einen beschreibenden Titel ein (z.B. `1.1.0-feature-xyz (Development Release)`) und ergänze Informationen zum getesteten Feature.
-6. **Veröffentlichen**
-   Klicke auf **„Publish release"**.
-
-Die CI/CD-Pipeline (GitHub Actions) reagiert auf das Erstellen eines neuen Releases und stellt es auf GitHub Packages zur Verwendung in der Haupt-App bereit.
+Die CI/CD-Pipeline (GitHub Actions) übernimmt die komplette Release-Erstellung und Package-Publishing automatisch.
 
 ## Dependency Updates
 

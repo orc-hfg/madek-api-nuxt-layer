@@ -120,14 +120,15 @@ function createRelease(releaseType, isDevelopmentRelease) {
 		console.log(`🎉 ${releaseTypeLabel} release created and pushed successfully!`);
 		console.log('');
 		console.log('📋 Next steps:');
+		console.log('   ✅ Git tag has been pushed to remote');
+		console.log('   ⏳ GitHub Actions will automatically create the GitHub release');
+		console.log('   📦 Package will be published automatically to GitHub Packages');
 		if (isDevelopmentRelease) {
-			console.log('   1. Create GitHub pre-release manually (mark as pre-release)');
-			console.log('   -> Development package will be published automatically via GitHub Actions');
-			console.log('   -> Use this version for testing in your main app');
+			console.log('   🚧 Release will be marked as pre-release automatically');
+			console.log('   🧪 Use this version for testing in your main app');
 		}
 		else {
-			console.log('   1. Create GitHub release manually');
-			console.log('   -> Package will be published automatically via GitHub Actions');
+			console.log('   🎯 Release will be marked as stable/latest');
 		}
 	}
 	catch {
