@@ -103,8 +103,6 @@ function createRelease(releaseType, isDevelopmentRelease) {
 
 			if (isAlreadyPrerelease) {
 				// If already a pre-release, just increment the pre-release counter
-				// Note: Using npm command is safe in this development script context
-
 				execSync(`npm version prerelease --preid=dev -m "chore: development release %s"`, { stdio: 'inherit' });
 			}
 			else {
