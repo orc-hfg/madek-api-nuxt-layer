@@ -119,7 +119,7 @@ jobs:
           fi
 
           # Get contributors for this release with enhanced error handling
-          if ! CONTRIBUTORS=$(git log ${LAST_TAG}..HEAD --format='%an' 2>/dev/null | sort -u | tr '\n' ', ' | sed 's/, $//'); then
+          if ! CONTRIBUTORS=$(git log ${LAST_TAG}..HEAD --format='%an' 2>/dev/null | sort -u | paste -sd ', ' -); then
             echo "Warning: Could not determine contributors for this release"
             CONTRIBUTORS="Unable to determine"
           fi
