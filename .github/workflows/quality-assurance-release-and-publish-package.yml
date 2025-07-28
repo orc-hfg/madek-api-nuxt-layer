@@ -1,4 +1,4 @@
-name: Release & Publish Package
+name: Quality Assurance, Release & Publish Package
 
 on:
   push:
