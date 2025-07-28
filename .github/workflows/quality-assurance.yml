@@ -3,6 +3,8 @@ name: Quality Assurance
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - package.json # Ignore release commits that only bump version
   pull_request:
     branches: [main]
 
