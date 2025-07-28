@@ -1,12 +1,11 @@
 import type { H3Event } from 'h3';
 import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
-import { createError } from 'h3';
-import { getReasonPhrase, StatusCodes } from 'http-status-codes';
+import { getRequestHeaders } from 'h3';
 import { FetchError } from 'ofetch';
 import { noCache } from '../constants/cache';
 
 export interface MadekApiOptions {
-	needsAuth?: boolean;
+	isAuthenticationNeeded?: boolean;
 	query?: NitroFetchOptions<NitroFetchRequest>['query'];
 }
 
@@ -40,50 +39,75 @@ export function generateCacheKey(endpoint: string, query?: Record<string, string
 	return safeKey;
 }
 
-export function handleFetchError(error: FetchError): void {
-	throw createError({
-		statusCode: error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR,
-		statusMessage:
-			error.statusMessage
-			?? error.statusText
-			?? getReasonPhrase(error.statusCode ?? StatusCodes.INTERNAL_SERVER_ERROR),
-	});
-}
+export function getAuthenticationHeaders(
+	event: H3Event,
+	apiToken?: string,
+	isDevelopment = import.meta.dev,
+): Record<string, string> {
+	const logger = createLogger();
+	const headers: Record<string, string> = {};
 
-export function getAuthHeader(token?: string): Record<string, string> | undefined {
-	if (token === undefined || token === '') {
-		return undefined;
+	// For development: use API token if available
+	if (isDevelopment && apiToken !== undefined && apiToken !== '') {
+		logger.info('Utility: madekApi', 'Using API token for authentication.');
+		headers.Authorization = `token ${apiToken}`;
 	}
 
-	return { Authorization: `token ${token}` };
+	// For production: forward cookie from request if available
+	else if (!isDevelopment) {
+		const { cookie } = getRequestHeaders(event);
+		if (cookie !== undefined) {
+			logger.info('Utility: madekApi', 'Using cookie for authentication.');
+			headers.cookie = cookie;
+		}
+	}
+
+	return headers;
 }
 
 export function buildRequestConfig(
+	event: H3Event,
 	apiOptions: MadekApiOptions = {},
-	token?: string,
+	apiToken?: string,
+	isDevelopment = import.meta.dev,
 ): NitroFetchOptions<NitroFetchRequest> {
-	return {
-		headers: apiOptions.needsAuth ? getAuthHeader(token) : undefined,
-		query: apiOptions.query,
-	};
+	const { isAuthenticationNeeded, query } = apiOptions;
+	const config: NitroFetchOptions<NitroFetchRequest> = {};
+
+	if (query !== undefined) {
+		config.query = query;
+	}
+
+	if (isAuthenticationNeeded) {
+		const authenticationHeaders = getAuthenticationHeaders(event, apiToken, isDevelopment);
+		if (Object.keys(authenticationHeaders).length > 0) {
+			config.headers = authenticationHeaders;
+		}
+	}
+
+	return config;
 }
 
 export async function fetchData<T>(
+	event: H3Event,
 	url: string,
 	apiOptions: MadekApiOptions = {},
-	token?: string,
+	apiToken?: string,
 	fetchFunction = $fetch,
+	isDevelopment = import.meta.dev,
 ): Promise<T> {
 	try {
-		const requestConfig = buildRequestConfig(apiOptions, token);
+		const requestConfig = buildRequestConfig(event, apiOptions, apiToken, isDevelopment);
+
 		const response = await fetchFunction<T>(url, requestConfig);
 
 		return response as T;
 	}
 	catch (error) {
 		if (error instanceof FetchError) {
-			handleFetchError(error);
+			throw convertFetchToH3Error(error);
 		}
+
 		throw error;
 	}
 }
@@ -100,29 +124,23 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
 	fetchFromApiWithPathParameters: (endpointTemplate: string, endpointPathParameters: Record<string, string>, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
 } {
-	const runtimeConfig = useRuntimeConfig(event);
-	const config: {
-		baseURL: string;
-		token?: string;
-	} = {
-		baseURL: runtimeConfig.public.madekApi.baseURL,
-		token: runtimeConfig.madekApi.token,
-	};
+	const config = useRuntimeConfig(event);
+	const apiBaseURL = config.public.madekApi.baseURL;
+	const apiToken = config.madekApi.token;
 
 	async function fetchFromApi(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
-		const url = `${config.baseURL}${endpoint}`;
-		const isAuthNeeded = apiRequestConfig.apiOptions?.needsAuth === true;
+		const url = `${apiBaseURL}${endpoint}`;
+		const isAuthNeeded = apiRequestConfig.apiOptions?.isAuthenticationNeeded === true;
 		const cacheOptions = apiRequestConfig.publicDataCache;
 
 		if (isAuthNeeded && apiRequestConfig.publicDataCache !== noCache) {
-			console.warn(
-				`[madek-api] Warning: Authenticated requests should only use 'noCache' for publicDataCache (or none at all). Other cache configurations are ignored. Request: ${endpoint}`,
-			);
+			const logger = createLogger();
+			logger.warn('Utility: madekApi', 'Authenticated requests should only use \'noCache\' for publicDataCache (or none at all). Other cache configurations are ignored.', endpoint);
 		}
 
 		if (shouldUseCaching(isAuthNeeded, cacheOptions)) {
 			return defineCachedFunction(
-				async () => fetchDataFunction<T>(url, apiRequestConfig.apiOptions ?? {}, config.token),
+				async () => fetchDataFunction<T>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken),
 				{
 					...cacheOptions,
 					name: 'madek-api',
@@ -131,7 +149,7 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 			)();
 		}
 
-		return fetchDataFunction<T>(url, apiRequestConfig.apiOptions ?? {}, config.token);
+		return fetchDataFunction<T>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken);
 	}
 
 	async function fetchFromApiWithPathParameters(endpointTemplate: string, endpointPathParameters: Record<string, string>, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {

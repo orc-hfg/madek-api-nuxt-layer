@@ -1,18 +1,15 @@
 import type { H3Event } from 'h3';
 import type { MadekCollectionMetaDatumResponse, MetaDatumString } from '../types/collection-meta-datum';
-import { StatusCodes } from 'http-status-codes';
 import { noCache } from '../constants/cache';
-import { createLogger } from '../utils/logger';
-import { createMadekApiClient } from '../utils/madek-api';
 
 export async function getCollectionMetaDatum(event: H3Event, collectionId: string, metaKeyId: string): Promise<MetaDatumString> {
-	const runtimeConfig = useRuntimeConfig(event);
+	const config = useRuntimeConfig(event);
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
 	const logger = createLogger(event);
 
-	logger.info('getCollectionMetaDatum', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
-	logger.info('getCollectionMetaDatum', 'Collection ID:', collectionId);
-	logger.info('getCollectionMetaDatum', 'Meta Key ID:', metaKeyId);
+	logger.info('Service: getCollectionMetaDatum', 'API baseURL:', config.public.madekApi.baseURL);
+	logger.info('Service: getCollectionMetaDatum', 'Collection ID:', collectionId);
+	logger.info('Service: getCollectionMetaDatum', 'Meta Key ID:', metaKeyId);
 
 	try {
 		const response = await fetchFromApiWithPathParameters(
@@ -23,7 +20,7 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: strin
 			},
 			{
 				apiOptions: {
-					needsAuth: true,
+					isAuthenticationNeeded: true,
 				},
 				publicDataCache: noCache,
 			},
@@ -34,13 +31,6 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: strin
 		};
 	}
 	catch (error) {
-		const errorMessage = 'Failed to fetch collection meta datum.';
-
-		logger.error('getCollectionMetaDatum', errorMessage, error);
-
-		throw createError({
-			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-			statusMessage: errorMessage,
-		});
+		return handleServiceError(error, 'getCollectionMetaDatum', logger, 'Failed to fetch collection meta datum.');
 	}
 }

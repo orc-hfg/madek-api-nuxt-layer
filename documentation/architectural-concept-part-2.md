@@ -31,10 +31,10 @@ export const useUserStore = defineStore('user', () => {
     try {
       // 1. Direkter API-Aufruf
       const response = await $fetch(
-        `${runtimeConfig.public.madekApi.baseURL}/auth-info`,
+        `${config.public.madekApi.baseURL}/auth-info`,
         {
           headers: {
-            Authorization: `token ${runtimeConfig.madekApi.token}`
+            Authorization: `token ${config.madekApi.token}`
           }
         }
       );
@@ -162,7 +162,7 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
     // Serverseitiger API-Aufruf mit Caching und sicherem Token-Handling
     const response = await fetchFromApi('/auth-info', {
       apiOptions: {
-        needsAuth: true,
+        isAuthenticationNeeded: true,
       },
       cache: freshOneHourCache,
     });

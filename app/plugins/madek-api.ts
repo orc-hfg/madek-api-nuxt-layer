@@ -1,13 +1,23 @@
 export default defineNuxtPlugin({
 	name: 'madek-api',
 	setup() {
-		// See: https://nuxt.com/docs/guide/recipes/custom-usefetch#custom-fetch
-		const runtimeConfig = useRuntimeConfig();
+		const config = useRuntimeConfig();
+		const logger = createLogger();
+
+		/*
+		 * See:
+		 * https://nuxt.com/docs/guide/recipes/custom-usefetch#custom-fetch
+		 * https://github.com/nuxt/nuxt/issues/27996#issuecomment-2211864930
+		 */
 		const madekApi = $fetch.create({
-			baseURL: `${runtimeConfig.app.baseURL}api`,
-			// eslint-disable-next-line ts/require-await
-			async onResponseError({ response }) {
-				console.error('Fetch response error:', response);
+			baseURL: `${config.app.baseURL}api`,
+
+			onRequest(context) {
+				forwardCookieHeaders(context, { logger });
+			},
+
+			onResponseError(context) {
+				logger.error('Plugin: madek-api', 'API request failed.', context.response);
 			},
 		});
 

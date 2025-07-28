@@ -1,5 +1,5 @@
 import { createResolver } from '@nuxt/kit';
-import packageJson from './package.json' with { type: 'json' };
+import packageJson from './package.json';
 
 function composeVersion(): string {
 	return packageJson.version ? `v${packageJson.version}` : 'Unknown Version';
@@ -29,7 +29,7 @@ export default defineNuxtConfig({
 	},
 	modules: ['@pinia/nuxt', '@nuxt/eslint', '@nuxt/test-utils/module'],
 	components: {
-		// Do not auto-import components and support knip for unused imports
+		// Do not auto-import components to support knip for unused imports
 		dirs: [],
 	},
 	imports: {
@@ -62,30 +62,30 @@ export default defineNuxtConfig({
 	 * https://nuxt.com/docs/getting-started/configuration#environment-overrides
 	 */
 	runtimeConfig: {
-		// This will only take effect in development mode, useful for testing.
-		delayResponse: false,
-		// Enable detailed API debug logging
-		enableDebugLogging: false,
-		app: {
-			// Will be set via environment variables
-			baseURL: '/',
-		},
+		// This will only take effect in development mode, useful for testing
+		enableResponseDelay: false,
 		madekApi: {
-			// Will be set via environment variables
+
+			/*
+			 * Set via environment variables (.env file)
+			 * Token-based authentication is only used in development environment (localhost server)
+			 * For production environments, API authentication is session-based
+			 */
 			token: '',
 		},
 		public: {
+			// Enable debug logging (logger)
+			enableDebugLogging: false,
 			version: composeVersion(),
 			madekApi: {
-				// Will be set via runtimeConfig
 				baseURL: '',
 			},
 		},
 	},
 	$development: {
 		runtimeConfig: {
-			enableDebugLogging: true,
 			public: {
+				enableDebugLogging: true,
 				madekApi: {
 					baseURL: 'https://dev.madek.hfg-karlsruhe.de/api-v2/',
 				},

@@ -1,20 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createApiTestContext } from './test-helpers';
+import { setupApiTestContext } from '../helpers/madek-api';
 
 /**
  * TODO: @upgrade-node24
  * When we bump the project to Node ≥ 24 LTS:
- *  1. Remove every beforeEach / afterEach that only calls createApiTestContext/ctx.dispose
- *  2. Inside each test block add: `using apiTestContext = createApiTestContext();`
+ *  1. Remove every beforeEach / afterEach that only calls setupApiTestContext/ctx.dispose
+ *  2. Inside each test block add: `using apiTestContext = setupApiTestContext();`
  *  3. Drop the `dispose` property from the context (remove dispose: cleanup)
  *  See: https://www.epicweb.dev/better-test-setup-with-disposable-objects
  */
 
-describe('createMadekApiClient', () => {
-	let apiTestContext: ReturnType<typeof createApiTestContext>;
+describe('createMadekApiClient()', () => {
+	let apiTestContext: ReturnType<typeof setupApiTestContext>;
 
 	beforeEach(() => {
-		apiTestContext = createApiTestContext();
+		apiTestContext = setupApiTestContext();
 	});
 
 	afterEach(() => {
@@ -23,12 +23,13 @@ describe('createMadekApiClient', () => {
 
 	it('returns an object with fetchFromApi method that calls fetchData with correct parameters', async () => {
 		const endpoint = 'resources/123';
-		const apiOptions = { needsAuth: true, query: { param: 'value' } };
+		const apiOptions = { isAuthenticationNeeded: true, query: { param: 'value' } };
 
 		await apiTestContext.client.fetchFromApi(endpoint, { apiOptions });
 
-		expect(apiTestContext.warnSpy).toHaveBeenCalledTimes(1);
+		expect(apiTestContext.loggerWarnSpy).toHaveBeenCalledTimes(1);
 		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+			apiTestContext.mockEvent,
 			'https://api.example.com/resources/123',
 			apiOptions,
 			'test-api-token',
@@ -42,6 +43,7 @@ describe('createMadekApiClient', () => {
 		);
 
 		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+			apiTestContext.mockEvent,
 			'https://api.example.com/collection/abc-123/meta-datum/meta_key.456',
 			{},
 			'test-api-token',
@@ -55,6 +57,7 @@ describe('createMadekApiClient', () => {
 		);
 
 		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+			apiTestContext.mockEvent,
 			'https://api.example.com/api/v2/collection/abc-123/meta-datum/meta_key.456',
 			{},
 			'test-api-token',
@@ -63,7 +66,7 @@ describe('createMadekApiClient', () => {
 
 	describe('caching mechanism', () => {
 		beforeEach(() => {
-			apiTestContext = createApiTestContext();
+			apiTestContext = setupApiTestContext();
 		});
 
 		afterEach(() => {
@@ -88,14 +91,15 @@ describe('createMadekApiClient', () => {
 
 		it('skips caching and directly calls fetchData when auth is needed', async () => {
 			await apiTestContext.client.fetchFromApi('authenticated-endpoint', {
-				apiOptions: { needsAuth: true },
+				apiOptions: { isAuthenticationNeeded: true },
 				publicDataCache: { maxAge: 3600 },
 			});
 
-			expect(apiTestContext.warnSpy).toHaveBeenCalledTimes(1);
+			expect(apiTestContext.loggerWarnSpy).toHaveBeenCalledTimes(1);
 			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+				apiTestContext.mockEvent,
 				'https://api.example.com/authenticated-endpoint',
-				{ needsAuth: true },
+				{ isAuthenticationNeeded: true },
 				'test-api-token',
 			);
 			expect(apiTestContext.defineCachedFunctionMock).not.toHaveBeenCalled();

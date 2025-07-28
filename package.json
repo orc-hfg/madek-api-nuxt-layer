@@ -1,7 +1,7 @@
 {
 	"name": "@orc-hfg/madek-api-nuxt-layer",
 	"type": "module",
-	"version": "1.2.0",
+	"version": "1.4.3-dev.4",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/orc-hfg/madek-api-nuxt-layer.git"
@@ -22,15 +22,18 @@
 		"test:watch": "vitest watch",
 		"check:eslint": "npx @eslint/config-inspector@latest",
 		"check:types": "nuxt typecheck",
-		"check:unused": "knip --include dependencies,duplicates,exports,types",
+		"check:unused": "NODE_NO_WARNINGS=1 knip --include dependencies,duplicates,exports,types",
 		"check:issues": "concurrently \"npm run lint\" \"npm run check:types\" \"npm run check:unused\" \"npm run test\"",
 		"check:node": "node ./scripts/check-node-version.mjs",
 		"check:updates": "npm-check-updates --interactive --format group",
 		"generate:api": "openapi-typescript ./resources/openapi.json --output ./generated/api/madek-api.d.ts --immutable --export-type --alphabetize --additional-properties",
 		"upgrade": "nuxt upgrade",
-		"release:patch": "npm version patch -m \"chore: release %s\" && git push --follow-tags",
-		"release:minor": "npm version minor -m \"chore: release %s\" && git push --follow-tags",
-		"release:major": "npm version major -m \"chore: release %s\" && git push --follow-tags",
+		"release:patch": "node ./scripts/safe-package-release.mjs patch",
+		"release:minor": "node ./scripts/safe-package-release.mjs minor",
+		"release:major": "node ./scripts/safe-package-release.mjs major",
+		"release:dev:patch": "node ./scripts/safe-package-release.mjs patch --development",
+		"release:dev:minor": "node ./scripts/safe-package-release.mjs minor --development",
+		"release:dev:major": "node ./scripts/safe-package-release.mjs major --development",
 		"prepare": "husky && nuxt prepare && npm run generate:api"
 	},
 	"peerDependencies": {
@@ -39,6 +42,7 @@
 	},
 	"dependencies": {
 		"@pinia/nuxt": "0.11.1",
+		"consola": "3.4.2",
 		"http-status-codes": "2.3.0",
 		"pinia": "3.0.3"
 	},

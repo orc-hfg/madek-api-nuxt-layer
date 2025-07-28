@@ -1,23 +1,20 @@
 import type { H3Event } from 'h3';
 import type { Context, Contexts, MadekContextsResponse } from '../types/contexts';
-import { StatusCodes } from 'http-status-codes';
-import { defaultCache } from '../constants/cache';
-import { createLogger } from '../utils/logger';
-import { createMadekApiClient } from '../utils/madek-api';
+import { twentyFourHoursCache } from '../constants/cache';
 
 export async function getContexts(event: H3Event): Promise<Contexts> {
-	const runtimeConfig = useRuntimeConfig(event);
+	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekContextsResponse>(event);
 	const logger = createLogger(event);
 
-	logger.info('getContexts', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
+	logger.info('Service: getContexts', 'API baseURL:', config.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('contexts', {
 			apiOptions: {
-				needsAuth: false,
+				isAuthenticationNeeded: false,
 			},
-			publicDataCache: defaultCache,
+			publicDataCache: twentyFourHoursCache,
 		});
 
 		return response.map((item: MadekContextsResponse[number]) => {
@@ -28,31 +25,24 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 		});
 	}
 	catch (error) {
-		const errorMessage = 'Failed to fetch contexts.';
-
-		logger.error('getContexts', errorMessage, error);
-
-		throw createError({
-			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-			statusMessage: errorMessage,
-		});
+		return handleServiceError(error, 'getContexts', logger, 'Failed to fetch contexts.');
 	}
 }
 
 export async function getContextById(event: H3Event, id: string): Promise<Context> {
-	const runtimeConfig = useRuntimeConfig(event);
+	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<Context>(event);
 	const logger = createLogger(event);
 
-	logger.info('getContextById', 'API baseURL:', runtimeConfig.public.madekApi.baseURL);
-	logger.info('getContextById', 'Context ID:', id);
+	logger.info('Service: getContextById', 'API baseURL:', config.public.madekApi.baseURL);
+	logger.info('Service: getContextById', 'Context ID:', id);
 
 	try {
 		const response = await fetchFromApi(`contexts/${id}`, {
 			apiOptions: {
-				needsAuth: false,
+				isAuthenticationNeeded: false,
 			},
-			publicDataCache: defaultCache,
+			publicDataCache: twentyFourHoursCache,
 		});
 
 		return {
@@ -61,13 +51,6 @@ export async function getContextById(event: H3Event, id: string): Promise<Contex
 		};
 	}
 	catch (error) {
-		const errorMessage = 'Failed to fetch context by ID.';
-
-		logger.error('getContextById', errorMessage, error);
-
-		throw createError({
-			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-			statusMessage: errorMessage,
-		});
+		return handleServiceError(error, 'getContextById', logger, 'Failed to fetch context by ID.');
 	}
 }

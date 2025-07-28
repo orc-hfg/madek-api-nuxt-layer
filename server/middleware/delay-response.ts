@@ -1,10 +1,18 @@
-import { MILLISECONDS_IN_SECOND } from '../constants/time';
-import { sleep } from '../utils/sleep';
+import { MILLISECONDS_IN_SECOND } from '../../shared/constants/time';
+
+async function sleep(milliseconds: number): Promise<void> {
+	return new Promise((resolve, _reject) => {
+		setTimeout(resolve, milliseconds);
+	});
+}
 
 export default defineEventHandler(async (event) => {
-	const runtimeConfig = useRuntimeConfig(event);
+	const config = useRuntimeConfig(event);
+	const isResponseDelayEnabled = Boolean(config.public.enableResponseDelay);
 
-	if (import.meta.dev && runtimeConfig.delayResponse) {
+	if (import.meta.dev && isResponseDelayEnabled) {
+		const logger = createLogger(event);
+		logger.info('Middleware: delay-response', `Delaying response by ${MILLISECONDS_IN_SECOND}ms`);
 		await sleep(MILLISECONDS_IN_SECOND);
 	}
 });
