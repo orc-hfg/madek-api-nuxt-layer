@@ -85,6 +85,8 @@ Alle Release-Skripte verwenden das `safe-release.mjs` Skript, das folgende Siche
 
 **Für neue Team-Mitglieder**: Falls Release-Erstellung fehlschlägt, kontaktiere einen Repository Admin zur Berechtigung.
 
+**Alternative für Teams**: Für größere Teams kann später ein GitHub Actions Manual Workflow (`workflow_dispatch`) implementiert werden, der es allen Contributors mit Write-Zugriff ermöglicht, Releases über die GitHub UI zu erstellen, ohne lokale Branch Protection Bypass-Rechte zu benötigen.
+
 ### Production Releases (nur von main Branch)
 
 Für die Erstellung von Production-Releases stehen drei Skripte zur Verfügung:
