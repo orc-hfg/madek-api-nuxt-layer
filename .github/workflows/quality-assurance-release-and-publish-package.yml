@@ -24,6 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          # Required for git history analysis (tag comparison, contributor extraction, commit counting)
           fetch-depth: 0
 
       - name: Setup Node.js + npm cache
