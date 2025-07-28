@@ -12,8 +12,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  release-and-publish:
-    name: Create Release & Publish Package
+  qa-release-and-publish:
+    name: Quality Assurance, Release & Publish Package
     runs-on: ubuntu-latest
 
     permissions:
