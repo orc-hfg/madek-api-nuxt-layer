@@ -3,8 +3,6 @@ name: Quality Assurance
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - package.json # Ignore release commits that only bump version
   pull_request:
     branches: [main]
 
@@ -24,6 +22,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Skip if release commit
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if [[ "$COMMIT_MSG" == *"chore: release v"* ]]; then
+            echo "Skipping Quality Assurance workflow for release commit"
+            exit 78  # Neutral exit code that marks workflow as skipped
+          fi
+          echo "Not a release commit, continuing with Quality Assurance"
 
       - name: Setup Node.js + npm cache
         uses: actions/setup-node@v4
