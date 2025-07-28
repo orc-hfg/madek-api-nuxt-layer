@@ -75,6 +75,16 @@ Alle Release-Skripte verwenden das `safe-release.mjs` Skript, das folgende Siche
 - **Git Pull**: Automatisches Holen der neuesten Änderungen
 - **Fehlerbehandlung**: Automatischer Abbruch bei Problemen
 
+### Branch Protection & Berechtigungen
+
+**Wichtig**: Der main Branch ist durch Branch Protection Rules geschützt. Für die Erstellung von Releases sind spezielle Berechtigungen erforderlich:
+
+- **Repository Admins** können Releases direkt vom main Branch erstellen (Bypass-Berechtigung)
+- **Andere Contributors** benötigen Admin-Rechte oder müssen zur Bypass-Liste hinzugefügt werden
+- Bei fehlenden Berechtigungen schlägt `npm run release:*` mit einem Branch Protection Fehler fehl
+
+**Für neue Team-Mitglieder**: Falls Release-Erstellung fehlschlägt, kontaktiere einen Repository Admin zur Berechtigung.
+
 ### Production Releases (nur von main Branch)
 
 Für die Erstellung von Production-Releases stehen drei Skripte zur Verfügung:
@@ -95,20 +105,20 @@ npm run release:major
 Für die Entwicklung und das Testen von Features können Development-Releases von jedem Branch erstellt werden:
 
 ```bash
-# Development Patch-Release (z.B. 1.0.0 → 1.0.1-feature-xyz-2025-01-24T14-35-00.0)
+# Development Patch-Release (z.B. 1.4.2 → 1.4.3-dev.0)
 npm run release:dev:patch
 
-# Development Minor-Release (z.B. 1.0.0 → 1.1.0-feature-xyz-2025-01-24T14-35-00.0)
+# Development Minor-Release (z.B. 1.4.2 → 1.5.0-dev.0)
 npm run release:dev:minor
 
-# Development Major-Release (z.B. 1.0.0 → 2.0.0-feature-xyz-2025-01-24T14-35-00.0)
+# Development Major-Release (z.B. 1.4.2 → 2.0.0-dev.0)
 npm run release:dev:major
 ```
 
 **Verwendung von Development-Releases:**
 - Ermöglicht schnelle Iteration während der Feature-Entwicklung
 - Kann direkt in der Haupt-App getestet werden, ohne in main zu mergen
-- Versionen enthalten Branch-Name und Timestamp für eindeutige Identifikation
+- Versionen folgen SemVer Pre-release Format (z.B. `1.4.3-dev.0`, `1.4.3-dev.1`)
 - Werden als pre-release markiert
 
 ### Was passiert bei einem Release?
@@ -116,7 +126,7 @@ npm run release:dev:major
 Jedes Release-Skript führt folgende Schritte automatisch aus:
 
 1. **Version erhöhen**: Die Versionsnummer in `package.json` wird entsprechend erhöht
-2. **Git-Commit**: Ein Commit mit der Nachricht `chore: release vX.X.X` wird erstellt
+2. **Git-Commit**: Ein Commit mit der Nachricht `chore: release X.X.X` oder `chore: development release X.X.X-dev.X` wird erstellt
 3. **Git-Tag**: Ein entsprechender Git-Tag wird erstellt
 4. **Push**: Sowohl Commit als auch Tag werden zum Repository gepusht
 
