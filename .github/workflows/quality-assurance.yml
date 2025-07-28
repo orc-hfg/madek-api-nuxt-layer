@@ -26,7 +26,7 @@ jobs:
       - name: Skip if release commit
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
-          if [[ "$COMMIT_MSG" == *"chore: release v"* ]]; then
+          if [[ "$COMMIT_MSG" == *"chore: release "* ]]; then
             echo "Skipping Quality Assurance workflow for release commit"
             exit 78  # Neutral exit code that marks workflow as skipped
           fi
