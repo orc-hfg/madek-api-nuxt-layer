@@ -55,15 +55,15 @@ jobs:
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
           if [[ "$COMMIT_MSG" == *"chore: release "* ]]; then
-            echo "should_skip=true" >> $GITHUB_OUTPUT
+            echo "should_run=false" >> $GITHUB_OUTPUT
             echo "This is a release commit - Quality Assurance will be skipped"
           else
-            echo "should_skip=false" >> $GITHUB_OUTPUT
+            echo "should_run=true" >> $GITHUB_OUTPUT
             echo "Not a release commit - continuing with Quality Assurance"
           fi
 
       - name: Setup Node.js + npm cache
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -71,35 +71,35 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm ci
 
       - name: Prepare Nuxt environment
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run dev:prepare
 
       - name: Run linting
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run lint
 
       - name: Type check
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run check:types
 
       - name: Check for unused code & dependencies
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run check:unused
 
       - name: Run unit tests
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run test
 
       - name: Build application
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run build
 
       - name: Verify package can be packed
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: |
           # Test that the package can be properly packed for publishing
           # This catches issues with .npmignore, package.json files array, etc.
