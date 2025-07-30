@@ -1,14 +1,15 @@
 import type { H3Event } from 'h3';
 import type { Collections, CollectionsUserQuery, MadekCollectionsResponse } from '../types/collections';
+import { createServerLogger } from '../../server/utils/logger';
 import { noCache } from '../constants/cache';
 
 export async function getCollections(event: H3Event, query: CollectionsUserQuery): Promise<Collections> {
 	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekCollectionsResponse>(event);
-	const logger = createLogger(event);
+	const serverLogger = createServerLogger(event);
 
-	logger.info('Service: getCollections', 'API baseURL:', config.public.madekApi.baseURL);
-	logger.info('Service: getCollections', 'Query params:', query);
+	serverLogger.info('Service: getCollections', 'API baseURL:', config.public.madekApi.baseURL);
+	serverLogger.info('Service: getCollections', 'Query params:', query);
 
 	try {
 		const response = await fetchFromApi('collections', {
@@ -26,6 +27,6 @@ export async function getCollections(event: H3Event, query: CollectionsUserQuery
 		});
 	}
 	catch (error) {
-		return handleServiceError(error, 'getCollections', logger, 'Failed to fetch collections.');
+		return handleServiceError(error, 'getCollections', serverLogger, 'Failed to fetch collections.');
 	}
 }

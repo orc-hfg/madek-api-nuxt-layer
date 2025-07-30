@@ -2,7 +2,7 @@ import type { paths } from '../../generated/api/madek-api';
 
 export type MadekCollectionMetaDatumPathParameters = paths['/api-v2/collection/{collection_id}/meta-datum/{meta_key_id}']['get']['parameters']['path'];
 
-/**
+/*
  * Manual type definition for collection meta datum response.
  *
  * This interface is manually defined because the OpenAPI schema only provides

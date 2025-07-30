@@ -3,6 +3,7 @@ import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropa
 import { getRequestHeaders } from 'h3';
 import { FetchError } from 'ofetch';
 import { noCache } from '../constants/cache';
+import { createServerLogger } from '../utils/logger';
 
 export interface MadekApiOptions {
 	isAuthenticationNeeded?: boolean;
@@ -44,12 +45,12 @@ export function getAuthenticationHeaders(
 	apiToken?: string,
 	isDevelopment = import.meta.dev,
 ): Record<string, string> {
-	const logger = createLogger();
+	const serverLogger = createServerLogger(event);
 	const headers: Record<string, string> = {};
 
 	// For development: use API token if available
 	if (isDevelopment && apiToken !== undefined && apiToken !== '') {
-		logger.info('Utility: madekApi', 'Using API token for authentication.');
+		serverLogger.info('Utility: madekApi', 'Using API token for authentication.');
 		headers.Authorization = `token ${apiToken}`;
 	}
 
@@ -57,7 +58,7 @@ export function getAuthenticationHeaders(
 	else if (!isDevelopment) {
 		const { cookie } = getRequestHeaders(event);
 		if (cookie !== undefined) {
-			logger.info('Utility: madekApi', 'Using cookie for authentication.');
+			serverLogger.info('Utility: madekApi', 'Using cookie for authentication.');
 			headers.cookie = cookie;
 		}
 	}
@@ -134,8 +135,8 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 		const cacheOptions = apiRequestConfig.publicDataCache;
 
 		if (isAuthNeeded && apiRequestConfig.publicDataCache !== noCache) {
-			const logger = createLogger();
-			logger.warn('Utility: madekApi', 'Authenticated requests should only use \'noCache\' for publicDataCache (or none at all). Other cache configurations are ignored.', endpoint);
+			const serverLogger = createServerLogger(event);
+			serverLogger.warn('Utility: madekApi', 'Authenticated requests should only use \'noCache\' for publicDataCache (or none at all). Other cache configurations are ignored.', endpoint);
 		}
 
 		if (shouldUseCaching(isAuthNeeded, cacheOptions)) {

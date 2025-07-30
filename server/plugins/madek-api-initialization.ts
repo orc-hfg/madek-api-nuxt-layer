@@ -1,10 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
+import { createServerStartupLogger } from '../utils/logger';
 
 export default defineNitroPlugin(() => {
 	const config = useRuntimeConfig();
-	const logger = createLogger();
+	const serverLogger = createServerStartupLogger();
 
-	logger.info('Plugin: madek-api-initialization', 'Madek API Base URL:', config.public.madekApi.baseURL);
+	serverLogger.info('Plugin: madek-api-initialization', 'Madek API Base URL:', config.public.madekApi.baseURL);
 
 	const isMainApplicationActive = Boolean(config.mainApplication);
 

@@ -27,13 +27,14 @@ function runtimeConfigMock(): RuntimeConfig {
 	};
 }
 
+mockNuxtImport('useRuntimeConfig', () => runtimeConfigMock);
+
 function getRequestHeadersMock(): RequestHeaders {
 	return {
 		cookie: TEST_COOKIE,
 	};
 }
 
-mockNuxtImport('useRuntimeConfig', () => runtimeConfigMock);
 vi.mock('h3', () => {
 	return {
 		getRequestHeaders: (): RequestHeaders => getRequestHeadersMock(),

@@ -1,13 +1,13 @@
 import type { H3Event } from 'h3';
 import type { MadekApiRequestConfig } from '../../../server/utils/madek-api';
 import { vi } from 'vitest';
+import * as loggerModule from '../../../server/utils/logger';
 import { createMadekApiClient } from '../../../server/utils/madek-api';
-import * as loggerModule from '../../../shared/utils/logger';
 import { createMockLoggerWithSpies } from '../../mocks/logger';
 
 export const mockEvent = { headers: {} } as H3Event;
 
-/**
+/*
  * TODO: @upgrade-node24
  * When we bump the project to Node ≥ 24 LTS:
  *  1. Remove every beforeEach / afterEach that only calls setupApiTestContext/ctx.dispose
@@ -43,7 +43,7 @@ export function setupApiTestContext(): ApiTestContext {
 		(cacheableFunction: () => unknown): (() => unknown) => (): unknown => cacheableFunction(),
 	);
 	const { logger, infoSpy, warnSpy, errorSpy } = createMockLoggerWithSpies();
-	vi.spyOn(loggerModule, 'createLogger').mockReturnValue(logger);
+	vi.spyOn(loggerModule, 'createServerLogger').mockReturnValue(logger);
 
 	function cleanup(): void {
 		vi.restoreAllMocks();
