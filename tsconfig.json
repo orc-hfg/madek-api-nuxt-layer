@@ -1,10 +1,10 @@
 {
-	"extends": "./.nuxt/tsconfig.json",
-	// Additional options for openapi-typescript: https://openapi-ts.dev/introduction#setup
-	"compilerOptions": {
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
-		"noImplicitReturns": true,
-		"noUncheckedIndexedAccess": true
-	}
+	// https://nuxt.com/docs/guide/concepts/typescript
+	"references": [
+		{ "path": "./.nuxt/tsconfig.app.json" },
+		{ "path": "./.nuxt/tsconfig.server.json" },
+		{ "path": "./.nuxt/tsconfig.shared.json" },
+		{ "path": "./.nuxt/tsconfig.node.json" }
+	],
+	"files": []
 }
