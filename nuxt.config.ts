@@ -17,7 +17,7 @@ export default defineNuxtConfig({
 		purgeCachedData: false,
 		granularCachedData: false,
 	},
-	compatibilityDate: '2025-05-09',
+	compatibilityDate: '2025-07-31',
 	devtools: {
 		enabled: true,
 	},
