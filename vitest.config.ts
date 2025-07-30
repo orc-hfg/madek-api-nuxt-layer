@@ -3,6 +3,20 @@ import { defineVitestConfig } from '@nuxt/test-utils/config';
 export default defineVitestConfig({
 	root: '.',
 	test: {
+		/*
+		 * WORKAROUND: Disable cache for @nuxt/test-utils macro transpilation
+		 *
+		 * Issue: mockNuxtImport() macros fail to transpile correctly when Vitest cache is enabled,
+		 * causing "mockNuxtImport() is a macro and it did not get transpiled" errors.
+		 *
+		 * Symptoms:
+		 * - Tests work after `npm run dev` but fail on subsequent runs
+		 *
+		 * Solution: cache: false provides more stable test execution (2 consecutive runs work)
+		 *
+		 * Trade-off: Slightly slower tests but more reliable execution
+		 */
+		cache: false,
 		projects: [
 			{
 				extends: true,
