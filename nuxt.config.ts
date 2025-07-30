@@ -8,9 +8,6 @@ function composeVersion(): string {
 const resolver = createResolver(import.meta.url);
 
 export default defineNuxtConfig({
-	future: {
-		compatibilityVersion: 4,
-	},
 	experimental: {
 
 		/*
