@@ -1,27 +1,32 @@
-import { defineVitestConfig } from '@nuxt/test-utils/config';
+import { defineVitestProject } from '@nuxt/test-utils/config';
+import { defineConfig } from 'vitest/config';
 
-export default defineVitestConfig({
-	root: '.',
-	test: {
-		projects: [
-			{
-				extends: true,
-				test: {
-					name: { label: 'unit', color: 'cyan' },
-					include: [
-						'**/*.test.ts',
-						'!tests/unit/madek-api/**/*.test.ts',
-					],
-				},
-			},
-			{
-				extends: true,
-				test: {
-					name: { label: 'madek-api', color: 'magenta' },
-					include: ['tests/unit/madek-api/**/*.test.ts'],
-					setupFiles: ['tests/unit/madek-api/vitest.setup.ts'],
-				},
-			},
-		],
-	},
+export default defineConfig(async () => {
+	return {
+		test: {
+			projects: [
+				await defineVitestProject({
+					root: '.',
+					test: {
+						name: { label: 'node', color: 'cyan' },
+						environment: 'node',
+						include: [
+							'**/*.test.ts',
+							'!tests/unit/madek-api/**/*.test.ts',
+						],
+					},
+				}),
+
+				await defineVitestProject({
+					root: '.',
+					test: {
+						name: { label: 'nuxt', color: 'magenta' },
+						environment: 'nuxt',
+						include: ['tests/unit/madek-api/**/*.test.ts'],
+						setupFiles: ['tests/unit/madek-api/vitest.setup.ts'],
+					},
+				}),
+			],
+		},
+	};
 });

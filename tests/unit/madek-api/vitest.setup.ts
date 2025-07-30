@@ -1,4 +1,4 @@
-import type { RequestHeaders } from 'h3';
+import type { H3Error, RequestHeaders } from 'h3';
 import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { vi } from 'vitest';
 import { TEST_COOKIE } from '../../../shared/constants/test';
@@ -27,7 +27,11 @@ function runtimeConfigMock(): RuntimeConfig {
 	};
 }
 
-mockNuxtImport('useRuntimeConfig', () => runtimeConfigMock);
+function routerMock() {
+	return {
+		afterEach: vi.fn(),
+	};
+}
 
 function getRequestHeadersMock(): RequestHeaders {
 	return {
@@ -35,8 +39,23 @@ function getRequestHeadersMock(): RequestHeaders {
 	};
 }
 
+mockNuxtImport('useRuntimeConfig', () => runtimeConfigMock);
+
+mockNuxtImport('useRouter', () => routerMock);
+
 vi.mock('h3', () => {
 	return {
 		getRequestHeaders: (): RequestHeaders => getRequestHeadersMock(),
+		createError: (options: { statusCode?: number; statusMessage?: string; data?: unknown } = {}): H3Error => {
+			const { statusCode = 500, statusMessage = 'Internal Server Error', data } = options;
+			const error = new Error(statusMessage) as H3Error;
+			error.statusCode = statusCode;
+			error.statusMessage = statusMessage;
+			error.data = data;
+			error.fatal = true;
+			error.unhandled = false;
+
+			return error;
+		},
 	};
 });

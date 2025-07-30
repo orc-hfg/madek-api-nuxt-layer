@@ -20,7 +20,6 @@
 		"@nuxt/eslint",
 		"@pinia/nuxt",
 		"pinia",
-		"vue",
-		"vue-tsc"
+		"vue"
 	]
 }
