@@ -176,6 +176,7 @@ Folgende Dateien entsprechend anpassen:
 
 ### 3. Aufgaben für das nächste Dependency Update bearbeiten und ggf. neue erstellen
 - Wenn die Node LTS Version >= 24 ist, die Tests in entsprechend anpassen (nach TODO-Kommentar `@upgrade-node24` suchen)
+- `tests/unit/madek-api/readme.md`: Tritt dieses Problem noch auf, wenn Nuxt >= 4.0.2 und auch @nuxt/test-utils >= 3.18.0 verwendet werden?
 - Kann happy-dom nun aktualisiert werden? https://github.com/nuxt/test-utils/issues/1323
 - Testen, ob Update von @nuxt/text-utils auf Version > 3.18.0 nun funktioniert (alle Tests sollten ausgeführt werden): https://github.com/nuxt/test-utils/issues/1296
 - Testen, ob Knip in Version ab 5.58.0 (5.61.0 ging zuletzt noch nicht) nun funktioniert und dieser Fehler nicht mehr auftritt: TypeError: Cannot assign to read only property 'defineNuxtConfig' of object '#<Object>'
