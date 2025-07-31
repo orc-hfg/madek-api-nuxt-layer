@@ -3,7 +3,7 @@ import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropa
 import { getRequestHeaders } from 'h3';
 import { FetchError } from 'ofetch';
 import { noCache } from '../constants/cache';
-import { createServerLogger } from '../utils/logger';
+import { createServerLogger } from './server-logger';
 
 export interface MadekApiOptions {
 	isAuthenticationNeeded?: boolean;

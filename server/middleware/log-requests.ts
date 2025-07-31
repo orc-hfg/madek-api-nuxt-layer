@@ -1,4 +1,4 @@
-import { createServerLogger } from '../utils/logger';
+import { createServerLogger } from '../utils/server-logger';
 
 export default defineEventHandler((event) => {
 	const serverLogger = createServerLogger(event);

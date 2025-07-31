@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3';
 import type { AppSettings, MadekAppSettingsResponse } from '../types/app-settings';
-import { createServerLogger } from '../../server/utils/logger';
 import { twentyFourHoursCache } from '../constants/cache';
+import { createServerLogger } from '../utils/server-logger';
 
 export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 	const config = useRuntimeConfig(event);

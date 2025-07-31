@@ -1,4 +1,4 @@
-import { createAppLogger } from '../../app/utils/logger';
+import { createAppLogger } from '../utils/app-logger';
 
 export default defineNuxtPlugin({
 	name: 'madek-api',
