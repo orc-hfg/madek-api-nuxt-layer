@@ -176,8 +176,9 @@ Folgende Dateien entsprechend anpassen:
 
 ### 3. Aufgaben für das nächste Dependency Update bearbeiten und ggf. neue erstellen
 - Wenn die Node LTS Version >= 24 ist, die Tests in entsprechend anpassen (nach TODO-Kommentar `@upgrade-node24` suchen)
-- Kann `"vitest": false` aus `knip.json` wieder entfernt werden? Läuft dann auch `npm run check:unused`?
-- wenn die neuen Caching-Strategien verfügbar sind (ab Nuxt 3.18?), diese implementieren und die experimentellen Flags `purgeCachedData` und `granularCachedData` aus `nuxt.config.ts` entfernen:
+- Kann `"vitest": false` aus `knip.json` wieder entfernt werden? Läuft dann `npm run check:unused` fehlerfrei?
+- Ist diese Warnung (`[nuxt] error caught during app initialization undefined`) beim Ausführen der Tests weiterhin sichtbar?
+- Wenn die neuen Caching-Strategien verfügbar sind (ab Nuxt 3.18?), diese implementieren und die experimentellen Flags `purgeCachedData` und `granularCachedData` aus `nuxt.config.ts` entfernen:
   - https://github.com/nuxt/nuxt/pull/32003
   - https://github.com/nuxt/nuxt/issues/31949#issuecomment-2844391646
   - https://github.com/nuxt/nuxt/pull/31373
