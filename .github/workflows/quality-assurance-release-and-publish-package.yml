@@ -91,11 +91,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Prepare Nuxt environment
-        run: npm run dev:prepare
-
       - name: Validate package version vs. release tag
-        id: version_check
         run: |
           PKG=$(npm pkg get version | tr -d '"')
           TAG=${GITHUB_REF#refs/tags/}
