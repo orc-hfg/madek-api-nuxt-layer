@@ -49,6 +49,8 @@ jobs:
     permissions:
       contents: write
       packages: write
+      # Required for npm provenance generation
+      id-token: write
 
     steps:
       - name: Checkout code
