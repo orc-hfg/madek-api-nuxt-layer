@@ -93,32 +93,21 @@ jobs:
         run: npm run dev:prepare
 
       - name: Validate package version vs. release tag
+        id: version_check
         run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          RELEASE_TAG=${GITHUB_REF#refs/tags/}
-          echo "Version Validation:"
-          echo "Package version: v$PACKAGE_VERSION"
-          echo "Release tag:     $RELEASE_TAG"
+          PKG=$(npm pkg get version | tr -d '"')
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "pkg=$PKG" >> $GITHUB_OUTPUT
+          echo "tag=${TAG#v}" >> $GITHUB_OUTPUT
 
-          if [ "v$PACKAGE_VERSION" != "$RELEASE_TAG" ]; then
-            echo "::error::Version mismatch detected!"
-            echo "::error::Expected package.json version: v$PACKAGE_VERSION"
-            echo "::error::Actual git tag:                $RELEASE_TAG"
-            echo "::error::"
-            echo "::error::This usually means:"
-            echo "::error::1. The release script didn't run properly"
-            echo "::error::2. Manual changes were made to package.json"
-            echo "::error::3. Git tag was created manually without version bump"
-            echo "::error::"
-            echo "::error::Troubleshooting steps:"
-            echo "::error::1. Check recent commits: git log --oneline -5"
-            echo "::error::2. Verify git tags: git tag -l | tail -5"
-            echo "::error::3. Run release script: npm run release:patch"
-            echo "::error::4. Ensure package.json and git tag match"
-            echo "::error::Please ensure the release script completed successfully."
+          echo "Version Validation: package.json ($PKG) vs. git tag (${TAG#v})"
+
+          if [ "$PKG" != "${TAG#v}" ]; then
+            echo "::error::Version mismatch: package.json ($PKG) ≠ git tag (${TAG})"
             exit 1
           fi
-          echo "Version validation passed: $RELEASE_TAG"
+
+          echo "Version validation passed: $PKG"
 
       - name: Run linting
         run: npm run lint
@@ -149,8 +138,13 @@ jobs:
             COMMIT_COUNT="unknown"
           fi
 
-          # Get contributors for this release with enhanced error handling
-          if ! CONTRIBUTORS=$(git log ${LAST_TAG}..HEAD --format='%an' 2>/dev/null | sort -u | paste -sd ', ' -); then
+          # Get contributors for this release using git shortlog for robust deduplication
+          # git shortlog provides built-in normalization and deduplication:
+          # -s = summarize (hide commit counts)
+          # -n = sort by number of commits (will be re-sorted anyway)
+          # cut -f2- = remove the commit count prefix
+          # sort -fu = case-insensitive sort with unique filtering
+          if ! CONTRIBUTORS=$(git shortlog -sn "${LAST_TAG}..HEAD" 2>/dev/null | cut -f2- | sort -fu | paste -sd ', ' -); then
             echo "Warning: Could not determine contributors for this release"
             CONTRIBUTORS="Unable to determine"
           fi
@@ -223,9 +217,20 @@ jobs:
           generate_release_notes: false
           make_latest: ${{ steps.tag_info.outputs.is_prerelease == 'false' }}
 
-      - name: Publish package to GitHub Packages
+      - name: Publish to GitHub Packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npm publish --access public
+          # Determine publish arguments based on release type
+          PUBLISH_ARGS="--provenance"
+
+          # Add 'next' tag for pre-releases to prevent accidental installation via @latest
+          if [[ "${{ steps.tag_info.outputs.is_prerelease }}" == "true" ]]; then
+            PUBLISH_ARGS="$PUBLISH_ARGS --tag next"
+            echo "Publishing pre-release with 'next' tag"
+          else
+            echo "Publishing stable release with 'latest' tag"
+          fi
+
+          npm publish $PUBLISH_ARGS
           echo "Package published successfully to GitHub Packages"
