@@ -1,4 +1,3 @@
-import type { H3Event } from 'h3';
 import { createConsola } from 'consola';
 
 export interface Logger {
@@ -8,12 +7,11 @@ export interface Logger {
 	error: (source: string, message: string, data?: unknown) => void;
 }
 
+type LoggerContext = 'Server' | 'App';
+
 let hasLoggedStatus = false;
 
-export function createLogger(event?: H3Event): Logger {
-	const config = useRuntimeConfig(event);
-	const isDebugLoggingEnabled = Boolean(config.public.enableDebugLogging);
-
+export function createLoggerWithConfig(context: LoggerContext, isDebugLoggingEnabled: boolean): Logger {
 	if (!hasLoggedStatus) {
 		const statusLogger = createConsola();
 		statusLogger.info(`[Logger] Debug logging is ${isDebugLoggingEnabled ? 'enabled' : 'disabled'}.`);
@@ -31,10 +29,10 @@ export function createLogger(event?: H3Event): Logger {
 
 	function log(level: 'debug' | 'info' | 'warn' | 'error', source: string, message: string, data?: unknown): void {
 		if (data === undefined) {
-			logger[level](`[${source}] ${message}`);
+			logger[level](`[${context}] [${source}] ${message}`);
 		}
 		else {
-			logger[level](`[${source}] ${message}`, data);
+			logger[level](`[${context}] [${source}] ${message}`, data);
 		}
 	};
 

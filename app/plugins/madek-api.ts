@@ -1,8 +1,10 @@
+import { createAppLogger } from '../utils/app-logger';
+
 export default defineNuxtPlugin({
 	name: 'madek-api',
 	setup() {
 		const config = useRuntimeConfig();
-		const logger = createLogger();
+		const appLogger = createAppLogger();
 
 		/*
 		 * See:
@@ -13,11 +15,11 @@ export default defineNuxtPlugin({
 			baseURL: `${config.app.baseURL}api`,
 
 			onRequest(context) {
-				forwardCookieHeaders(context, { logger });
+				forwardCookieHeaders(context, { logger: appLogger });
 			},
 
 			onResponseError(context) {
-				logger.error('Plugin: madek-api', 'API request failed.', context.response);
+				appLogger.error('Plugin: madek-api', 'API request failed.', context.response);
 			},
 		});
 

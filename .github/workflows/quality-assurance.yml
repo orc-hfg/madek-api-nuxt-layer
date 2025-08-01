@@ -1,3 +1,32 @@
+# Quality Assurance Workflow
+#
+# This workflow ensures code quality and package integrity for the madek-api-nuxt-layer.
+# It runs comprehensive checks on every push to main and pull requests to catch issues early.
+#
+# Design Decisions:
+# 1. **Release Commit Skip Logic**: Automatically skips QA for release commits to prevent
+#    duplicate CI runs, since the "Quality Assurance, Release & Publish Package" workflow
+#    already includes all QA steps when processing version tags. This avoids running
+#    the same quality checks twice when a release commit is pushed to main.
+#
+# 2. **Workflow Coordination**: Works in tandem with the release workflow:
+#    - This workflow: Handles regular development (pushes to main, PRs)
+#    - Release workflow: Handles releases (version tags) and includes QA steps
+#    - Release commit detection prevents overlap and resource waste
+#
+# 3. **Concurrency Control**: Uses ref-based grouping to prevent resource waste and
+#    potential conflicts when multiple commits are pushed rapidly to the same branch.
+#
+# 4. **Nuxt Preparation**: Required before linting because ESLint config imports
+#    generated files from .playground/.nuxt/eslint.config.mjs that only exist after
+#    Nuxt environment preparation.
+#
+# 5. **Package Verification**: Includes npm pack dry-run to catch packaging issues
+#    (invalid .npmignore, missing files array entries) before actual publishing.
+#
+# 6. **Conditional Execution**: All steps respect the release commit check to ensure
+#    efficient resource usage and prevent unnecessary CI runs.
+
 name: Quality Assurance
 
 on:
@@ -26,15 +55,15 @@ jobs:
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
           if [[ "$COMMIT_MSG" == *"chore: release "* ]]; then
-            echo "should_skip=true" >> $GITHUB_OUTPUT
+            echo "should_run=false" >> $GITHUB_OUTPUT
             echo "This is a release commit - Quality Assurance will be skipped"
           else
-            echo "should_skip=false" >> $GITHUB_OUTPUT
+            echo "should_run=true" >> $GITHUB_OUTPUT
             echo "Not a release commit - continuing with Quality Assurance"
           fi
 
       - name: Setup Node.js + npm cache
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -42,37 +71,38 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm ci
 
       - name: Prepare Nuxt environment
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run dev:prepare
 
       - name: Run linting
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run lint
 
       - name: Type check
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run check:types
 
       - name: Check for unused code & dependencies
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run check:unused
 
       - name: Run unit tests
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run test
 
       - name: Build application
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: npm run build
 
       - name: Verify package can be packed
-        if: steps.check_release.outputs.should_skip == 'false'
+        if: steps.check_release.outputs.should_run == 'true'
         run: |
           # Test that the package can be properly packed for publishing
           # This catches issues with .npmignore, package.json files array, etc.
+          # before they cause problems during actual npm publish
           npm pack --dry-run
           echo "Package packing verification passed"

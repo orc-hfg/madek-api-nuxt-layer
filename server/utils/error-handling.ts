@@ -22,10 +22,10 @@ export function convertFetchToH3Error(error: FetchError): H3Error {
 export function handleServiceError(
 	error: unknown,
 	serviceName: string,
-	logger: Logger,
+	serverLogger: Logger,
 	message = 'Failed to complete operation',
 ): never {
-	logger.error(serviceName, message, error);
+	serverLogger.error(serviceName, message, error);
 
 	throw error;
 }

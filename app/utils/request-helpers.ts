@@ -1,4 +1,5 @@
 import type { FetchContext } from 'ofetch';
+import { createAppLogger } from './app-logger';
 
 export function forwardCookieHeaders(
 	context: FetchContext,
@@ -16,7 +17,7 @@ export function forwardCookieHeaders(
 		 */
 		getRequestHeaders = useRequestHeaders,
 		isServerEnvironment = import.meta.server,
-		logger = createLogger(),
+		logger = createAppLogger(),
 	} = options;
 
 	if (!isServerEnvironment) {

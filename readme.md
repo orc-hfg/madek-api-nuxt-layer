@@ -175,11 +175,6 @@ Folgende Dateien entsprechend anpassen:
 - Angaben zu Peer Dependencies in `package.json` mit neuen Versionen aktualisieren
 
 ### 3. Aufgaben für das nächste Dependency Update bearbeiten und ggf. neue erstellen
-- Wenn die Node LTS Version >= 24 ist, die Tests in entsprechend anpassen (nach TODO-Kommentar `@upgrade-node24` suchen)
-- Kann happy-dom nun aktualisiert werden? https://github.com/nuxt/test-utils/issues/1323
-- Testen, ob Update von @nuxt/text-utils auf Version > 3.18.0 nun funktioniert (alle Tests sollten ausgeführt werden): https://github.com/nuxt/test-utils/issues/1296
-- Testen, ob Knip in Version ab 5.58.0 (5.61.0 ging zuletzt noch nicht) nun funktioniert und dieser Fehler nicht mehr auftritt: TypeError: Cannot assign to read only property 'defineNuxtConfig' of object '#<Object>'
-- wenn die neuen Caching-Strategien verfügbar sind (ab Nuxt 3.18?), diese implementieren und die experimentellen Flags `purgeCachedData` und `granularCachedData` aus `nuxt.config.ts` entfernen:
-  - https://github.com/nuxt/nuxt/pull/32003
-  - https://github.com/nuxt/nuxt/issues/31949#issuecomment-2844391646
-  - https://github.com/nuxt/nuxt/pull/31373
+- Wenn die Node LTS Version >= 24 ist, die Tests entsprechend anpassen (nach TODO-Kommentar `@upgrade-node24` suchen)
+- Kann `"vitest": false` aus `knip.json` wieder entfernt werden? Läuft dann `npm run check:unused` fehlerfrei?
+- Ist diese Warnung (`[nuxt] error caught during app initialization undefined`) beim Ausführen der Tests weiterhin sichtbar?
