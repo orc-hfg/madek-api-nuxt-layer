@@ -224,7 +224,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Determine publish arguments based on release type
-          PUBLISH_ARGS="--provenance"
+          PUBLISH_ARGS="--provenance --access public"
 
           # Add 'next' tag for pre-releases to prevent accidental installation via @latest
           if [[ "${{ steps.tag_info.outputs.is_prerelease }}" == "true" ]]; then
