@@ -3,9 +3,9 @@ import { createServerStartupLogger } from '../utils/server-logger';
 
 export default defineNitroPlugin(() => {
 	const config = useRuntimeConfig();
-	const serverLogger = createServerStartupLogger();
+	const serverStartupLogger = createServerStartupLogger();
 
-	serverLogger.info('Plugin: madek-api-initialization', 'Madek API Base URL:', config.public.madekApi.baseURL);
+	serverStartupLogger.info('Plugin: madek-api-initialization', 'Madek API Base URL:', config.public.madekApi.baseURL);
 
 	const isMainApplicationActive = Boolean(config.mainApplication);
 
