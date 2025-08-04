@@ -50,7 +50,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Node and install dependencies
-        uses: ./.github/actions/setup-node-dependencies/action.yml
+        uses: ./.github/actions/setup-node-dependencies
 
       - name: Prepare Nuxt environment
         run: npm run dev:prepare
