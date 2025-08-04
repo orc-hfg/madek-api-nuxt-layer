@@ -1,0 +1,30 @@
+name: Detect release commit
+
+on:
+  workflow_call:
+    outputs:
+      is_release_commit:
+        description: 'true if release commit, false if normal commit'
+        value: ${{ jobs.detect.outputs.is_release_commit }}
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      is_release_commit: ${{ steps.flag.outputs.is_release_commit }}
+    steps:
+      - name: Checkout code (shallow)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Detect release commit
+        id: flag
+        shell: bash
+        run: |
+          commit_msg="$(git log -1 --pretty=%B)"
+          if [[ "$commit_msg" == *"chore: release "* ]]; then
+            echo "is_release_commit=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_release_commit=false"  >> "$GITHUB_OUTPUT"
+          fi

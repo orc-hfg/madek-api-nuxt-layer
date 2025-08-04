@@ -1,0 +1,83 @@
+name: Create GitHub release
+description: Creates a GitHub release with comprehensive release notes
+
+inputs:
+  tag_name:
+    description: The tag name for this release
+    required: true
+  release_title:
+    description: Title for the release
+    required: true
+  release_body:
+    description: Text for the release body
+    required: true
+  is_prerelease:
+    description: Whether this is a pre-release (true/false)
+    required: true
+  build_date:
+    description: Build date in UTC format
+    required: true
+  build_sha:
+    description: Short SHA of the build commit
+    required: true
+  commit_count:
+    description: Number of commits since last release
+    required: true
+  contributors:
+    description: List of contributors for this release
+    required: true
+  github_token:
+    description: GitHub token for creating releases
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Create GitHub release
+      uses: softprops/action-gh-release@v2
+      with:
+        token: ${{ inputs.github_token }}
+        tag_name: ${{ inputs.tag_name }}
+        name: ${{ inputs.release_title }}
+        body: |
+          ${{ inputs.release_body }}
+
+          ## Release information
+
+          - **Version**: `${{ inputs.tag_name }}`
+          - **Build date**: ${{ inputs.build_date }}
+          - **Commit SHA**: [`${{ inputs.build_sha }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+          - **Commits in this release**: ${{ inputs.commit_count }}
+          - **Contributors**: ${{ inputs.contributors }}
+
+          ## Installation
+
+          ```bash
+          npm install @orc-hfg/madek-api-nuxt-layer@${{ inputs.tag_name }}
+          ```
+
+          ### Using in your project
+
+          ```typescript
+          // nuxt.config.ts
+          export default defineNuxtConfig({
+            extends: ['@orc-hfg/madek-api-nuxt-layer']
+          })
+          ```
+
+          ## Automatic publishing
+
+          This release will be automatically published to GitHub Packages and is available for installation immediately.
+
+          ## Links
+
+          - [Documentation](https://github.com/${{ github.repository }}#readme)
+          - [Report Issues](https://github.com/${{ github.repository }}/issues)
+
+          ---
+
+          *This release was created automatically by GitHub Actions.*
+        draft: false
+        prerelease: ${{ inputs.is_prerelease == 'true' }}
+        generate_release_notes: false
+        make_latest: ${{ inputs.is_prerelease == 'false' }}

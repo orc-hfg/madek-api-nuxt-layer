@@ -1,0 +1,32 @@
+name: Publish package
+description: Publishes package to GitHub Packages with proper tagging
+
+inputs:
+  is_prerelease:
+    description: Whether this is a pre-release (true/false)
+    required: true
+  node_auth_token:
+    description: Node authentication token for publishing
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Publish package
+      shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.node_auth_token }}
+      run: |
+        # Determine publish arguments based on release type
+        PUBLISH_ARGS="--provenance --access public"
+
+        # Add 'next' tag for pre-releases to prevent accidental installation via @latest
+        if [[ "${{ inputs.is_prerelease }}" == "true" ]]; then
+          PUBLISH_ARGS="$PUBLISH_ARGS --tag next"
+          echo "Publishing pre-release with 'next' tag"
+        else
+          echo "Publishing stable release with 'latest' tag"
+        fi
+
+        npm publish $PUBLISH_ARGS --registry=https://npm.pkg.github.com
+        echo "Package published successfully to GitHub Packages"

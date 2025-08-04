@@ -1,0 +1,70 @@
+name: Generate release info
+description: Generates detailed release information including commits, contributors and build info
+
+inputs:
+  tag_name:
+    description: The tag name for this release
+    required: true
+
+outputs:
+  commit_count:
+    description: Number of commits since last release
+    value: ${{ steps.generate_info.outputs.commit_count }}
+  contributors:
+    description: List of contributors for this release
+    value: ${{ steps.generate_info.outputs.contributors }}
+  build_date:
+    description: Build date in UTC format
+    value: ${{ steps.generate_info.outputs.build_date }}
+  build_sha:
+    description: Short SHA of the build commit
+    value: ${{ steps.generate_info.outputs.build_sha }}
+
+runs:
+  using: composite
+  steps:
+    - name: Generate release info
+      id: generate_info
+      shell: bash
+      run: |
+        TAG_NAME="${{ inputs.tag_name }}"
+
+        # Get last tag with more robust fallback
+        LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD 2>/dev/null || echo "HEAD")
+
+        # Get commit count since last release
+        if ! COMMIT_COUNT=$(git rev-list --count ${LAST_TAG}..HEAD 2>/dev/null); then
+          echo "Warning: Could not determine commit count, using fallback"
+          COMMIT_COUNT="unknown"
+        fi
+
+        # Get contributors for this release using git shortlog for robust deduplication
+        # git shortlog provides built-in normalization and deduplication:
+        # -s = summarize (hide commit counts)
+        # -n = sort by number of commits (will be re-sorted anyway)
+        # cut -f2- = remove the commit count prefix
+        # sort -fu = case-insensitive sort with unique filtering
+        if ! CONTRIBUTORS=$(git shortlog -sn "${LAST_TAG}..HEAD" 2>/dev/null | cut -f2- | sort -fu | paste -sd ', ' -); then
+          echo "Warning: Could not determine contributors for this release"
+          CONTRIBUTORS="Unable to determine"
+        fi
+
+        # Fallback if contributors is empty
+        if [ -z "$CONTRIBUTORS" ]; then
+          CONTRIBUTORS="No contributors found"
+        fi
+
+        # Generate build info
+        BUILD_DATE=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+        BUILD_SHA=$(git rev-parse --short HEAD)
+
+        echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+        echo "contributors=$CONTRIBUTORS" >> $GITHUB_OUTPUT
+        echo "build_date=$BUILD_DATE" >> $GITHUB_OUTPUT
+        echo "build_sha=$BUILD_SHA" >> $GITHUB_OUTPUT
+
+        echo "Release statistics:"
+        echo "Commits: $COMMIT_COUNT"
+        echo "Contributors: $CONTRIBUTORS"
+        echo "Build SHA: $BUILD_SHA"
+        echo "Last tag used for comparison: $LAST_TAG"
