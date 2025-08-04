@@ -76,7 +76,7 @@ jobs:
           echo "Version validation passed: $PKG"
 
       - name: Setup Node and install dependencies
-        uses: ./.github/actions/setup-node-dependencies/action.yml
+        uses: ./.github/actions/setup-node-dependencies
 
       - name: Prepare Nuxt environment
         run: npm run dev:prepare
