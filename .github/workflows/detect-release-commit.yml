@@ -13,10 +13,10 @@ jobs:
     outputs:
       is_release_commit: ${{ steps.flag.outputs.is_release_commit }}
     steps:
-      - name: Checkout code (shallow)
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          ref: ${{ github.sha }}
 
       - name: Detect release commit
         id: flag
@@ -25,7 +25,7 @@ jobs:
           commit_msg="$(git log -1 --pretty=%B)"
           echo "Commit message: $commit_msg"
 
-          if [[ "$commit_msg" == *"chore: release "* ]]; then
+          if [[ "$commit_msg" == *"chore: release "* ]] || [[ "$commit_msg" == *"chore: development release "* ]]; then
             echo "is_release_commit=true" >> "$GITHUB_OUTPUT"
             echo "Result: Release commit detected (true)"
           else
