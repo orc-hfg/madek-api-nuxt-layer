@@ -22,6 +22,18 @@ jobs:
         id: flag
         shell: bash
         run: |
+          echo "=== Debug Information ==="
+          echo "GITHUB_SHA: ${{ github.sha }}"
+          echo "GITHUB_REF: ${{ github.ref }}"
+          echo "GITHUB_HEAD_REF: ${{ github.head_ref }}"
+          echo "GITHUB_BASE_REF: ${{ github.base_ref }}"
+          echo "Current HEAD: $(git rev-parse HEAD)"
+          echo "Current branch: $(git branch --show-current || echo 'detached')"
+          echo ""
+          echo "Last 3 commits:"
+          git log -3 --oneline --graph
+          echo "=== End Debug ==="
+
           commit_msg="$(git log -1 --pretty=%B)"
           echo "Commit message: $commit_msg"
 
