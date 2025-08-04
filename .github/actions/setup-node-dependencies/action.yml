@@ -7,14 +7,22 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Setup Node and NPM cache
+    - name: Setup Node.js + npm cache
       uses: actions/setup-node@v4
       with:
         node-version-file: .nvmrc
         cache: npm
         cache-dependency-path: ${{ inputs.lockfile }}
-        registry-url: https://npm.pkg.github.com
 
-    - name: Install dependencies
-      run: npm ci --no-audit --no-fund --loglevel=error --prefer-offline
+    - name: Install project dependencies (skip scripts)
+      run: npm ci --ignore-scripts --no-audit --no-fund --loglevel=error --prefer-offline
+      shell: bash
+
+    - name: Install Rollup native binary (Linux only)
+      if: runner.os == 'Linux'
+      run: npm install --no-save @rollup/rollup-linux-x64-gnu
+      shell: bash
+
+    - name: Run Nuxt prepare
+      run: npx nuxt prepare
       shell: bash
