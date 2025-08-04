@@ -16,7 +16,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
+          # Use the actual commit from PR branch (not merge commit) for pull requests,
+          # fallback to normal commit SHA for direct pushes
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Detect release commit
         id: flag
