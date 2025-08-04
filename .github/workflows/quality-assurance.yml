@@ -46,8 +46,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node and install dependencies
         uses: ./.github/actions/setup-node-dependencies
@@ -55,11 +53,8 @@ jobs:
       - name: Prepare Nuxt environment
         run: npm run dev:prepare
 
-      - name: Run static code analysis
-        uses: ./.github/actions/static-code-analysis
-
-      - name: Run unit tests
-        run: npm run test
+      - name: Run quality assurance
+        uses: ./.github/actions/quality-assurance
 
       - name: Build application
         run: npm run build
