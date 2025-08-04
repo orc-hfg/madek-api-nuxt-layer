@@ -1,34 +1,34 @@
-# Quality Assurance, Release & Publish Package Workflow
+# Quality assurance, release and publish package workflow
 #
 # This workflow handles the complete release pipeline: quality assurance, GitHub release creation,
 # and package publishing to GitHub Packages. It's triggered automatically when version tags are pushed.
 #
-# Design Decisions:
-# 1. **Tag-Based Triggering**: Only runs on version tags (v*) to ensure releases are intentional
+# Design decisions:
+# 1. **Tag-based triggering**: Only runs on version tags (v*) to ensure releases are intentional
 #    and follow semantic versioning conventions.
 #
-# 2. **All-in-One Pipeline**: Combines QA, release creation, and publishing in a single workflow
+# 2. **All-in-one pipeline**: Combines quality assurance, release creation, and publishing in a single workflow
 #    to ensure atomicity - if any step fails, the entire release process is aborted.
 #
-# 3. **Version Validation**: Strict validation between package.json version and git tag prevents
+# 3. **Version validation**: Strict validation between package.json version and git tag prevents
 #    deployment of mismatched versions that could cause confusion or dependency issues.
 #
-# 4. **Pre-release Detection**: Automatically detects pre-release versions (containing "-dev.")
+# 4. **Pre-release detection**: Automatically detects pre-release versions (containing "-dev.")
 #    and marks them appropriately in GitHub releases to prevent accidental production usage.
 #
-# 5. **Comprehensive Release Notes**: Generates detailed release information including:
+# 5. **Comprehensive release notes**: Generates detailed release information including:
 #    - Build metadata (date, SHA, commit count)
 #    - Contributor attribution
 #    - Installation instructions
 #    - Usage examples
 #
-# 6. **GitHub Packages Publishing**: Automatically publishes to GitHub Packages with proper
+# 6. **GitHub packages publishing**: Automatically publishes to GitHub Packages with proper
 #    access controls and authentication via GITHUB_TOKEN.
 #
-# 7. **Concurrency Control**: Prevents parallel releases for the same tag to avoid race
+# 7. **Concurrency control**: Prevents parallel releases for the same tag to avoid race
 #    conditions during package publishing and release creation.
 
-name: Quality Assurance, Release & Publish Package
+name: Quality assurance, release and publish package
 
 on:
   push:
@@ -38,12 +38,12 @@ on:
 # Prevent parallel releases for the same tag to ensure data consistency
 # and avoid race conditions during package publishing
 concurrency:
-  group: release-${{ github.ref }}
+  group: layer-release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  qa-release-and-publish:
-    name: Quality Assurance, Release & Publish Package
+  quality-assurance-release-and-publish:
+    name: Quality assurance, release and publish package
     runs-on: ubuntu-latest
 
     permissions:
@@ -53,46 +53,11 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout code
+      - name: Checkout code (full history)
         uses: actions/checkout@v4
         with:
           # Required for git history analysis (tag comparison, contributor extraction, commit counting)
           fetch-depth: 0
-
-      - name: Setup Node.js + npm cache
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: package-lock.json
-          registry-url: https://npm.pkg.github.com
-
-      - name: Get tag info
-        id: tag_info
-        run: |
-          # Get tag name
-          TAG_NAME=${GITHUB_REF#refs/tags/}
-
-          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
-
-          # Simple pre-release detection
-          if [[ "$TAG_NAME" == *"-dev."* ]]; then
-            echo "is_prerelease=true" >> $GITHUB_OUTPUT
-            echo "release_title=$TAG_NAME" >> $GITHUB_OUTPUT
-            echo "release_body=Pre-release - Use with caution in production environments." >> $GITHUB_OUTPUT
-          else
-            echo "is_prerelease=false" >> $GITHUB_OUTPUT
-            echo "release_title=$TAG_NAME" >> $GITHUB_OUTPUT
-            echo "release_body=Stable Release - Ready for production use." >> $GITHUB_OUTPUT
-          fi
-
-          echo "Release: $TAG_NAME (Pre-release: $(if [[ "$TAG_NAME" == *"-dev."* ]]; then echo "true"; else echo "false"; fi))"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Prepare Nuxt environment
-        run: npm run dev:prepare
 
       - name: Validate package version vs. release tag
         run: |
@@ -110,14 +75,14 @@ jobs:
 
           echo "Version validation passed: $PKG"
 
-      - name: Run linting
-        run: npm run lint
+      - name: Setup Node and install dependencies
+        uses: ./.github/actions/setup-node-dependencies/action.yml
 
-      - name: Type check
-        run: npm run check:types
+      - name: Prepare Nuxt environment
+        run: npm run dev:prepare
 
-      - name: Check for unused code & dependencies
-        run: npm run check:unused
+      - name: Run static code analysis
+        uses: ./.github/actions/static-code-analysis
 
       - name: Run unit tests
         run: npm run test
@@ -125,113 +90,31 @@ jobs:
       - name: Build application
         run: npm run build
 
+      - name: Get tag info
+        id: tag_info
+        uses: ./.github/actions/extract-tag-info
+
       - name: Generate release info
         id: release_info
-        run: |
-          TAG_NAME="${{ steps.tag_info.outputs.tag_name }}"
-
-          # Get last tag with more robust fallback
-          LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD 2>/dev/null || echo "HEAD")
-
-          # Get commit count since last release
-          if ! COMMIT_COUNT=$(git rev-list --count ${LAST_TAG}..HEAD 2>/dev/null); then
-            echo "Warning: Could not determine commit count, using fallback"
-            COMMIT_COUNT="unknown"
-          fi
-
-          # Get contributors for this release using git shortlog for robust deduplication
-          # git shortlog provides built-in normalization and deduplication:
-          # -s = summarize (hide commit counts)
-          # -n = sort by number of commits (will be re-sorted anyway)
-          # cut -f2- = remove the commit count prefix
-          # sort -fu = case-insensitive sort with unique filtering
-          if ! CONTRIBUTORS=$(git shortlog -sn "${LAST_TAG}..HEAD" 2>/dev/null | cut -f2- | sort -fu | paste -sd ', ' -); then
-            echo "Warning: Could not determine contributors for this release"
-            CONTRIBUTORS="Unable to determine"
-          fi
-
-          # Fallback if contributors is empty
-          if [ -z "$CONTRIBUTORS" ]; then
-            CONTRIBUTORS="No contributors found"
-          fi
-
-          # Generate build info
-          BUILD_DATE=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          BUILD_SHA=$(git rev-parse --short HEAD)
-
-          echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
-          echo "contributors=$CONTRIBUTORS" >> $GITHUB_OUTPUT
-          echo "build_date=$BUILD_DATE" >> $GITHUB_OUTPUT
-          echo "build_sha=$BUILD_SHA" >> $GITHUB_OUTPUT
-
-          echo "Release Statistics:"
-          echo "Commits: $COMMIT_COUNT"
-          echo "Contributors: $CONTRIBUTORS"
-          echo "Build SHA: $BUILD_SHA"
-          echo "Last tag used for comparison: $LAST_TAG"
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: ./.github/actions/generate-release-info
         with:
           tag_name: ${{ steps.tag_info.outputs.tag_name }}
-          name: ${{ steps.tag_info.outputs.release_title }}
-          body: |
-            ${{ steps.tag_info.outputs.release_body }}
 
-            ## Release Information
+      - name: Create release
+        uses: ./.github/actions/create-github-release
+        with:
+          tag_name: ${{ steps.tag_info.outputs.tag_name }}
+          release_title: ${{ steps.tag_info.outputs.release_title }}
+          release_body: ${{ steps.tag_info.outputs.release_body }}
+          is_prerelease: ${{ steps.tag_info.outputs.is_prerelease }}
+          build_date: ${{ steps.release_info.outputs.build_date }}
+          build_sha: ${{ steps.release_info.outputs.build_sha }}
+          commit_count: ${{ steps.release_info.outputs.commit_count }}
+          contributors: ${{ steps.release_info.outputs.contributors }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-            - **Version**: `${{ steps.tag_info.outputs.tag_name }}`
-            - **Build Date**: ${{ steps.release_info.outputs.build_date }}
-            - **Commit SHA**: [`${{ steps.release_info.outputs.build_sha }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-            - **Commits in this release**: ${{ steps.release_info.outputs.commit_count }}
-            - **Contributors**: ${{ steps.release_info.outputs.contributors }}
-
-            ## Installation
-
-            ```bash
-            npm install @orc-hfg/madek-api-nuxt-layer@${{ steps.tag_info.outputs.tag_name }}
-            ```
-
-            ### Using in your project
-
-            ```typescript
-            // nuxt.config.ts
-            export default defineNuxtConfig({
-              extends: ['@orc-hfg/madek-api-nuxt-layer']
-            })
-            ```
-
-            ## Automatic Publishing
-
-            This release will be automatically published to GitHub Packages and is available for installation immediately.
-
-            ## Links
-
-            - [Documentation](https://github.com/${{ github.repository }}#readme)
-            - [Report Issues](https://github.com/${{ github.repository }}/issues)
-
-            ---
-
-            *This release was created automatically by GitHub Actions.*
-          draft: false
-          prerelease: ${{ steps.tag_info.outputs.is_prerelease == 'true' }}
-          generate_release_notes: false
-          make_latest: ${{ steps.tag_info.outputs.is_prerelease == 'false' }}
-
-      - name: Publish to GitHub Packages
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Determine publish arguments based on release type
-          PUBLISH_ARGS="--provenance --access public"
-
-          # Add 'next' tag for pre-releases to prevent accidental installation via @latest
-          if [[ "${{ steps.tag_info.outputs.is_prerelease }}" == "true" ]]; then
-            PUBLISH_ARGS="$PUBLISH_ARGS --tag next"
-            echo "Publishing pre-release with 'next' tag"
-          else
-            echo "Publishing stable release with 'latest' tag"
-          fi
-
-          npm publish $PUBLISH_ARGS
-          echo "Package published successfully to GitHub Packages"
+      - name: Publish package to GitHub Packages
+        uses: ./.github/actions/publish-package
+        with:
+          is_prerelease: ${{ steps.tag_info.outputs.is_prerelease }}
+          node_auth_token: ${{ secrets.GITHUB_TOKEN }}

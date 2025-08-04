@@ -1,0 +1,47 @@
+name: Extract tag info
+description: Extracts information from git tag and detects pre-releases
+
+inputs:
+  ref:
+    description: The git reference, typically GITHUB_REF
+    required: true
+    default: ${{ github.ref }}
+
+outputs:
+  tag_name:
+    description: The extracted tag name without refs/tags/ prefix
+    value: ${{ steps.extract_tag_info.outputs.tag_name }}
+  is_prerelease:
+    description: Whether this is a pre-release (true/false)
+    value: ${{ steps.extract_tag_info.outputs.is_prerelease }}
+  release_title:
+    description: Generated release title
+    value: ${{ steps.extract_tag_info.outputs.release_title }}
+  release_body:
+    description: Generated release body text
+    value: ${{ steps.extract_tag_info.outputs.release_body }}
+
+runs:
+  using: composite
+  steps:
+    - name: Extract tag info
+      id: extract_tag_info
+      shell: bash
+      run: |
+        # Get tag name
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+
+        echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+
+        # Simple pre-release detection
+        if [[ "$TAG_NAME" == *"-dev."* ]]; then
+          echo "is_prerelease=true" >> $GITHUB_OUTPUT
+          echo "release_title=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "release_body=Pre-release - Use with caution in production environments." >> $GITHUB_OUTPUT
+        else
+          echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          echo "release_title=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "release_body=Stable Release - Ready for production use." >> $GITHUB_OUTPUT
+        fi
+
+        echo "Release: $TAG_NAME (Pre-release: $(if [[ "$TAG_NAME" == *"-dev."* ]]; then echo "true"; else echo "false"; fi))"
