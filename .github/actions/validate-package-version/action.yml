@@ -1,0 +1,22 @@
+name: Validate package version
+description: Validates that package.json version matches the git release tag
+
+runs:
+  using: composite
+  steps:
+    - name: Validate package version vs. release tag
+      shell: bash
+      run: |
+        PKG=$(npm pkg get version | tr -d '"')
+        TAG=${GITHUB_REF#refs/tags/}
+        echo "pkg=$PKG" >> $GITHUB_OUTPUT
+        echo "tag=${TAG#v}" >> $GITHUB_OUTPUT
+
+        echo "Version Validation: package.json ($PKG) vs. git tag (${TAG#v})"
+
+        if [ "$PKG" != "${TAG#v}" ]; then
+          echo "::error::Version mismatch: package.json ($PKG) ≠ git tag (${TAG})"
+          exit 1
+        fi
+
+        echo "Version validation passed: $PKG"

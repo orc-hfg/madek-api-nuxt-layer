@@ -10,11 +10,17 @@
 # 2. **All-in-one pipeline**: Combines quality assurance, release creation, and publishing in a single workflow
 #    to ensure atomicity - if any step fails, the entire release process is aborted.
 #
-# 3. **Version validation**: Strict validation between package.json version and git tag prevents
-#    deployment of mismatched versions that could cause confusion or dependency issues.
+# 3. **Modular architecture**: Uses specialized composite actions for maintainability and reusability:
+#    - validate-package-version: Ensures package.json version matches git tag
+#    - setup-node-dependencies: Node.js setup with optimized caching and npm flags
+#    - quality-assurance: Static analysis (linting, type checking, unused code) and unit tests
+#    - extract-tag-info: Extracts tag information and detects pre-releases
+#    - generate-release-info: Generates commit count, contributors, and build metadata
+#    - create-github-release: Creates GitHub release with comprehensive notes
+#    - publish-package: Publishes to GitHub Packages with proper tagging
 #
 # 4. **Pre-release detection**: Automatically detects pre-release versions (containing "-dev.")
-#    and marks them appropriately in GitHub releases to prevent accidental production usage.
+#    and marks them appropriately in GitHub releases and npm tags to prevent accidental production usage.
 #
 # 5. **Comprehensive release notes**: Generates detailed release information including:
 #    - Build metadata (date, SHA, commit count)
@@ -23,7 +29,7 @@
 #    - Usage examples
 #
 # 6. **GitHub packages publishing**: Automatically publishes to GitHub Packages with proper
-#    access controls and authentication via GITHUB_TOKEN.
+#    access controls, authentication via GITHUB_TOKEN, and conditional tagging (--tag next for pre-releases).
 #
 # 7. **Concurrency control**: Prevents parallel releases for the same tag to avoid race
 #    conditions during package publishing and release creation.
@@ -59,21 +65,8 @@ jobs:
           # Required for git history analysis (tag comparison, contributor extraction, commit counting)
           fetch-depth: 0
 
-      - name: Validate package version vs. release tag
-        run: |
-          PKG=$(npm pkg get version | tr -d '"')
-          TAG=${GITHUB_REF#refs/tags/}
-          echo "pkg=$PKG" >> $GITHUB_OUTPUT
-          echo "tag=${TAG#v}" >> $GITHUB_OUTPUT
-
-          echo "Version Validation: package.json ($PKG) vs. git tag (${TAG#v})"
-
-          if [ "$PKG" != "${TAG#v}" ]; then
-            echo "::error::Version mismatch: package.json ($PKG) ≠ git tag (${TAG})"
-            exit 1
-          fi
-
-          echo "Version validation passed: $PKG"
+      - name: Validate package version
+        uses: ./.github/actions/validate-package-version
 
       - name: Setup Node and install dependencies
         uses: ./.github/actions/setup-node-dependencies

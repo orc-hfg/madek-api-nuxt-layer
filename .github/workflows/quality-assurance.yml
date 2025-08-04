@@ -12,8 +12,10 @@
 #    - Release workflow: Handles releases (version tags) and includes quality assurance steps
 #    - Release commit detection prevents overlap and resource waste
 #
-# 3. **Performance optimizations**: Uses integrated Node.js setup caching and optimized
-#    npm flags (--no-audit --no-fund --loglevel=error) for faster CI builds and reduced noise in logs.
+# 3. **Modular architecture**: Uses composite actions for reusability and maintainability:
+#    - setup-node-dependencies: Node.js setup with optimized caching and npm flags
+#    - quality-assurance: Static analysis (linting, type checking, unused code) and unit tests
+#    - Separate build and package verification steps for clear separation of concerns
 #
 # 4. **Package verification**: Ensures the package can be properly packed with npm pack,
 #    verifying package integrity before any potential release.
