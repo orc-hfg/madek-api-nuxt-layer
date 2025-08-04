@@ -14,15 +14,6 @@ runs:
         cache: npm
         cache-dependency-path: ${{ inputs.lockfile }}
 
-    - name: Install project dependencies (skip scripts)
-      run: npm ci --ignore-scripts --no-audit --no-fund --loglevel=error --prefer-offline
-      shell: bash
-
-    - name: Install Rollup native binary (Linux only)
-      if: runner.os == 'Linux'
-      run: npm install --no-save @rollup/rollup-linux-x64-gnu
-      shell: bash
-
-    - name: Run Nuxt prepare
-      run: npx nuxt prepare
+    - name: Install dependencies
+      run: npm ci --no-audit --no-fund --loglevel=error --prefer-offline
       shell: bash

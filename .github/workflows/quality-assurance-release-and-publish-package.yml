@@ -53,7 +53,7 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout code (full history)
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           # Required for git history analysis (tag comparison, contributor extraction, commit counting)
