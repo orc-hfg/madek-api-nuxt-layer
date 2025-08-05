@@ -62,7 +62,7 @@
 		"knip": "5.62.0",
 		"lint-staged": "16.1.4",
 		"npm-check-updates": "18.0.2",
-		"nuxt": "4.0.2",
+		"nuxt": "4.0.3",
 		"openapi-typescript": "7.8.0",
 		"typescript": "5.8.3",
 		"vitest": "3.2.4",
