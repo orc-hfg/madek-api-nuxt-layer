@@ -12,11 +12,11 @@ Der Madek-API Nuxt Layer ist ein wiederverwendbares Nuxt-Layer-Package für die 
 
 Die Dokumentation ist in mehrere domänenspezifische README-Dateien aufgeteilt:
 
-- [Entwicklung](./readme-development.md) - Lokales Linking, API-Typen-Generierung, Entwicklungsworkflow
-- [Release Management](./readme-release.md) - Versioning, automatisierte Releases, GitHub Actions
-- [Wartung](./readme-maintenance.md) - Dependency Updates, Node-Aktualisierung, bekannte Issues
-- [Testing](./readme-testing.md) - Unit-Tests, Vitest-Konfiguration, Test-Utilities
-- [TypeScript-Richtlinien](./readme-typescript.md) - Best Practices für TypeScript im Layer
+- [Entwicklung](./readme.development.md) – Lokales Linking, API-Typen-Generierung, Entwicklungsworkflow
+- [Release Management](./readme.release.md) – Versioning, automatisierte Releases, GitHub Actions
+- [Wartung](./readme.maintenance.md) – Dependency Updates, Node-Aktualisierung, bekannte Issues
+- [Testing](./readme.testing.md) – Unit-Tests, Vitest-Konfiguration, Test-Utilities
+- [TypeScript-Richtlinien](./readme.typescript.md) – Best Practices für TypeScript im Layer
 
 ## Architektur-Dokumentation
 
