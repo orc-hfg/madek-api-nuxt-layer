@@ -8,9 +8,11 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: strin
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
 	const serverLogger = createServerLogger(event);
 
-	serverLogger.info('Service: getCollectionMetaDatum', 'API baseURL:', config.public.madekApi.baseURL);
-	serverLogger.info('Service: getCollectionMetaDatum', 'Collection ID:', collectionId);
-	serverLogger.info('Service: getCollectionMetaDatum', 'Meta Key ID:', metaKeyId);
+	const LOGGER_SOURCE = 'Service: getCollectionMetaDatum';
+
+	serverLogger.info(LOGGER_SOURCE, 'API baseURL:', config.public.madekApi.baseURL);
+	serverLogger.info(LOGGER_SOURCE, 'Collection ID:', collectionId);
+	serverLogger.info(LOGGER_SOURCE, 'Meta Key ID:', metaKeyId);
 
 	try {
 		const response = await fetchFromApiWithPathParameters(
