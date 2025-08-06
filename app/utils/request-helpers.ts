@@ -27,6 +27,8 @@ export function forwardCookieHeader(
 
 	const cookieValue = cookieHeader.cookie?.trim();
 
+	logger.debug(LOGGER_SOURCE, 'Cookie header value:', cookieValue);
+
 	if (cookieValue === undefined || cookieValue === '') {
 		logger.info(LOGGER_SOURCE, 'No cookie header found to forward.');
 
