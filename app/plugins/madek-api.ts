@@ -6,7 +6,9 @@ export default defineNuxtPlugin({
 	setup() {
 		const config = useRuntimeConfig();
 		const appLogger = createAppLogger();
+		const isDevelopmentEnvironment = import.meta.dev;
 		const isServerEnvironment = import.meta.server;
+		const shouldForwardCookieHeader = !isDevelopmentEnvironment;
 
 		// Capture request headers during plugin setup where composables are available
 		const cookieHeader = isServerEnvironment ? useRequestHeaders(['cookie']) : undefined;
@@ -19,7 +21,7 @@ export default defineNuxtPlugin({
 			baseURL: `${config.app.baseURL}api`,
 
 			onRequest(context) {
-				if (cookieHeader !== undefined) {
+				if (shouldForwardCookieHeader && cookieHeader !== undefined) {
 					forwardCookieHeader(context, {
 						cookieHeader,
 						logger: appLogger,
