@@ -4,8 +4,6 @@ import { TEST_COOKIE } from '../../shared/constants/test';
 import { createMockLogger } from '../../tests/mocks/logger';
 import { forwardCookieHeader } from './request-helpers';
 
-const LOGGER_SOURCE = 'Utility: request-helpers';
-
 function setupTestContext({
 	initialHeaders = new Headers(),
 	cookie = TEST_COOKIE,
@@ -44,7 +42,7 @@ describe('forwardCookieHeader()', () => {
 		);
 
 		expect(mockContext.options.headers.get('cookie')).toBe(testCookie);
-		expect(mockLogger.info).toHaveBeenCalledWith(LOGGER_SOURCE, 'Cookie header forwarded.');
+		expect(mockLogger.info).toHaveBeenCalledWith('Cookie header forwarded.');
 	});
 
 	it('returns false when on client side', () => {
@@ -78,7 +76,7 @@ describe('forwardCookieHeader()', () => {
 		);
 
 		expect(mockContext.options.headers.get('cookie')).toBeNull();
-		expect(mockLogger.info).toHaveBeenCalledWith(LOGGER_SOURCE, 'No cookie header found to forward.');
+		expect(mockLogger.info).toHaveBeenCalledWith('No cookie header found to forward.');
 	});
 
 	it('handles existing headers properly', () => {
@@ -100,6 +98,6 @@ describe('forwardCookieHeader()', () => {
 
 		expect(mockContext.options.headers.get('content-type')).toBe('application/json');
 		expect(mockContext.options.headers.get('cookie')).toBe(testCookie);
-		expect(mockLogger.info).toHaveBeenCalledWith(LOGGER_SOURCE, 'Cookie header forwarded.');
+		expect(mockLogger.info).toHaveBeenCalledWith('Cookie header forwarded.');
 	});
 });

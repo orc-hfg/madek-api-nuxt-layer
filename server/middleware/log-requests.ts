@@ -1,7 +1,7 @@
 import { createServerLogger } from '../utils/server-logger';
 
 export default defineEventHandler((event) => {
-	const serverLogger = createServerLogger(event);
+	const serverLogger = createServerLogger(event, 'Middleware: log-requests');
 
 	const { headers } = event.node.req;
 	const forwardedHost = headers['x-forwarded-host'];
@@ -15,5 +15,5 @@ export default defineEventHandler((event) => {
 	const isInternalCall = forwardedHost === undefined && host === 'localhost';
 
 	const requestURL = getRequestURL(event);
-	serverLogger.info('Middleware: log-requests', 'Request URL:', isInternalCall ? `[Internal call] ${requestURL.href}` : requestURL.href);
+	serverLogger.info('Request URL:', isInternalCall ? `[Internal call] ${requestURL.href}` : requestURL.href);
 });

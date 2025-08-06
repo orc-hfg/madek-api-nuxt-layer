@@ -6,12 +6,10 @@ import { createServerLogger } from '../utils/server-logger';
 export async function getCollections(event: H3Event, query: CollectionsUserQuery): Promise<Collections> {
 	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekCollectionsResponse>(event);
-	const serverLogger = createServerLogger(event);
+	const serverLogger = createServerLogger(event, 'Service: getCollections');
 
-	const LOGGER_SOURCE = 'Service: getCollections';
-
-	serverLogger.info(LOGGER_SOURCE, 'API baseURL:', config.public.madekApi.baseURL);
-	serverLogger.info(LOGGER_SOURCE, 'Query params:', query);
+	serverLogger.info('API baseURL:', config.public.madekApi.baseURL);
+	serverLogger.info('Query params:', query);
 
 	try {
 		const response = await fetchFromApi('collections', {
@@ -29,6 +27,6 @@ export async function getCollections(event: H3Event, query: CollectionsUserQuery
 		});
 	}
 	catch (error) {
-		return handleServiceError(error, LOGGER_SOURCE, serverLogger, 'Failed to fetch collections.');
+		return handleServiceError(serverLogger, error, 'Failed to fetch collections.');
 	}
 }

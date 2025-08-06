@@ -2,6 +2,7 @@ import type { H3Event } from 'h3';
 import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
 import { getRequestHeaders } from 'h3';
 import { FetchError } from 'ofetch';
+import { isDevelopmentEnvironment as defaultIsDevelopmentEnvironment } from '../../shared/utils/environment';
 import { noCache } from '../constants/cache';
 import { createServerLogger } from './server-logger';
 
@@ -45,14 +46,14 @@ export function generateCacheKey(endpoint: string, query?: Record<string, string
 export function getAuthenticationHeaders(
 	event: H3Event,
 	apiToken?: string,
-	isDevelopmentEnvironment = import.meta.dev,
+	isDevelopmentEnvironment = defaultIsDevelopmentEnvironment,
 ): Record<string, string> {
-	const serverLogger = createServerLogger(event);
+	const serverLogger = createServerLogger(event, LOGGER_SOURCE);
 	const headers: Record<string, string> = {};
 
 	// For development: use API token if available
 	if (isDevelopmentEnvironment && apiToken !== undefined && apiToken !== '') {
-		serverLogger.info(LOGGER_SOURCE, 'Using API token for authentication.');
+		serverLogger.info('Using API token for authentication.');
 		headers.Authorization = `token ${apiToken}`;
 	}
 
@@ -60,7 +61,7 @@ export function getAuthenticationHeaders(
 	else if (!isDevelopmentEnvironment) {
 		const { cookie } = getRequestHeaders(event);
 		if (cookie !== undefined) {
-			serverLogger.info(LOGGER_SOURCE, 'Using cookie for authentication.');
+			serverLogger.info('Using cookie for authentication.');
 			headers.cookie = cookie;
 		}
 	}
@@ -72,7 +73,7 @@ export function buildRequestConfig(
 	event: H3Event,
 	apiOptions: MadekApiOptions = {},
 	apiToken?: string,
-	isDevelopmentEnvironment = import.meta.dev,
+	isDevelopmentEnvironment = defaultIsDevelopmentEnvironment,
 ): NitroFetchOptions<NitroFetchRequest> {
 	const { isAuthenticationNeeded, query } = apiOptions;
 	const config: NitroFetchOptions<NitroFetchRequest> = {};
@@ -97,7 +98,7 @@ export async function fetchData<T>(
 	apiOptions: MadekApiOptions = {},
 	apiToken?: string,
 	fetchFunction = $fetch,
-	isDevelopmentEnvironment = import.meta.dev,
+	isDevelopmentEnvironment = defaultIsDevelopmentEnvironment,
 ): Promise<T> {
 	try {
 		const requestConfig = buildRequestConfig(event, apiOptions, apiToken, isDevelopmentEnvironment);
@@ -116,11 +117,11 @@ export async function fetchData<T>(
 }
 
 export function shouldUseCaching(
-	isAuthNeeded: boolean,
+	isAuthenticationNeeded: boolean,
 	cacheOptions?: CacheOptions,
-	isDevelopmentEnvironment = import.meta.dev,
+	isDevelopmentEnvironment = defaultIsDevelopmentEnvironment,
 ): boolean {
-	return !isDevelopmentEnvironment && !isAuthNeeded && cacheOptions !== undefined;
+	return !isDevelopmentEnvironment && !isAuthenticationNeeded && cacheOptions !== undefined;
 }
 
 export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetchData): {
@@ -133,15 +134,15 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 
 	async function fetchFromApi(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
 		const url = `${apiBaseURL}${endpoint}`;
-		const isAuthNeeded = apiRequestConfig.apiOptions?.isAuthenticationNeeded === true;
+		const isAuthenticationNeeded = apiRequestConfig.apiOptions?.isAuthenticationNeeded === true;
 		const cacheOptions = apiRequestConfig.publicDataCache;
 
-		if (isAuthNeeded && apiRequestConfig.publicDataCache !== noCache) {
-			const serverLogger = createServerLogger(event);
-			serverLogger.warn('Utility: madekApi', 'Authenticated requests should only use \'noCache\' for publicDataCache (or none at all). Other cache configurations are ignored.', endpoint);
+		if (isAuthenticationNeeded && apiRequestConfig.publicDataCache !== noCache) {
+			const serverLogger = createServerLogger(event, LOGGER_SOURCE);
+			serverLogger.warn('Authenticated requests should only use \'noCache\' for publicDataCache (or none at all). Other cache configurations are ignored.', endpoint);
 		}
 
-		if (shouldUseCaching(isAuthNeeded, cacheOptions)) {
+		if (shouldUseCaching(isAuthenticationNeeded, cacheOptions)) {
 			return defineCachedFunction(
 				async () => fetchDataFunction<T>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken),
 				{

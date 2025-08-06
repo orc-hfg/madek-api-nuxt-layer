@@ -6,13 +6,11 @@ import { createServerLogger } from '../utils/server-logger';
 export async function getCollectionMetaDatum(event: H3Event, collectionId: string, metaKeyId: string): Promise<MetaDatumString> {
 	const config = useRuntimeConfig(event);
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
-	const serverLogger = createServerLogger(event);
+	const serverLogger = createServerLogger(event, 'Service: getCollectionMetaDatum');
 
-	const LOGGER_SOURCE = 'Service: getCollectionMetaDatum';
-
-	serverLogger.info(LOGGER_SOURCE, 'API baseURL:', config.public.madekApi.baseURL);
-	serverLogger.info(LOGGER_SOURCE, 'Collection ID:', collectionId);
-	serverLogger.info(LOGGER_SOURCE, 'Meta Key ID:', metaKeyId);
+	serverLogger.info('API baseURL:', config.public.madekApi.baseURL);
+	serverLogger.info('Collection ID:', collectionId);
+	serverLogger.info('Meta Key ID:', metaKeyId);
 
 	try {
 		const response = await fetchFromApiWithPathParameters(
@@ -34,6 +32,6 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: strin
 		};
 	}
 	catch (error) {
-		return handleServiceError(error, 'getCollectionMetaDatum', serverLogger, 'Failed to fetch collection meta datum.');
+		return handleServiceError(serverLogger, error, 'Failed to fetch collection meta datum.');
 	}
 }

@@ -6,9 +6,9 @@ import { createServerLogger } from '../utils/server-logger';
 export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekAuthInfoResponse>(event);
-	const serverLogger = createServerLogger(event);
+	const serverLogger = createServerLogger(event, 'Service: getAuthInfo');
 
-	serverLogger.info('Service: getAuthInfo', 'API baseURL:', config.public.madekApi.baseURL);
+	serverLogger.info('API baseURL:', config.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('auth-info', {
@@ -26,6 +26,6 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 		};
 	}
 	catch (error) {
-		return handleServiceError(error, 'getAuthInfo', serverLogger, 'Failed to fetch auth info.');
+		return handleServiceError(serverLogger, error, 'Failed to fetch auth info.');
 	}
 }
