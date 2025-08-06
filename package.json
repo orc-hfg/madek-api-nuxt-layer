@@ -13,6 +13,7 @@
 	"scripts": {
 		"dev": "nuxt dev -p 3001 .playground",
 		"dev:prepare": "nuxt prepare .playground",
+		"link:dev": "npm link && echo '\n🔗 Layer successfully linked!' && echo '📋 Next step: Open a new terminal tab and run \"npm run link:dev\" in your main app repository folder.' && echo '⚠️  Both development servers need to run in parallel for live updates.\n' && npm run dev",
 		"build": "nuxt build .playground",
 		"generate": "nuxt generate .playground",
 		"preview": "nuxt preview .playground",
