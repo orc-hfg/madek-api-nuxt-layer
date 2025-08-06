@@ -45,19 +45,19 @@ export function generateCacheKey(endpoint: string, query?: Record<string, string
 export function getAuthenticationHeaders(
 	event: H3Event,
 	apiToken?: string,
-	isDevelopment = import.meta.dev,
+	isDevelopmentEnvironment = import.meta.dev,
 ): Record<string, string> {
 	const serverLogger = createServerLogger(event);
 	const headers: Record<string, string> = {};
 
 	// For development: use API token if available
-	if (isDevelopment && apiToken !== undefined && apiToken !== '') {
+	if (isDevelopmentEnvironment && apiToken !== undefined && apiToken !== '') {
 		serverLogger.info(LOGGER_SOURCE, 'Using API token for authentication.');
 		headers.Authorization = `token ${apiToken}`;
 	}
 
 	// For production: forward cookie from request if available
-	else if (!isDevelopment) {
+	else if (!isDevelopmentEnvironment) {
 		const { cookie } = getRequestHeaders(event);
 		if (cookie !== undefined) {
 			serverLogger.info(LOGGER_SOURCE, 'Using cookie for authentication.');
@@ -72,7 +72,7 @@ export function buildRequestConfig(
 	event: H3Event,
 	apiOptions: MadekApiOptions = {},
 	apiToken?: string,
-	isDevelopment = import.meta.dev,
+	isDevelopmentEnvironment = import.meta.dev,
 ): NitroFetchOptions<NitroFetchRequest> {
 	const { isAuthenticationNeeded, query } = apiOptions;
 	const config: NitroFetchOptions<NitroFetchRequest> = {};
@@ -82,7 +82,7 @@ export function buildRequestConfig(
 	}
 
 	if (isAuthenticationNeeded) {
-		const authenticationHeaders = getAuthenticationHeaders(event, apiToken, isDevelopment);
+		const authenticationHeaders = getAuthenticationHeaders(event, apiToken, isDevelopmentEnvironment);
 		if (Object.keys(authenticationHeaders).length > 0) {
 			config.headers = authenticationHeaders;
 		}
@@ -97,10 +97,10 @@ export async function fetchData<T>(
 	apiOptions: MadekApiOptions = {},
 	apiToken?: string,
 	fetchFunction = $fetch,
-	isDevelopment = import.meta.dev,
+	isDevelopmentEnvironment = import.meta.dev,
 ): Promise<T> {
 	try {
-		const requestConfig = buildRequestConfig(event, apiOptions, apiToken, isDevelopment);
+		const requestConfig = buildRequestConfig(event, apiOptions, apiToken, isDevelopmentEnvironment);
 
 		const response = await fetchFunction<T>(url, requestConfig);
 
@@ -118,9 +118,9 @@ export async function fetchData<T>(
 export function shouldUseCaching(
 	isAuthNeeded: boolean,
 	cacheOptions?: CacheOptions,
-	isDevelopment = import.meta.dev,
+	isDevelopmentEnvironment = import.meta.dev,
 ): boolean {
-	return !isDevelopment && !isAuthNeeded && cacheOptions !== undefined;
+	return !isDevelopmentEnvironment && !isAuthNeeded && cacheOptions !== undefined;
 }
 
 export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetchData): {
