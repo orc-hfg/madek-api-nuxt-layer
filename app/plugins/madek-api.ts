@@ -1,3 +1,4 @@
+import { isDevelopmentEnvironment, isServerEnvironment } from '../../shared/utils/environment';
 import { createAppLogger } from '../utils/app-logger';
 import { forwardCookieHeader } from '../utils/request-helpers';
 
@@ -5,10 +6,8 @@ export default defineNuxtPlugin({
 	name: 'madek-api',
 	setup() {
 		const config = useRuntimeConfig();
-		const appLogger = createAppLogger();
-		const isDevelopmentEnvironment = import.meta.dev;
-		const isServerEnvironment = import.meta.server;
-		const shouldForwardCookieHeader = !isDevelopmentEnvironment;
+		const appLogger = createAppLogger('Plugin: madek-api');
+		const shouldForwardCookieHeader = isServerEnvironment && !isDevelopmentEnvironment;
 
 		// Capture request headers during plugin setup where composables are available
 		const cookieHeader = isServerEnvironment ? useRequestHeaders(['cookie']) : undefined;
@@ -30,7 +29,7 @@ export default defineNuxtPlugin({
 			},
 
 			onResponseError(context) {
-				appLogger.error('Plugin: madek-api', 'API request failed.', context.response);
+				appLogger.error('API request failed.', context.response);
 			},
 		});
 
