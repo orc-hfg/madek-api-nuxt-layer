@@ -8,8 +8,10 @@ export async function getCollections(event: H3Event, query: CollectionsUserQuery
 	const { fetchFromApi } = createMadekApiClient<MadekCollectionsResponse>(event);
 	const serverLogger = createServerLogger(event);
 
-	serverLogger.info('Service: getCollections', 'API baseURL:', config.public.madekApi.baseURL);
-	serverLogger.info('Service: getCollections', 'Query params:', query);
+	const LOGGER_SOURCE = 'Service: getCollections';
+
+	serverLogger.info(LOGGER_SOURCE, 'API baseURL:', config.public.madekApi.baseURL);
+	serverLogger.info(LOGGER_SOURCE, 'Query params:', query);
 
 	try {
 		const response = await fetchFromApi('collections', {
@@ -27,6 +29,6 @@ export async function getCollections(event: H3Event, query: CollectionsUserQuery
 		});
 	}
 	catch (error) {
-		return handleServiceError(error, 'getCollections', serverLogger, 'Failed to fetch collections.');
+		return handleServiceError(error, LOGGER_SOURCE, serverLogger, 'Failed to fetch collections.');
 	}
 }

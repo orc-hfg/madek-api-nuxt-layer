@@ -5,6 +5,8 @@ import { FetchError } from 'ofetch';
 import { noCache } from '../constants/cache';
 import { createServerLogger } from './server-logger';
 
+const LOGGER_SOURCE = 'Utility: madekApi';
+
 export interface MadekApiOptions {
 	isAuthenticationNeeded?: boolean;
 	query?: NitroFetchOptions<NitroFetchRequest>['query'];
@@ -50,7 +52,7 @@ export function getAuthenticationHeaders(
 
 	// For development: use API token if available
 	if (isDevelopment && apiToken !== undefined && apiToken !== '') {
-		serverLogger.info('Utility: madekApi', 'Using API token for authentication.');
+		serverLogger.info(LOGGER_SOURCE, 'Using API token for authentication.');
 		headers.Authorization = `token ${apiToken}`;
 	}
 
@@ -58,7 +60,7 @@ export function getAuthenticationHeaders(
 	else if (!isDevelopment) {
 		const { cookie } = getRequestHeaders(event);
 		if (cookie !== undefined) {
-			serverLogger.info('Utility: madekApi', 'Using cookie for authentication.');
+			serverLogger.info(LOGGER_SOURCE, 'Using cookie for authentication.');
 			headers.cookie = cookie;
 		}
 	}
