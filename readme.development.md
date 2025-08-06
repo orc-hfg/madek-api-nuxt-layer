@@ -55,3 +55,52 @@ Die API-Typen in `generated/api` werden aus der OpenAPI-Spezifikation in `resour
 ### API-Typen aktualisieren
 
 Wenn sich die OpenAPI-Spezifikation ändert, können die Typen neu generiert werden: `npm run generate:api`
+
+## Logging Guidelines
+
+Dieses Layer verwendet ein konsistentes Logger-System mit verschiedenen Kontexten für App-, Server- und Test-Umgebungen.
+
+### App Logger (Client-Side)
+```typescript
+// Logger erstellen mit Source im Konstruktor
+const appLogger = createAppLogger('Plugin: madek-api');
+
+// Verwenden ohne Source-Parameter
+appLogger.info('User logged in successfully');
+appLogger.error('Login failed', error);
+appLogger.debug('Debug information', debugData);
+```
+
+### Server Logger (Server-Side)
+
+**Server Request Logger** - für Request Handler (mit H3Event):
+```typescript
+// In API routes (server/api/*.ts) oder anderen Request Handlers
+export default defineEventHandler(async (event) => {
+	const serverLogger = createServerLogger(event, 'API: /auth/sign-in');
+	serverLogger.error('Authentication failed', error);
+	serverLogger.info('Request processed successfully');
+});
+```
+
+**Server Startup Logger** - für Plugins und Initialization:
+```typescript
+// In Server Plugins (server/plugins/*.ts)
+const serverStartupLogger = createServerStartupLogger('Plugin: authentication-mock');
+serverStartupLogger.info('Authentication mock is active.');
+```
+
+### Wichtige Unterschiede
+
+**Server Request vs. Startup Logger:**
+- **Request Logger**: Benötigt H3Event, wird in API routes und Request Handlers verwendet
+- **Startup Logger**: Kein H3Event verfügbar, wird in Server Plugins während der Initialisierung verwendet
+
+**Warum zwei Server Logger?**
+Server Plugins laufen während des Server-Starts, nicht während individueller Requests. Sie haben keinen Zugriff auf H3Event und müssen `useRuntimeConfig()` ohne Event-Parameter aufrufen.
+
+**Debug Logging aktivieren:**
+```env
+# In .env oder nuxt.config.ts
+NUXT_PUBLIC_ENABLE_DEBUG_LOGGING=true
+```
