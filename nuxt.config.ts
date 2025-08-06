@@ -62,7 +62,6 @@ export default defineNuxtConfig({
 			token: '',
 		},
 		public: {
-			// Enable debug logging (logger)
 			enableDebugLogging: false,
 			version: composeVersion(),
 			madekApi: {
