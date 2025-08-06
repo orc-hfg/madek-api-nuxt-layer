@@ -9,7 +9,7 @@ const LOGGER_SOURCE = 'Utility: request-helpers';
 function setupTestContext({
 	initialHeaders = new Headers(),
 	cookie = TEST_COOKIE,
-	hasCookie = true,
+	hasCookieInHeader = true,
 } = {}) {
 	const mockContext: FetchContext = {
 		options: {
@@ -18,7 +18,7 @@ function setupTestContext({
 		request: {} as FetchRequest,
 	};
 
-	const mockCookieHeader = hasCookie ? { cookie } : undefined;
+	const mockCookieHeader = hasCookieInHeader ? { cookie } : {};
 
 	const mockLogger = createMockLogger();
 
@@ -65,7 +65,7 @@ describe('forwardCookieHeader()', () => {
 
 	it('returns false when no cookie is found', () => {
 		const { mockContext, mockCookieHeader, mockLogger } = setupTestContext({
-			hasCookie: false,
+			hasCookieInHeader: false,
 		});
 
 		forwardCookieHeader(

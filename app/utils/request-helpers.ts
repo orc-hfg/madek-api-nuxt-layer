@@ -6,7 +6,7 @@ interface CookieHeader {
 }
 
 interface ForwardCookieHeaderOptions {
-	cookieHeader?: CookieHeader;
+	cookieHeader: CookieHeader;
 	isServerEnvironment?: boolean;
 	logger?: Logger;
 }
@@ -19,13 +19,13 @@ export function forwardCookieHeader(
 		cookieHeader,
 		isServerEnvironment = import.meta.server,
 		logger = createAppLogger(),
-	}: ForwardCookieHeaderOptions = {},
+	}: ForwardCookieHeaderOptions,
 ): void {
 	if (!isServerEnvironment) {
 		return;
 	}
 
-	const cookieValue = cookieHeader?.cookie?.trim();
+	const cookieValue = cookieHeader.cookie?.trim();
 
 	if (cookieValue === undefined || cookieValue === '') {
 		logger.info(LOGGER_SOURCE, 'No cookie header found to forward.');

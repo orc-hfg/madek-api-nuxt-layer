@@ -8,6 +8,9 @@ export default defineNuxtPlugin({
 		const appLogger = createAppLogger();
 		const isServerEnvironment = import.meta.server;
 
+		// Capture request headers during plugin setup where composables are available
+		const cookieHeader = isServerEnvironment ? useRequestHeaders(['cookie']) : undefined;
+
 		/*
 		 * See:
 		 * https://nuxt.com/docs/guide/recipes/custom-usefetch#custom-fetch
@@ -16,19 +19,12 @@ export default defineNuxtPlugin({
 			baseURL: `${config.app.baseURL}api`,
 
 			onRequest(context) {
-				/*
-				 * See:
-				 * https://nuxt.com/docs/4.x/api/composables/use-request-headers
-				 * https://github.com/nuxt/nuxt/issues/27996#issuecomment-2211864930
-				 */
-
-				// Get request headers in the plugin context where it's safe to use Nuxt composables
-				const cookieHeader = isServerEnvironment ? useRequestHeaders(['cookie']) : undefined;
-
-				forwardCookieHeader(context, {
-					logger: appLogger,
-					cookieHeader,
-				});
+				if (cookieHeader !== undefined) {
+					forwardCookieHeader(context, {
+						cookieHeader,
+						logger: appLogger,
+					});
+				}
 			},
 
 			onResponseError(context) {
