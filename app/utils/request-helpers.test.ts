@@ -1,8 +1,10 @@
 import type { FetchContext, FetchRequest } from 'ofetch';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { TEST_COOKIE } from '../../shared/constants/test';
 import { createMockLogger } from '../../tests/mocks/logger';
-import { forwardCookieHeaders } from './request-helpers';
+import { forwardCookieHeader } from './request-helpers';
+
+const LOGGER_SOURCE = 'Utility: request-helpers';
 
 function setupTestContext({
 	initialHeaders = new Headers(),
@@ -16,99 +18,81 @@ function setupTestContext({
 		request: {} as FetchRequest,
 	};
 
-	const mockGetRequestHeaders = vi.fn(((headers?: string[]) => {
-		if (!hasCookie) {
-			return {};
-		}
-
-		if (headers?.includes('cookie')) {
-			return {
-				cookie,
-			};
-		}
-
-		return {};
-	}) as typeof useRequestHeaders);
+	const mockCookieHeader = hasCookie ? { cookie } : undefined;
 
 	const mockLogger = createMockLogger();
 
 	return {
 		mockContext,
-		mockGetRequestHeaders,
+		mockCookieHeader,
 		mockLogger,
 		testCookie: cookie,
 	};
 }
 
-describe('forwardCookieHeaders()', () => {
+describe('forwardCookieHeader()', () => {
 	it('forwards cookie headers when on server and cookie exists', () => {
-		const { mockContext, mockGetRequestHeaders, mockLogger, testCookie } = setupTestContext();
+		const { mockContext, mockCookieHeader, mockLogger, testCookie } = setupTestContext();
 
-		const result = forwardCookieHeaders(
+		forwardCookieHeader(
 			mockContext,
 			{
-				getRequestHeaders: mockGetRequestHeaders,
+				cookieHeader: mockCookieHeader,
 				isServerEnvironment: true,
 				logger: mockLogger,
 			},
 		);
 
-		expect(result).toBe(true);
 		expect(mockContext.options.headers.get('cookie')).toBe(testCookie);
-		expect(mockGetRequestHeaders).toHaveBeenCalledWith(['cookie']);
-		expect(mockLogger.info).toHaveBeenCalledWith('Utility: request-helpers', 'Cookie header forwarded.');
+		expect(mockLogger.info).toHaveBeenCalledWith(LOGGER_SOURCE, 'Cookie header forwarded.');
 	});
 
 	it('returns false when on client side', () => {
-		const { mockContext, mockGetRequestHeaders, mockLogger } = setupTestContext();
+		const { mockContext, mockCookieHeader, mockLogger } = setupTestContext();
 
-		const result = forwardCookieHeaders(
+		forwardCookieHeader(
 			mockContext,
 			{
-				getRequestHeaders: mockGetRequestHeaders,
+				cookieHeader: mockCookieHeader,
 				isServerEnvironment: false,
 				logger: mockLogger,
 			},
 		);
 
-		expect(result).toBe(false);
 		expect(mockContext.options.headers.get('cookie')).toBeNull();
-		expect(mockGetRequestHeaders).not.toHaveBeenCalled();
 		expect(mockLogger.info).not.toHaveBeenCalled();
 	});
 
 	it('returns false when no cookie is found', () => {
-		const { mockContext, mockGetRequestHeaders, mockLogger } = setupTestContext({
+		const { mockContext, mockCookieHeader, mockLogger } = setupTestContext({
 			hasCookie: false,
 		});
 
-		const result = forwardCookieHeaders(
+		forwardCookieHeader(
 			mockContext,
 			{
-				getRequestHeaders: mockGetRequestHeaders,
+				cookieHeader: mockCookieHeader,
 				isServerEnvironment: true,
 				logger: mockLogger,
 			},
 		);
 
-		expect(result).toBe(false);
 		expect(mockContext.options.headers.get('cookie')).toBeNull();
-		expect(mockGetRequestHeaders).toHaveBeenCalledWith(['cookie']);
-		expect(mockLogger.info).toHaveBeenCalledWith('Utility: request-helpers', 'No cookie header found to forward.');
+		expect(mockLogger.info).toHaveBeenCalledWith(LOGGER_SOURCE, 'No cookie header found to forward.');
 	});
 
 	it('handles existing headers properly', () => {
 		const existingHeaders = new Headers();
 		existingHeaders.set('content-type', 'application/json');
 
-		const { mockContext, mockGetRequestHeaders, mockLogger, testCookie } = setupTestContext({
+		const { mockContext, mockCookieHeader, mockLogger, testCookie } = setupTestContext({
 			initialHeaders: existingHeaders,
 		});
 
-		forwardCookieHeaders(
+		forwardCookieHeader(
 			mockContext,
 			{
-				getRequestHeaders: mockGetRequestHeaders,
+				cookieHeader: mockCookieHeader,
 				isServerEnvironment: true,
 				logger: mockLogger,
 			},
@@ -116,6 +100,6 @@ describe('forwardCookieHeaders()', () => {
 
 		expect(mockContext.options.headers.get('content-type')).toBe('application/json');
 		expect(mockContext.options.headers.get('cookie')).toBe(testCookie);
-		expect(mockLogger.info).toHaveBeenCalledWith('Utility: request-helpers', 'Cookie header forwarded.');
+		expect(mockLogger.info).toHaveBeenCalledWith(LOGGER_SOURCE, 'Cookie header forwarded.');
 	});
 });

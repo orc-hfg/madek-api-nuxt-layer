@@ -1,43 +1,41 @@
 import type { FetchContext } from 'ofetch';
 import { createAppLogger } from './app-logger';
 
-export function forwardCookieHeaders(
+interface CookieHeader {
+	cookie?: string;
+}
+
+interface ForwardCookieHeaderOptions {
+	cookieHeader?: CookieHeader;
+	isServerEnvironment?: boolean;
+	logger?: Logger;
+}
+
+const LOGGER_SOURCE = 'Utility: request-helpers';
+
+export function forwardCookieHeader(
 	context: FetchContext,
-	options: {
-		getRequestHeaders?: typeof useRequestHeaders;
-		isServerEnvironment?: boolean;
-		logger?: Logger;
-	} = {},
-): boolean {
-	const {
-		/*
-		 * See:
-		 * https://nuxt.com/docs/4.x/api/composables/use-request-headers
-		 * https://github.com/nuxt/nuxt/issues/27996#issuecomment-2211864930
-		 */
-		getRequestHeaders = useRequestHeaders,
+	{
+		cookieHeader,
 		isServerEnvironment = import.meta.server,
 		logger = createAppLogger(),
-	} = options;
-
+	}: ForwardCookieHeaderOptions = {},
+): void {
 	if (!isServerEnvironment) {
-		return false;
+		return;
 	}
 
-	const { cookie } = getRequestHeaders(['cookie']);
+	const cookieValue = cookieHeader?.cookie?.trim();
 
-	if (cookie !== undefined) {
-		const headers = new Headers(context.options.headers);
-		headers.set('cookie', cookie);
+	if (cookieValue === undefined || cookieValue === '') {
+		logger.info(LOGGER_SOURCE, 'No cookie header found to forward.');
 
-		context.options.headers = headers;
-
-		logger.info('Utility: request-helpers', 'Cookie header forwarded.');
-
-		return true;
+		return;
 	}
 
-	logger.info('Utility: request-helpers', 'No cookie header found to forward.');
+	const requestHeaders = new Headers(context.options.headers);
+	requestHeaders.set('cookie', cookieValue);
+	context.options.headers = requestHeaders;
 
-	return false;
+	logger.info(LOGGER_SOURCE, 'Cookie header forwarded.');
 }

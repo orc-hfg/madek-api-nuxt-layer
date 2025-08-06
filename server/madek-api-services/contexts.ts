@@ -35,8 +35,10 @@ export async function getContextById(event: H3Event, id: string): Promise<Contex
 	const { fetchFromApi } = createMadekApiClient<Context>(event);
 	const serverLogger = createServerLogger(event);
 
-	serverLogger.info('Service: getContextById', 'API baseURL:', config.public.madekApi.baseURL);
-	serverLogger.info('Service: getContextById', 'Context ID:', id);
+	const LOGGER_SOURCE = 'Service: getContextById';
+
+	serverLogger.info(LOGGER_SOURCE, 'API baseURL:', config.public.madekApi.baseURL);
+	serverLogger.info(LOGGER_SOURCE, 'Context ID:', id);
 
 	try {
 		const response = await fetchFromApi(`contexts/${id}`, {
