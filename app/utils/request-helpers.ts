@@ -1,4 +1,5 @@
 import type { FetchContext } from 'ofetch';
+import { isServerEnvironment as defaultIsServerEnvironment } from '../../shared/utils/environment';
 import { createAppLogger } from './app-logger';
 
 interface CookieHeader {
@@ -11,14 +12,12 @@ interface ForwardCookieHeaderOptions {
 	logger?: Logger;
 }
 
-const LOGGER_SOURCE = 'Utility: request-helpers';
-
 export function forwardCookieHeader(
 	context: FetchContext,
 	{
 		cookieHeader,
-		isServerEnvironment = import.meta.server,
-		logger = createAppLogger(),
+		isServerEnvironment = defaultIsServerEnvironment,
+		logger = createAppLogger('Utility: request-helpers'),
 	}: ForwardCookieHeaderOptions,
 ): void {
 	if (!isServerEnvironment) {
@@ -27,10 +26,8 @@ export function forwardCookieHeader(
 
 	const cookieValue = cookieHeader.cookie?.trim();
 
-	logger.debug(LOGGER_SOURCE, 'Cookie header value:', cookieValue);
-
 	if (cookieValue === undefined || cookieValue === '') {
-		logger.info(LOGGER_SOURCE, 'No cookie header found to forward.');
+		logger.info('No cookie header found to forward.');
 
 		return;
 	}
@@ -39,5 +36,5 @@ export function forwardCookieHeader(
 	requestHeaders.set('cookie', cookieValue);
 	context.options.headers = requestHeaders;
 
-	logger.info(LOGGER_SOURCE, 'Cookie header forwarded.');
+	logger.info('Cookie header forwarded.');
 }

@@ -106,13 +106,11 @@ describe('handleServiceError()', () => {
 			statusMessage: getReasonPhrase(StatusCodes.FORBIDDEN),
 		});
 
-		const serviceName = 'testService';
-
 		const caughtError = catchH3Error(() => {
-			handleServiceError(h3Error, serviceName, mockLogger, 'Failed to complete operation');
+			handleServiceError(mockLogger, h3Error, 'Failed to complete operation');
 		});
 
-		expect(loggerErrorSpy).toHaveBeenCalledWith(serviceName, 'Failed to complete operation', h3Error);
+		expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to complete operation', h3Error);
 
 		expect(caughtError?.statusCode).toBe(StatusCodes.FORBIDDEN);
 		expect(caughtError?.statusMessage).toBe(getReasonPhrase(StatusCodes.FORBIDDEN));
@@ -124,22 +122,20 @@ describe('handleServiceError()', () => {
 			statusMessage: getReasonPhrase(StatusCodes.NOT_FOUND),
 		});
 
-		const serviceName = 'testService';
 		const customMessage = 'Custom error message';
 
 		catchH3Error(() => {
-			handleServiceError(h3Error, serviceName, mockLogger, customMessage);
+			handleServiceError(mockLogger, h3Error, customMessage);
 		});
 
-		expect(loggerErrorSpy).toHaveBeenCalledWith(serviceName, customMessage, h3Error);
+		expect(loggerErrorSpy).toHaveBeenCalledWith(customMessage, h3Error);
 	});
 
 	it('logs and re-throws generic Error types', () => {
 		const genericError = new Error('Generic error');
-		const serviceName = 'testService';
 
 		const caughtError = catchH3Error(() => {
-			handleServiceError(genericError, serviceName, mockLogger, 'Failed to complete operation');
+			handleServiceError(mockLogger, genericError, 'Failed to complete operation');
 		});
 
 		expect(loggerErrorSpy).toHaveBeenCalledTimes(1);

@@ -1,17 +1,17 @@
 import { createConsola } from 'consola';
 
 export interface Logger {
-	debug: (source: string, message: string, data?: unknown) => void;
-	info: (source: string, message: string, data?: unknown) => void;
-	warn: (source: string, message: string, data?: unknown) => void;
-	error: (source: string, message: string, data?: unknown) => void;
+	debug: (message: string, data?: unknown) => void;
+	info: (message: string, data?: unknown) => void;
+	warn: (message: string, data?: unknown) => void;
+	error: (message: string, data?: unknown) => void;
 }
 
 type LoggerContext = 'Server' | 'App';
 
 let hasLoggedStatus = false;
 
-export function createLoggerWithConfig(context: LoggerContext, isDebugLoggingEnabled: boolean): Logger {
+export function createLoggerWithConfig(context: LoggerContext, source: string, isDebugLoggingEnabled: boolean): Logger {
 	if (!hasLoggedStatus) {
 		const statusLogger = createConsola();
 		statusLogger.info(`[Logger] Debug logging is ${isDebugLoggingEnabled ? 'enabled' : 'disabled'}.`);
@@ -27,7 +27,7 @@ export function createLoggerWithConfig(context: LoggerContext, isDebugLoggingEna
 		level: isDebugLoggingEnabled ? LOG_LEVEL_DEFAULT : LOG_LEVEL_SILENT,
 	});
 
-	function log(level: 'debug' | 'info' | 'warn' | 'error', source: string, message: string, data?: unknown): void {
+	function log(level: 'debug' | 'info' | 'warn' | 'error', message: string, data?: unknown): void {
 		if (data === undefined) {
 			logger[level](`[${context}] [${source}] ${message}`);
 		}
@@ -37,9 +37,9 @@ export function createLoggerWithConfig(context: LoggerContext, isDebugLoggingEna
 	};
 
 	return {
-		debug: (source: string, message: string, data?: unknown): void => { log('debug', source, message, data); },
-		info: (source: string, message: string, data?: unknown): void => { log('info', source, message, data); },
-		warn: (source: string, message: string, data?: unknown): void => { log('warn', source, message, data); },
-		error: (source: string, message: string, data?: unknown): void => { log('error', source, message, data); },
+		debug: (message: string, data?: unknown): void => { log('debug', message, data); },
+		info: (message: string, data?: unknown): void => { log('info', message, data); },
+		warn: (message: string, data?: unknown): void => { log('warn', message, data); },
+		error: (message: string, data?: unknown): void => { log('error', message, data); },
 	};
 }

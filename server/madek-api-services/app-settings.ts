@@ -6,9 +6,9 @@ import { createServerLogger } from '../utils/server-logger';
 export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekAppSettingsResponse>(event);
-	const serverLogger = createServerLogger(event);
+	const serverLogger = createServerLogger(event, 'Service: getAppSettings');
 
-	serverLogger.info('Service: getAppSettings', 'API baseURL:', config.public.madekApi.baseURL);
+	serverLogger.info('API baseURL:', config.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('app-settings', {
@@ -23,6 +23,6 @@ export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 		};
 	}
 	catch (error) {
-		return handleServiceError(error, 'getAppSettings', serverLogger, 'Failed to fetch app settings.');
+		return handleServiceError(serverLogger, error, 'Failed to fetch app settings.');
 	}
 }
