@@ -15,6 +15,7 @@ Die Dokumentation ist in mehrere domänenspezifische README-Dateien aufgeteilt:
 - [Entwicklung](./readme.development.md) – Lokales Linking, API-Typen-Generierung, Entwicklungsworkflow
 - [Release Management](./readme.release.md) – Versioning, automatisierte Releases, GitHub Actions
 - [Wartung](./readme.maintenance.md) – Dependency Updates, Node-Aktualisierung, bekannte Issues
+- [Wartungsaufgaben](./readme.maintenance-todo.md) – Offene Wartungsaufgaben
 - [Testing](./readme.testing.md) – Unit-Tests, Vitest-Konfiguration, Test-Utilities
 - [TypeScript-Richtlinien](./readme.typescript.md) – Best Practices für TypeScript im Layer
 
