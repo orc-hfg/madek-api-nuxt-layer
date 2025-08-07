@@ -9,16 +9,7 @@ export interface Logger {
 
 type LoggerContext = 'Server' | 'App';
 
-let hasLoggedStatus = false;
-
 export function createLoggerWithConfig(context: LoggerContext, source: string, isDebugLoggingEnabled: boolean): Logger {
-	if (!hasLoggedStatus) {
-		const statusLogger = createConsola();
-		statusLogger.info(`[Logger] Debug logging is ${isDebugLoggingEnabled ? 'enabled' : 'disabled'}.`);
-
-		hasLoggedStatus = true;
-	}
-
 	// See: https://github.com/unjs/consola?tab=readme-ov-file#log-level
 	const LOG_LEVEL_DEFAULT = 4;
 	const LOG_LEVEL_SILENT = -999;
@@ -27,12 +18,14 @@ export function createLoggerWithConfig(context: LoggerContext, source: string, i
 		level: isDebugLoggingEnabled ? LOG_LEVEL_DEFAULT : LOG_LEVEL_SILENT,
 	});
 
+	const loggerPrefix = `[${context} Logger] [${source}]`;
+
 	function log(level: 'debug' | 'info' | 'warn' | 'error', message: string, data?: unknown): void {
 		if (data === undefined) {
-			logger[level](`[${context}] [${source}] ${message}`);
+			logger[level](loggerPrefix, message);
 		}
 		else {
-			logger[level](`[${context}] [${source}] ${message}`, data);
+			logger[level](loggerPrefix, message, data);
 		}
 	};
 
