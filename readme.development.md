@@ -67,6 +67,26 @@ Die API-Typen in `generated/api` werden aus der OpenAPI-Spezifikation in `resour
 
 Wenn sich die OpenAPI-Spezifikation ändert, können die Typen neu generiert werden: `npm run generate:api`
 
+## Import-Pfad Guidelines
+
+Bei der Entwicklung von Nuxt-Layers sollten **immer relative Imports** verwendet werden, nicht die in Nuxt-Projekten sonst üblichen Alias-Imports mit Tilde (`~`) oder At-Zeichen (`@`).
+
+**Richtig:**
+```typescript
+// Immer relative Pfade verwenden
+import { someFunction } from '../utils/helpers';
+import { SomeType } from '../../types/models';
+```
+
+**Vermeiden:**
+```typescript
+// In Nuxt-Layers NICHT verwenden
+import { someFunction } from '~/utils/helpers';
+import { SomeType } from '@/types/models';
+```
+
+Diese Einschränkung gilt speziell für Nuxt-Layers, da Alias-Pfade möglicherweise nicht korrekt zwischen dem Layer und dem Hauptprojekt aufgelöst werden. Relative Pfade gewährleisten die korrekte Auflösung der Imports unabhängig vom Kontext.
+
 ## Logging Guidelines
 
 Dieses Layer verwendet ein konsistentes Logger-System mit verschiedenen Kontexten für App-, Server- und Test-Umgebungen.
