@@ -43,7 +43,7 @@ describe('buildRequestConfig()', () => {
 			expect(result).toStrictEqual({});
 		});
 
-		it('includes auth header when isAuthenticationNeeded is true', () => {
+		it('includes authentication header when isAuthenticationNeeded is true', () => {
 			const token = 'test-token';
 			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: true }, token, true);
 
@@ -52,7 +52,7 @@ describe('buildRequestConfig()', () => {
 			});
 		});
 
-		it('does not include auth header when isAuthenticationNeeded is false', () => {
+		it('does not include authentication header when isAuthenticationNeeded is false', () => {
 			const token = 'test-token';
 			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: false }, token, true);
 
@@ -66,7 +66,7 @@ describe('buildRequestConfig()', () => {
 			expect(result).toStrictEqual({ query });
 		});
 
-		it('combines auth headers and query parameters when both are provided', () => {
+		it('combines authentication headers and query parameters when both are provided', () => {
 			const token = 'test-token';
 			const query = { parameter1: 'value1', parameter2: 'value2' };
 			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: true, query }, token, true);

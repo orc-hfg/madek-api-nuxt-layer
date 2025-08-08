@@ -1,9 +1,9 @@
 import type { H3Event } from 'h3';
-import type { MadekCollectionMetaDatumResponse, MetaDatumString } from '../types/collection-meta-datum';
-import { noCache } from '../constants/cache';
+import type { MadekCollectionMetaDatumResponse, MetaDatum } from '../types/collection-meta-datum';
+import { fiveMinutesCache } from '../constants/cache';
 import { createServerLogger } from '../utils/server-logger';
 
-export async function getCollectionMetaDatum(event: H3Event, collectionId: string, metaKeyId: string): Promise<MetaDatumString> {
+export async function getCollectionMetaDatum(event: H3Event, collectionId: string, metaKeyId: string): Promise<MetaDatum> {
 	const config = useRuntimeConfig(event);
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
 	const serverLogger = createServerLogger(event, 'Service: getCollectionMetaDatum');
@@ -21,13 +21,14 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: strin
 			},
 			{
 				apiOptions: {
-					isAuthenticationNeeded: true,
+					isAuthenticationNeeded: false,
 				},
-				publicDataCache: noCache,
+				publicDataCache: fiveMinutesCache,
 			},
 		);
 
 		return {
+			id: response['meta-data'].id,
 			string: response['meta-data'].string,
 		};
 	}

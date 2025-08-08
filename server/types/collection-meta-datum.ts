@@ -15,19 +15,19 @@ export type MadekCollectionMetaDatumPathParameters = paths['/api-v2/collection/{
  */
 export interface MadekCollectionMetaDatumResponse {
 	'meta-data': {
-		collection_id: string;
 		created_by_id: string;
-		id: string;
-		json: Record<string, any> | null;
 		media_entry_id: string | null;
-		meta_data_updated_at: string;
-		meta_key_id: string;
-		other_media_entry_id: string | null;
-		string: string | null;
+		collection_id: string;
 		type: string;
+		meta_key_id: string;
+		string: string | null;
+		id: string;
+		meta_data_updated_at: string;
+		json: Record<string, any> | null;
+		other_media_entry_id: string | null;
 	};
 	'defaultmetadata': string;
 	'defaultdata': string;
 }
 
-export type MetaDatumString = Pick<MadekCollectionMetaDatumResponse['meta-data'], 'string'>;
+export type MetaDatum = Pick<MadekCollectionMetaDatumResponse['meta-data'], 'id' | 'string'>;

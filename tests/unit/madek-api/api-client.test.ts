@@ -89,7 +89,7 @@ describe('createMadekApiClient()', () => {
 			);
 		});
 
-		it('skips caching and directly calls fetchData when auth is needed', async () => {
+		it('skips caching and directly calls fetchData when authentication is needed', async () => {
 			await apiTestContext.client.fetchFromApi('authenticated-endpoint', {
 				apiOptions: { isAuthenticationNeeded: true },
 				publicDataCache: { maxAge: 3600 },
@@ -103,6 +103,19 @@ describe('createMadekApiClient()', () => {
 				'test-api-token',
 			);
 			expect(apiTestContext.defineCachedFunctionMock).not.toHaveBeenCalled();
+		});
+
+		it('logs cache usage when caching is enabled', async () => {
+			const cacheOptions = { maxAge: 3600, swr: true };
+
+			await apiTestContext.client.fetchFromApi('cached-endpoint', {
+				publicDataCache: cacheOptions,
+			});
+
+			expect(apiTestContext.loggerInfoSpy).toHaveBeenCalledWith(
+				'Using cache for request: cached-endpoint',
+				cacheOptions,
+			);
 		});
 	});
 });
