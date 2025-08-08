@@ -8,9 +8,9 @@ export default defineNuxtPlugin({
 		const publicConfig = config.public;
 		const isDebugLoggingEnabled = publicConfig.enableDebugLogging;
 
-		if (isDebugLoggingEnabled && isClientEnvironment) {
-			const appLogger = createAppLogger('Plugin: debug-info');
+		const appLogger = createAppLogger('Plugin: debug-info');
 
+		if (isDebugLoggingEnabled && isClientEnvironment) {
 			appLogger.info('Debug logging is enabled.');
 		}
 	},
