@@ -1,12 +1,16 @@
+import type { MetaDatum } from '../../server/types/collection-meta-datum';
 import type { Collection } from '../../server/types/collections';
 import { getSetRepository } from '../repositories/set';
+import { getSetsRepository } from '../repositories/sets';
 
 export const useUserSetsStore = defineStore('user-sets', () => {
 	const isInitialized = shallowRef(false);
 	const sets = shallowRef<Collection[]>([]);
+	const setTitles = shallowRef<MetaDatum[]>([]);
 
 	async function refreshData(): Promise<void> {
 		const userStore = useUserStore();
+		const setsRepository = getSetsRepository();
 		const setRepository = getSetRepository();
 
 		if (userStore.id === undefined) {
@@ -15,8 +19,23 @@ export const useUserSetsStore = defineStore('user-sets', () => {
 
 		const userId = userStore.id;
 		if (userId !== undefined) {
-			const data = await setRepository.getSets({ responsible_user_id: userId });
+			const data = await setsRepository.getSets(
+				{
+					responsible_user_id: userId,
+					filter_by: JSON.stringify({
+						meta_data: [
+							{
+								key: 'settings:is_node',
+							},
+						],
+					}),
+				},
+			);
 			sets.value = data;
+
+			setTitles.value = await setRepository.getSetTitles(
+				sets.value.map(set => set.id),
+			);
 		}
 	}
 
@@ -31,6 +50,7 @@ export const useUserSetsStore = defineStore('user-sets', () => {
 
 	return {
 		sets,
+		setTitles,
 		refreshData,
 		initialize,
 	};

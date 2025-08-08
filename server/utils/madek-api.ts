@@ -117,32 +117,36 @@ export async function fetchData<T>(
 }
 
 export function shouldUseCaching(
+	isServerSideCachingEnabled: boolean,
 	isAuthenticationNeeded: boolean,
 	cacheOptions?: CacheOptions,
-	isDevelopmentEnvironment = defaultIsDevelopmentEnvironment,
 ): boolean {
-	return !isDevelopmentEnvironment && !isAuthenticationNeeded && cacheOptions !== undefined;
+	return isServerSideCachingEnabled && !isAuthenticationNeeded && cacheOptions !== undefined;
 }
 
 export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetchData): {
 	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
 	fetchFromApiWithPathParameters: (endpointTemplate: string, endpointPathParameters: Record<string, string>, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
 } {
+	const serverLogger = createServerLogger(event, LOGGER_SOURCE);
 	const config = useRuntimeConfig(event);
-	const apiBaseURL = config.public.madekApi.baseURL;
+	const publicConfig = config.public;
+	const apiBaseURL = publicConfig.madekApi.baseURL;
 	const apiToken = config.madekApi.token;
 
 	async function fetchFromApi(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
 		const url = `${apiBaseURL}${endpoint}`;
+		const isServerSideCachingEnabled = publicConfig.enableServerSideCaching;
 		const isAuthenticationNeeded = apiRequestConfig.apiOptions?.isAuthenticationNeeded === true;
 		const cacheOptions = apiRequestConfig.publicDataCache;
 
 		if (isAuthenticationNeeded && apiRequestConfig.publicDataCache !== noCache) {
-			const serverLogger = createServerLogger(event, LOGGER_SOURCE);
 			serverLogger.warn('Authenticated requests should only use \'noCache\' for publicDataCache (or none at all). Other cache configurations are ignored.', endpoint);
 		}
 
-		if (shouldUseCaching(isAuthenticationNeeded, cacheOptions)) {
+		if (shouldUseCaching(isServerSideCachingEnabled, isAuthenticationNeeded, cacheOptions)) {
+			serverLogger.info(`Using cache for request: ${endpoint}`, cacheOptions);
+
 			return defineCachedFunction(
 				async () => fetchDataFunction<T>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken),
 				{

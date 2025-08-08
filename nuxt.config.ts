@@ -50,8 +50,6 @@ export default defineNuxtConfig({
 	 * https://nuxt.com/docs/getting-started/configuration#environment-overrides
 	 */
 	runtimeConfig: {
-		// This will only take effect in development mode, useful for testing
-		enableResponseDelay: false,
 		madekApi: {
 
 			/*
@@ -63,6 +61,8 @@ export default defineNuxtConfig({
 		},
 		public: {
 			enableDebugLogging: false,
+			enableResponseDelay: false,
+			enableServerSideCaching: true,
 			version: composeVersion(),
 			madekApi: {
 				baseURL: '',
@@ -73,6 +73,14 @@ export default defineNuxtConfig({
 		runtimeConfig: {
 			public: {
 				enableDebugLogging: true,
+
+				/*
+				 * Controls server-side caching with Nitro for API requests
+				 * Caching only happens when:
+				 * - Authentication is not needed (no user-specific data should be cached)
+				 * - Cache options are explicitly defined
+				 */
+				enableServerSideCaching: false,
 				madekApi: {
 					baseURL: 'https://dev.madek.hfg-karlsruhe.de/api-v2/',
 				},

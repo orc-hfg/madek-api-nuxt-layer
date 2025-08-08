@@ -3,19 +3,33 @@ import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { vi } from 'vitest';
 import { TEST_COOKIE } from '../../../shared/constants/test';
 
-function runtimeConfigMock() {
+function createRuntimeConfig() {
 	return {
-		app: {
-			baseURL: '/',
+		madekApi: {
+			token: 'test-api-token',
 		},
 		public: {
+			enableServerSideCaching: true,
 			madekApi: {
 				baseURL: 'https://api.example.com/',
 			},
 		},
-		madekApi: {
-			token: 'test-api-token',
+	};
+}
+
+function createRequiredTestConfig() {
+	return {
+		// Required for Nuxt test initialization (router setup)
+		app: {
+			baseURL: '/',
 		},
+	};
+}
+
+function runtimeConfigMock() {
+	return {
+		...createRequiredTestConfig(),
+		...createRuntimeConfig(),
 	};
 }
 
