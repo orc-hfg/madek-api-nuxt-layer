@@ -97,8 +97,8 @@ Dieses Layer verwendet ein konsistentes Logger-System mit verschiedenen Kontexte
 const appLogger = createAppLogger('Plugin: madek-api');
 
 // Verwenden ohne Source-Parameter
-appLogger.info('User logged in successfully');
-appLogger.error('Login failed', error);
+appLogger.info('User signed in successfully');
+appLogger.error('Sign-in failed', error);
 appLogger.debug('Debug information', debugData);
 ```
 
