@@ -3,9 +3,9 @@ export default defineNitroPlugin(() => {
 	const publicConfig = config.public;
 	const isDebugLoggingEnabled = publicConfig.enableDebugLogging;
 
-	if (isDebugLoggingEnabled) {
-		const serverStartupLogger = createServerStartupLogger('Plugin: debug-info');
+	const serverStartupLogger = createServerStartupLogger('Plugin: debug-info');
 
+	if (isDebugLoggingEnabled) {
 		serverStartupLogger.info('Debug logging is enabled.');
 	}
 });
