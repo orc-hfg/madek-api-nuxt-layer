@@ -1,18 +1,11 @@
-import { createAppLogger } from '../utils/app-logger';
+import type { RuntimeConfig } from 'nuxt/schema';
 
-interface DebugInfoLogger {
-	info: (message: string) => void;
-}
-
-interface PublicRuntimeConfig {
-	enableDebugLogging: boolean;
-	enableResponseDelay: boolean;
-	enableServerSideCaching: boolean;
-}
-
-function logDebugInfo(logger: DebugInfoLogger, publicConfig: PublicRuntimeConfig): void {
+function logDebugInfo(logger: Logger, publicConfig: RuntimeConfig['public']): void {
 	logger.info('=== ENVIRONMENT ===');
 	logger.info(`Nuxt environment: ${isDevelopmentEnvironment ? 'development' : 'production'}`);
+
+	logger.info('=== API ===');
+	logger.info(`Base URL: ${publicConfig.madekApi.baseURL}`);
 
 	const features = [
 		{ name: 'Debug logging', isEnabled: publicConfig.enableDebugLogging },
@@ -20,7 +13,7 @@ function logDebugInfo(logger: DebugInfoLogger, publicConfig: PublicRuntimeConfig
 		{ name: 'Server-side caching', isEnabled: publicConfig.enableServerSideCaching },
 	];
 
-	logger.info('=== FEATURE FLAGS ===');
+	logger.info('=== FEATURES ===');
 	for (const { name, isEnabled } of features) {
 		logger.info(`${name}: ${isEnabled ? 'enabled' : 'disabled'}`);
 	}
