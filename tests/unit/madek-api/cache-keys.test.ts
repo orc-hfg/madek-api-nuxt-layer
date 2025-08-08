@@ -5,27 +5,27 @@ import { generateCacheKey, shouldUseCaching } from '../../../server/utils/madek-
 describe('shouldUseCaching()', () => {
 	it('returns false when authentication is needed (do not allow caching for user sensitive data)', () => {
 		const cacheOptions = { maxAge: 3600 };
-		const result = shouldUseCaching(true, cacheOptions, false);
+		const result = shouldUseCaching(true, true, cacheOptions);
 
 		expect(result).toBe(false);
 	});
 
-	it('returns false when in development mode', () => {
+	it('returns false when server side caching is disabled', () => {
 		const cacheOptions = { maxAge: 3600 };
-		const result = shouldUseCaching(false, cacheOptions, true);
+		const result = shouldUseCaching(false, false, cacheOptions);
 
 		expect(result).toBe(false);
 	});
 
 	it('returns false when cache options are undefined', () => {
-		const result = shouldUseCaching(false, undefined, false);
+		const result = shouldUseCaching(true, false, undefined);
 
 		expect(result).toBe(false);
 	});
 
 	it('returns true when all conditions for caching are met', () => {
 		const cacheOptions = { maxAge: 3600 };
-		const result = shouldUseCaching(false, cacheOptions, false);
+		const result = shouldUseCaching(true, false, cacheOptions);
 
 		expect(result).toBe(true);
 	});

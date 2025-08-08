@@ -14,15 +14,15 @@ export default defineEventHandler(async (event: H3Event) => {
 		});
 	}
 
-	const parameters: MadekCollectionMetaDatumPathParameters = {
+	const pathParameters: MadekCollectionMetaDatumPathParameters = {
 		collection_id: collectionId,
 		meta_key_id: metaKeyId,
 	};
 
 	const collectionMetaDatum = await getCollectionMetaDatum(
 		event,
-		parameters.collection_id,
-		parameters.meta_key_id,
+		pathParameters.collection_id,
+		pathParameters.meta_key_id,
 	);
 
 	return collectionMetaDatum;

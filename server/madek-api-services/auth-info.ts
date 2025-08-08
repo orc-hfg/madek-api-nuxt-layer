@@ -26,6 +26,6 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 		};
 	}
 	catch (error) {
-		return handleServiceError(serverLogger, error, 'Failed to fetch auth info.');
+		return handleServiceError(serverLogger, error, 'Failed to fetch authenticated info.');
 	}
 }

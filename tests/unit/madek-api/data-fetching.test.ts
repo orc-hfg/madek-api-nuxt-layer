@@ -24,7 +24,7 @@ describe('fetchData()', () => {
 	});
 
 	describe('in development mode', () => {
-		it('builds correct request configuration with auth headers and calls $fetch', async () => {
+		it('builds correct request configuration with authentication headers and calls $fetch', async () => {
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',

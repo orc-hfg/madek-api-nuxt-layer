@@ -1,21 +1,21 @@
-import type { Collection, Collections, CollectionsUserQuery } from '../../server/types/collections';
+import type { MetaDatum } from '../../server/types/collection-meta-datum';
 import type { ApiFunction } from '../types/api';
 
 interface SetRepository {
-	getSets: (query?: CollectionsUserQuery) => Promise<Collections>;
-	getSetById: (id: string) => Promise<Collection>;
+	getSetTitle: (setId: string) => Promise<MetaDatum>;
+	getSetTitles: (setIds: string[]) => Promise<MetaDatum[]>;
 }
 
 function createSetRepository($madekApi: ApiFunction): SetRepository {
 	return {
-		async getSets(query): Promise<Collections> {
-			return $madekApi('/collections', {
-				query,
-			});
+		async getSetTitle(setId: string): Promise<MetaDatum> {
+			return $madekApi(`/collection/${setId}/meta-datum/madek_core:title`);
 		},
 
-		async getSetById(id): Promise<Collection> {
-			return $madekApi(`/collections/${id}`);
+		async getSetTitles(setIds: string[]): Promise<MetaDatum[]> {
+			const titlePromises = setIds.map(async setId => this.getSetTitle(setId));
+
+			return Promise.all(titlePromises);
 		},
 	};
 }
