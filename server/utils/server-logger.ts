@@ -4,7 +4,7 @@ import { createLoggerWithConfig } from '../../shared/utils/logger';
 
 export function createServerLogger(event: H3Event, source: string): Logger {
 	const config = useRuntimeConfig(event);
-	const isDebugLoggingEnabled = Boolean(config.public.enableDebugLogging);
+	const isDebugLoggingEnabled = config.public.enableDebugLogging;
 
 	return createLoggerWithConfig('Server', source, isDebugLoggingEnabled);
 }
@@ -24,7 +24,7 @@ export function createServerLogger(event: H3Event, source: string): Logger {
  */
 export function createServerStartupLogger(source: string): Logger {
 	const config = useRuntimeConfig();
-	const isDebugLoggingEnabled = Boolean(config.public.enableDebugLogging);
+	const isDebugLoggingEnabled = config.public.enableDebugLogging;
 
 	return createLoggerWithConfig('Server', source, isDebugLoggingEnabled);
 }
