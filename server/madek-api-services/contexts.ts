@@ -4,11 +4,8 @@ import { twentyFourHoursCache } from '../constants/cache';
 import { createServerLogger } from '../utils/server-logger';
 
 export async function getContexts(event: H3Event): Promise<Contexts> {
-	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekContextsResponse>(event);
 	const serverLogger = createServerLogger(event, 'Service: getContexts');
-
-	serverLogger.info('API baseURL:', config.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('contexts', {
@@ -31,11 +28,9 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 }
 
 export async function getContextById(event: H3Event, id: string): Promise<Context> {
-	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<Context>(event);
 	const serverLogger = createServerLogger(event, 'Service: getContextById');
 
-	serverLogger.info('API baseURL:', config.public.madekApi.baseURL);
 	serverLogger.info('Context ID:', id);
 
 	try {

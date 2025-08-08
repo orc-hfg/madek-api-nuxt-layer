@@ -4,11 +4,8 @@ import { twentyFourHoursCache } from '../constants/cache';
 import { createServerLogger } from '../utils/server-logger';
 
 export async function getAppSettings(event: H3Event): Promise<AppSettings> {
-	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekAppSettingsResponse>(event);
 	const serverLogger = createServerLogger(event, 'Service: getAppSettings');
-
-	serverLogger.info('API baseURL:', config.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('app-settings', {

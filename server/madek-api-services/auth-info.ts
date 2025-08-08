@@ -4,11 +4,8 @@ import { noCache } from '../constants/cache';
 import { createServerLogger } from '../utils/server-logger';
 
 export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
-	const config = useRuntimeConfig(event);
 	const { fetchFromApi } = createMadekApiClient<MadekAuthInfoResponse>(event);
 	const serverLogger = createServerLogger(event, 'Service: getAuthInfo');
-
-	serverLogger.info('API baseURL:', config.public.madekApi.baseURL);
 
 	try {
 		const response = await fetchFromApi('auth-info', {
