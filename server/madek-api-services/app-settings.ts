@@ -1,7 +1,6 @@
 import type { H3Event } from 'h3';
 import type { AppSettings, MadekAppSettingsResponse } from '../types/app-settings';
 import { twentyFourHoursCache } from '../constants/cache';
-import { createServerLogger } from '../utils/server-logger';
 
 export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 	const { fetchFromApi } = createMadekApiClient<MadekAppSettingsResponse>(event);

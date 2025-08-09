@@ -1,6 +1,4 @@
 import type { H3Event } from 'h3';
-import type { Logger } from '../../shared/utils/logger';
-import { createLoggerWithConfig } from '../../shared/utils/logger';
 
 export function createServerLogger(event: H3Event, source: string): Logger {
 	const config = useRuntimeConfig(event);

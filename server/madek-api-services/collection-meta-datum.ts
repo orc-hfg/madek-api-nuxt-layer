@@ -1,7 +1,6 @@
 import type { H3Event } from 'h3';
 import type { MadekCollectionMetaDatumResponse, MetaDatum } from '../types/collection-meta-datum';
 import { fiveMinutesCache } from '../constants/cache';
-import { createServerLogger } from '../utils/server-logger';
 
 export async function getCollectionMetaDatum(event: H3Event, collectionId: string, metaKeyId: string): Promise<MetaDatum> {
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);

@@ -1,6 +1,6 @@
-import type { RuntimeConfig } from 'nuxt/schema';
+import type { PublicRuntimeConfig } from 'nuxt/schema';
 
-function logDebugInfo(logger: Logger, publicConfig: RuntimeConfig['public']): void {
+function logDebugInfo(logger: Logger, publicConfig: PublicRuntimeConfig): void {
 	logger.info('=== ENVIRONMENT ===');
 	logger.info(`Nuxt environment: ${isDevelopmentEnvironment ? 'development' : 'production'}`);
 

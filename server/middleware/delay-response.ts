@@ -1,5 +1,4 @@
 import { MILLISECONDS_IN_SECOND } from '../../shared/constants/time';
-import { createServerLogger } from '../utils/server-logger';
 
 async function sleep(milliseconds: number): Promise<void> {
 	return new Promise((resolve, _reject) => {
