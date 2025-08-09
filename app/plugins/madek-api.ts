@@ -1,7 +1,3 @@
-import { isDevelopmentEnvironment, isServerEnvironment } from '../../shared/utils/environment';
-import { createAppLogger } from '../utils/app-logger';
-import { forwardCookieHeader } from '../utils/request-helpers';
-
 export default defineNuxtPlugin({
 	name: 'madek-api',
 	setup() {

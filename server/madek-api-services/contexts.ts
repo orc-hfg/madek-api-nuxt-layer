@@ -1,7 +1,6 @@
 import type { H3Event } from 'h3';
 import type { Context, Contexts, MadekContextsResponse } from '../types/contexts';
 import { twentyFourHoursCache } from '../constants/cache';
-import { createServerLogger } from '../utils/server-logger';
 
 export async function getContexts(event: H3Event): Promise<Contexts> {
 	const { fetchFromApi } = createMadekApiClient<MadekContextsResponse>(event);
