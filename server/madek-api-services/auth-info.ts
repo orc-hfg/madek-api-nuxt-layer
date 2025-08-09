@@ -1,7 +1,6 @@
 import type { H3Event } from 'h3';
 import type { AuthInfo, MadekAuthInfoResponse } from '../types/auth-info';
 import { noCache } from '../constants/cache';
-import { createServerLogger } from '../utils/server-logger';
 
 export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 	const { fetchFromApi } = createMadekApiClient<MadekAuthInfoResponse>(event);

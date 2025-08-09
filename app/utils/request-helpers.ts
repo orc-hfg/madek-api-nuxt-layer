@@ -1,6 +1,5 @@
 import type { FetchContext } from 'ofetch';
 import { isServerEnvironment as defaultIsServerEnvironment } from '../../shared/utils/environment';
-import { createAppLogger } from './app-logger';
 
 interface CookieHeader {
 	cookie?: string;

@@ -1,5 +1,3 @@
-import { createAppLogger } from '../utils/app-logger';
-
 export default defineNuxtPlugin({
 	name: 'placeholder-api',
 	setup() {
