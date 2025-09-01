@@ -1,6 +1,6 @@
 import type { PublicRuntimeConfig } from 'nuxt/schema';
 
-function logDebugInfo(logger: Logger, publicConfig: PublicRuntimeConfig): void {
+function logInfo(logger: Logger, publicConfig: PublicRuntimeConfig): void {
 	logger.info('=== ENVIRONMENT ===');
 	logger.info(`Nuxt environment: ${isDevelopmentEnvironment ? 'development' : 'production'}`);
 
@@ -8,7 +8,7 @@ function logDebugInfo(logger: Logger, publicConfig: PublicRuntimeConfig): void {
 	logger.info(`Base URL: ${publicConfig.madekApi.baseURL}`);
 
 	const features = [
-		{ name: 'Debug logging', isEnabled: publicConfig.enableDebugLogging },
+		{ name: 'Logging', isEnabled: publicConfig.enableLogging },
 		{ name: 'Response delay', isEnabled: publicConfig.enableResponseDelay },
 		{ name: 'Server-side caching', isEnabled: publicConfig.enableServerSideCaching },
 	];
@@ -20,17 +20,17 @@ function logDebugInfo(logger: Logger, publicConfig: PublicRuntimeConfig): void {
 }
 
 export default defineNuxtPlugin({
-	name: 'debug-info',
+	name: 'info-log',
 	setup() {
 		const config = useRuntimeConfig();
 		const publicConfig = config.public;
-		const isDebugLoggingEnabled = publicConfig.enableDebugLogging;
+		const isLoggingEnabled = publicConfig.enableLogging;
 
-		if (!isDebugLoggingEnabled) {
+		if (!isLoggingEnabled) {
 			return;
 		}
 
-		const appLogger = createAppLogger('Plugin: debug-info');
-		logDebugInfo(appLogger, publicConfig);
+		const appLogger = createAppLogger('Plugin: info-log');
+		logInfo(appLogger, publicConfig);
 	},
 });

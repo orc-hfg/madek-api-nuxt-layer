@@ -2,9 +2,9 @@ import type { H3Event } from 'h3';
 
 export function createServerLogger(event: H3Event, source: string): Logger {
 	const config = useRuntimeConfig(event);
-	const isDebugLoggingEnabled = config.public.enableDebugLogging;
+	const isLoggingEnabled = config.public.enableLogging;
 
-	return createLoggerWithConfig('Server', source, isDebugLoggingEnabled);
+	return createLoggerWithConfig('Server', source, isLoggingEnabled);
 }
 
 /*
@@ -22,7 +22,7 @@ export function createServerLogger(event: H3Event, source: string): Logger {
  */
 export function createServerStartupLogger(source: string): Logger {
 	const config = useRuntimeConfig();
-	const isDebugLoggingEnabled = config.public.enableDebugLogging;
+	const isLoggingEnabled = config.public.enableLogging;
 
-	return createLoggerWithConfig('Server', source, isDebugLoggingEnabled);
+	return createLoggerWithConfig('Server', source, isLoggingEnabled);
 }

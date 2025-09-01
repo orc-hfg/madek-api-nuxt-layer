@@ -60,7 +60,7 @@ export default defineNuxtConfig({
 			token: '',
 		},
 		public: {
-			enableDebugLogging: false,
+			enableLogging: false,
 			enableResponseDelay: false,
 			enableServerSideCaching: true,
 			version: composeVersion(),
@@ -72,7 +72,7 @@ export default defineNuxtConfig({
 	$development: {
 		runtimeConfig: {
 			public: {
-				enableDebugLogging: true,
+				enableLogging: true,
 
 				/*
 				 * Controls server-side caching with Nitro for API requests

@@ -1,6 +1,6 @@
 export function createAppLogger(source: string): Logger {
 	const config = useRuntimeConfig();
-	const isDebugLoggingEnabled = config.public.enableDebugLogging;
+	const isLoggingEnabled = config.public.enableLogging;
 
-	return createLoggerWithConfig('App', source, isDebugLoggingEnabled);
+	return createLoggerWithConfig('App', source, isLoggingEnabled);
 }

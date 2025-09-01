@@ -9,13 +9,13 @@ export interface Logger {
 
 type LoggerContext = 'Server' | 'App';
 
-export function createLoggerWithConfig(context: LoggerContext, source: string, isDebugLoggingEnabled: boolean): Logger {
+export function createLoggerWithConfig(context: LoggerContext, source: string, isLoggingEnabled: boolean): Logger {
 	// See: https://github.com/unjs/consola?tab=readme-ov-file#log-level
 	const LOG_LEVEL_DEFAULT = 4;
 	const LOG_LEVEL_SILENT = -999;
 
 	const logger = createConsola({
-		level: isDebugLoggingEnabled ? LOG_LEVEL_DEFAULT : LOG_LEVEL_SILENT,
+		level: isLoggingEnabled ? LOG_LEVEL_DEFAULT : LOG_LEVEL_SILENT,
 	});
 
 	const loggerPrefix = `[${context} Logger] [${source}]`;
