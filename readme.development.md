@@ -130,7 +130,7 @@ serverStartupLogger.info('Authentication mock is active.');
 **Warum zwei Server Logger?**
 Server Plugins laufen während des Server-Starts, nicht während individueller Requests. Sie haben keinen Zugriff auf H3Event und müssen `useRuntimeConfig()` ohne Event-Parameter aufrufen.
 
-**Debug Logging aktivieren:**
+**Logging aktivieren:**
 ```env
 # In .env oder nuxt.config.ts
-NUXT_PUBLIC_ENABLE_DEBUG_LOGGING=true
+NUXT_PUBLIC_ENABLE_LOGGING=true
