@@ -38,13 +38,12 @@ runs:
           COMMIT_COUNT="unknown"
         fi
 
-        # Get contributors for this release using git shortlog for robust deduplication
-        # git shortlog provides built-in normalization and deduplication:
+        # Get contributors for this release using git shortlog with enhanced deduplication
+        # git shortlog provides built-in normalization:
         # -s = summarize (hide commit counts)
-        # -n = sort by number of commits (will be re-sorted anyway)
-        # cut -f2- = remove the commit count prefix
-        # sort -fu = case-insensitive sort with unique filtering
-        if ! CONTRIBUTORS=$(git shortlog -sn "${LAST_TAG}..HEAD" 2>/dev/null | cut -f2- | sort -fu | paste -sd ', ' -); then
+        # -n = sort by number of commits
+        # Enhanced deduplication with awk to handle edge cases like different emails
+        if ! CONTRIBUTORS=$(git shortlog -sn "${LAST_TAG}..HEAD" 2>/dev/null | cut -f2- | awk '!seen[tolower($0)]++' | sort | paste -sd ', ' -); then
           echo "Warning: Could not determine contributors for this release"
           CONTRIBUTORS="Unable to determine"
         fi
