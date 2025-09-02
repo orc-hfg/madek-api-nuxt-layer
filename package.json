@@ -61,7 +61,7 @@
 		"happy-dom": "18.0.1",
 		"husky": "9.1.7",
 		"knip": "5.63.0",
-		"lint-staged": "16.1.5",
+		"lint-staged": "16.1.6",
 		"npm-check-updates": "18.0.3",
 		"nuxt": "4.0.3",
 		"openapi-typescript": "7.9.1",
