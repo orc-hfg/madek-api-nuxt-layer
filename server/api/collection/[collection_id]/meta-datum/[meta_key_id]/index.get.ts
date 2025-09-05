@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import type { MadekCollectionMetaDatumPathParameters } from '../../../../../types/collection-meta-datum';
+import type { MadekCollectionMetaDatumPathParameters } from '../../../../../../shared/types/collection-meta-datum';
 import { StatusCodes } from 'http-status-codes';
 import { getCollectionMetaDatum } from '../../../../../madek-api-services/collection-meta-datum';
 import { isH3NotFoundError } from '../../../../../utils/error-handling';

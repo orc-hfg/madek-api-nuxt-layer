@@ -29,5 +29,6 @@ export interface MadekCollectionsResponse {
 }
 
 type MadekCollection = MadekCollectionsArray[number];
+
 export type Collection = Pick<MadekCollection, 'id'>;
 export type Collections = Collection[];

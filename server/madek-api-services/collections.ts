@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import type { Collections, CollectionsUserQuery, MadekCollectionsResponse } from '../types/collections';
+import type { Collections, CollectionsUserQuery, MadekCollectionsResponse } from '../../shared/types/collections';
 import { fiveMinutesCache } from '../constants/cache';
 
 export async function getCollections(event: H3Event, query: CollectionsUserQuery): Promise<Collections> {

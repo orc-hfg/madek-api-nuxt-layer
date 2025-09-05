@@ -1,5 +1,5 @@
-import type { MetaDatum } from '../../server/types/collection-meta-datum';
-import type { Collection } from '../../server/types/collections';
+import type { MetaDatum } from '../../shared/types/collection-meta-datum';
+import type { Collection } from '../../shared/types/collections';
 import type { AppLocale } from '../types/i18n-locales';
 import { getSetRepository } from '../repositories/set';
 import { getSetsRepository } from '../repositories/sets';
@@ -30,6 +30,7 @@ export const useUserSetsStore = defineStore('user-sets', () => {
 					}),
 				},
 			);
+
 			sets.value = data;
 
 			setTitles.value = await setRepository.getSetTitles(

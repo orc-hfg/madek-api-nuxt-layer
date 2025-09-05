@@ -1,4 +1,4 @@
-import type { MetaDatum } from '../../server/types/collection-meta-datum';
+import type { MetaDatum } from '../../shared/types/collection-meta-datum';
 import type { ApiFunction } from '../types/api';
 import type { AppLocale } from '../types/i18n-locales';
 

@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import type { AppSettings, MadekAppSettingsResponse } from '../types/app-settings';
+import type { AppSettings, MadekAppSettingsResponse } from '../../shared/types/app-settings';
 import { twentyFourHoursCache } from '../constants/cache';
 
 export async function getAppSettings(event: H3Event): Promise<AppSettings> {

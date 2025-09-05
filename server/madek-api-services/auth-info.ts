@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import type { AuthInfo, MadekAuthInfoResponse } from '../types/auth-info';
+import type { AuthInfo, MadekAuthInfoResponse } from '../../shared/types/auth-info';
 import { noCache } from '../constants/cache';
 
 export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {

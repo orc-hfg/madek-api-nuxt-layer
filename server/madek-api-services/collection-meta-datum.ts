@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import type { MadekCollectionMetaDatumResponse, MetaDatum } from '../types/collection-meta-datum';
+import type { MadekCollectionMetaDatumResponse, MetaDatum } from '../../shared/types/collection-meta-datum';
 import { fiveMinutesCache } from '../constants/cache';
 import { isH3NotFoundError } from '../utils/error-handling';
 
