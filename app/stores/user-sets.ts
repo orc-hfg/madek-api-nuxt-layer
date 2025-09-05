@@ -13,16 +13,14 @@ export const useUserSetsStore = defineStore('user-sets', () => {
 		const setsRepository = getSetsRepository();
 		const setRepository = getSetRepository();
 
-		const userId = userStore.id;
-
-		if (userId === undefined) {
+		if (userStore.id === undefined) {
 			await userStore.initialize();
 		}
 
-		if (userId !== undefined) {
+		if (userStore.id !== undefined) {
 			const data = await setsRepository.getSets(
 				{
-					responsible_user_id: userId,
+					responsible_user_id: userStore.id,
 					filter_by: JSON.stringify({
 						meta_data: [
 							{

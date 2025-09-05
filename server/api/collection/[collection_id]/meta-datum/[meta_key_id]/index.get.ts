@@ -1,9 +1,17 @@
 import type { H3Event } from 'h3';
 import type { MadekCollectionMetaDatumPathParameters } from '../../../../../types/collection-meta-datum';
 import { StatusCodes } from 'http-status-codes';
-import { SET_TITLE_META_KEY_FALLBACKS } from '../../../../../../app/repositories/set';
 import { getCollectionMetaDatum } from '../../../../../madek-api-services/collection-meta-datum';
 import { isH3NotFoundError } from '../../../../../utils/error-handling';
+
+/*
+ * Fallback rules for set title meta keys used by API routes
+ * When a requested meta key returns 404, try the fallback meta key instead
+ * Example: 'creative_work:title_en' (English) → 'madek_core:title' (German fallback)
+ */
+const SET_TITLE_META_KEY_FALLBACKS: Record<string, string> = {
+	'creative_work:title_en': 'madek_core:title',
+};
 
 // Combine all fallback rules for this API route
 const META_KEY_FALLBACKS: Record<string, string> = {
