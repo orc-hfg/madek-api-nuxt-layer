@@ -21,7 +21,7 @@ import type { paths } from '../../generated/api/madek-api';
 type MadekCollectionsGet = paths['/api-v2/collections']['get'];
 
 type MadekCollectionsQuery = NonNullable<MadekCollectionsGet['parameters']['query']>;
-export type CollectionsUserQuery = Pick<MadekCollectionsQuery, 'responsible_user_id' | 'filter_by'>;
+export type CollectionsQuery = Pick<MadekCollectionsQuery, 'responsible_user_id' | 'filter_by'>;
 
 type MadekCollectionsArray = MadekCollectionsGet['responses']['200']['content']['application/json']['groups'];
 export interface MadekCollectionsResponse {

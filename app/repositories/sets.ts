@@ -1,8 +1,7 @@
-import type { Collections, CollectionsUserQuery } from '../../shared/types/collections';
 import type { ApiFunction } from '../types/api';
 
 interface SetsRepository {
-	getSets: (query?: CollectionsUserQuery) => Promise<Collections>;
+	getSets: (query?: CollectionsQuery) => Promise<Collections>;
 }
 
 function createSetsRepository($madekApi: ApiFunction): SetsRepository {

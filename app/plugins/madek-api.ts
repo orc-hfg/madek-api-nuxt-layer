@@ -1,3 +1,5 @@
+export const apiBaseName = 'api';
+
 export default defineNuxtPlugin({
 	name: 'madek-api',
 	setup() {
@@ -13,7 +15,7 @@ export default defineNuxtPlugin({
 		 * https://nuxt.com/docs/guide/recipes/custom-usefetch#custom-fetch
 		 */
 		const madekApi = $fetch.create({
-			baseURL: `${config.app.baseURL}api`,
+			baseURL: `${config.app.baseURL}${apiBaseName}`,
 
 			onRequest(context) {
 				if (shouldForwardCookieHeader && cookieHeader !== undefined) {

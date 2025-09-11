@@ -1,4 +1,3 @@
-import type { AppSettings } from '../../shared/types/app-settings';
 import type { ApiFunction } from '../types/api';
 
 interface SettingsRepository {

@@ -3,7 +3,6 @@ import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropa
 import { getRequestHeaders } from 'h3';
 import { isDevelopmentEnvironment as defaultIsDevelopmentEnvironment } from '../../shared/utils/environment';
 import { noCache } from '../constants/cache';
-import { isFetchError } from './error-handling';
 import { createServerLogger } from './server-logger';
 
 const LOGGER_SOURCE = 'Utility: madekApi';

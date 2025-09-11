@@ -1,8 +1,9 @@
 import type { H3Event } from 'h3';
-import type { CollectionMediaEntryArcs, MadekCollectionMediaEntryArcsResponse } from '../../shared/types/collection-media-entry-arcs';
 import { fiveMinutesCache } from '../constants/cache';
 
-export async function getCollectionMediaEntryArcs(event: H3Event, collectionId: string): Promise<CollectionMediaEntryArcs> {
+type Collection = MadekCollectionMediaEntryArcsPathParameters['collection_id'];
+
+export async function getCollectionMediaEntryArcs(event: H3Event, collectionId: Collection): Promise<CollectionMediaEntryArcs> {
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMediaEntryArcsResponse>(event);
 	const serverLogger = createServerLogger(event, 'Service: getCollectionMediaEntryArcs');
 
@@ -26,6 +27,7 @@ export async function getCollectionMediaEntryArcs(event: H3Event, collectionId: 
 			return {
 				media_entry_id: item.media_entry_id,
 				cover: item.cover,
+				position: item.position,
 			};
 		});
 	}

@@ -11,5 +11,5 @@ export interface MadekCollectionMediaEntryArcsResponse {
 
 type MadekCollectionMediaEntryArc = MadekCollectionMediaEntryArcsArray[number];
 
-type CollectionMediaEntryArc = Pick<MadekCollectionMediaEntryArc, 'media_entry_id' | 'cover'>;
+export type CollectionMediaEntryArc = Pick<MadekCollectionMediaEntryArc, 'media_entry_id' | 'cover' | 'position'>;
 export type CollectionMediaEntryArcs = CollectionMediaEntryArc[];

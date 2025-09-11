@@ -10,6 +10,7 @@
 		"server/constants/*.ts",
 		"server/utils/*.ts",
 		"shared/constants/*.ts",
+		"shared/types/*.ts",
 		"shared/utils/*.ts",
 		"tests/**/*.ts"
 	],
