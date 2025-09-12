@@ -1,5 +1,8 @@
+import type { RuntimeConfigStructure } from '../helpers/runtime-config';
+import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { setupApiTestContext } from '../helpers/madek-api';
+import { createRuntimeConfigMock } from '../helpers/runtime-config';
 
 /*
  * TODO: @upgrade-node24
@@ -10,10 +13,19 @@ import { setupApiTestContext } from '../helpers/madek-api';
  *  See: https://www.epicweb.dev/better-test-setup-with-disposable-objects
  */
 
+let runtimeConfigReturnValue: RuntimeConfigStructure;
+
+function useRuntimeConfigMock() {
+	return runtimeConfigReturnValue;
+}
+
+mockNuxtImport('useRuntimeConfig', () => useRuntimeConfigMock);
+
 describe('createMadekApiClient()', () => {
 	let apiTestContext: ReturnType<typeof setupApiTestContext>;
 
 	beforeEach(() => {
+		runtimeConfigReturnValue = createRuntimeConfigMock();
 		apiTestContext = setupApiTestContext();
 	});
 
@@ -66,6 +78,7 @@ describe('createMadekApiClient()', () => {
 
 	describe('caching mechanism', () => {
 		beforeEach(() => {
+			runtimeConfigReturnValue = createRuntimeConfigMock({ enableServerSideCaching: true });
 			apiTestContext = setupApiTestContext();
 		});
 
@@ -117,5 +130,35 @@ describe('createMadekApiClient()', () => {
 				cacheOptions,
 			);
 		});
+	});
+});
+
+describe('createMadekApiClient() without server-side caching', () => {
+	let apiTestContext: ReturnType<typeof setupApiTestContext>;
+
+	beforeEach(() => {
+		runtimeConfigReturnValue = createRuntimeConfigMock({ enableServerSideCaching: false });
+		apiTestContext = setupApiTestContext();
+	});
+
+	afterEach(() => {
+		apiTestContext.dispose();
+	});
+
+	it('calls fetchData directly when caching is globally disabled', async () => {
+		await apiTestContext.client.fetchFromApi('test-endpoint', {
+			publicDataCache: { maxAge: 3600 },
+		});
+
+		// Should call fetchData directly, not through caching
+		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+			apiTestContext.mockEvent,
+			'https://api.example.com/test-endpoint',
+			{},
+			'test-api-token',
+		);
+
+		// Should NOT call defineCachedFunction when caching is disabled
+		expect(apiTestContext.defineCachedFunctionMock).not.toHaveBeenCalled();
 	});
 });
