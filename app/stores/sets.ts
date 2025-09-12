@@ -3,7 +3,7 @@ import type { AppLocale } from '../types/i18n-locales';
 interface SetData {
 	id: Collection['id'];
 	title: MetaDatumString['string'];
-	coverImageThumbnailSources: ThumbnailSources;
+	coverImageSources: ThumbnailSources;
 }
 
 export const useSetsStore = defineStore('sets', () => {
@@ -35,7 +35,7 @@ export const useSetsStore = defineStore('sets', () => {
 
 			sets.value = data;
 
-			const [titles, coverImageThumbnailSources] = await Promise.all([
+			const [titles, coverImageSources] = await Promise.all([
 				setService.getTitleBatch(
 					sets.value.map(set => set.id),
 					appLocale,
@@ -50,7 +50,7 @@ export const useSetsStore = defineStore('sets', () => {
 				return {
 					id: set.id,
 					title: titles[index]?.string ?? '',
-					coverImageThumbnailSources: coverImageThumbnailSources[index] ?? {},
+					coverImageSources: coverImageSources[index] ?? {},
 				};
 			});
 		}
