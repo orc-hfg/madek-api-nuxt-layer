@@ -4,6 +4,7 @@
 		"app/composables/*.ts",
 		"app/plugins/*.ts",
 		"app/repositories/*.ts",
+		"app/services/*.ts",
 		"app/stores/*.ts",
 		"app/utils/*.ts",
 		"server/api/*.ts",

@@ -1,6 +1,4 @@
 import type { AppLocale } from '../types/i18n-locales';
-import { getSetRepository } from '../repositories/set';
-import { getSetsRepository } from '../repositories/sets';
 
 interface SetData {
 	id: Collection['id'];
@@ -15,7 +13,7 @@ export const useSetsStore = defineStore('sets', () => {
 	async function refreshData(appLocale: AppLocale): Promise<void> {
 		const userStore = useUserStore();
 		const setsRepository = getSetsRepository();
-		const setRepository = getSetRepository();
+		const setService = getSetService();
 
 		if (userStore.id === undefined) {
 			await userStore.initialize();
@@ -38,11 +36,11 @@ export const useSetsStore = defineStore('sets', () => {
 			sets.value = data;
 
 			const [titles, coverImageThumbnailSources] = await Promise.all([
-				setRepository.getTitleBatch(
+				setService.getTitleBatch(
 					sets.value.map(set => set.id),
 					appLocale,
 				),
-				setRepository.getCoverImageThumbnailSourcesBatch(
+				setService.getCoverImageThumbnailSourcesBatch(
 					sets.value.map(set => set.id),
 					['small', 'medium', 'large', 'x_large'],
 				),
