@@ -1,9 +1,9 @@
 import type { H3Event } from 'h3';
 import type { MadekApiRequestConfig } from '../../../server/utils/madek-api';
+import type { ServerLoggerMock } from './logger';
 import { vi } from 'vitest';
 import { createMadekApiClient } from '../../../server/utils/madek-api';
-import * as loggerModule from '../../../server/utils/server-logger';
-import { createMockLoggerWithSpies } from '../../mocks/logger';
+import { setupServerLoggerMock } from './logger';
 
 export const mockEvent = { headers: {} } as H3Event;
 
@@ -16,7 +16,7 @@ export const mockEvent = { headers: {} } as H3Event;
  *  See: https://www.epicweb.dev/better-test-setup-with-disposable-objects
  */
 
-interface ApiTestContext {
+interface ApiTestContext extends ServerLoggerMock {
 	client: {
 		fetchFromApi: (endpoint: string, config?: MadekApiRequestConfig) => Promise<unknown>;
 		fetchFromApiWithPathParameters: (
@@ -29,9 +29,6 @@ interface ApiTestContext {
 	fetchDataFunctionMock: ReturnType<typeof vi.fn>;
 	defineCachedFunctionMock: ReturnType<typeof vi.fn>;
 	mockEvent: H3Event;
-	loggerInfoSpy: ReturnType<typeof vi.spyOn>;
-	loggerWarnSpy: ReturnType<typeof vi.spyOn>;
-	loggerErrorSpy: ReturnType<typeof vi.spyOn>;
 	[Symbol.dispose]: () => void;
 	dispose: () => void;
 }
@@ -42,8 +39,8 @@ export function setupApiTestContext(): ApiTestContext {
 	const defineCachedFunctionMock = vi.fn().mockImplementation(
 		(cacheableFunction: () => unknown): (() => unknown) => (): unknown => cacheableFunction(),
 	);
-	const { logger, infoSpy, warnSpy, errorSpy } = createMockLoggerWithSpies();
-	vi.spyOn(loggerModule, 'createServerLogger').mockReturnValue(logger);
+
+	const loggerMock = setupServerLoggerMock();
 
 	function cleanup(): void {
 		vi.restoreAllMocks();
@@ -60,10 +57,8 @@ export function setupApiTestContext(): ApiTestContext {
 		fetchMock,
 		fetchDataFunctionMock,
 		defineCachedFunctionMock,
-		loggerInfoSpy: infoSpy,
-		loggerWarnSpy: warnSpy,
-		loggerErrorSpy: errorSpy,
 		mockEvent,
+		...loggerMock,
 		[Symbol.dispose]: cleanup,
 		dispose: cleanup,
 	};
