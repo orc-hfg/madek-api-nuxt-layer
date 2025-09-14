@@ -1,4 +1,3 @@
-import type { AppSettings } from '../../server/types/app-settings';
 import type { ApiFunction } from '../types/api';
 
 interface SettingsRepository {

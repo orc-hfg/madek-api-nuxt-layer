@@ -1,9 +1,10 @@
 import type { H3Event } from 'h3';
 import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
 import { getRequestHeaders } from 'h3';
-import { FetchError } from 'ofetch';
 import { isDevelopmentEnvironment as defaultIsDevelopmentEnvironment } from '../../shared/utils/environment';
 import { noCache } from '../constants/cache';
+import { isFetchError } from './error-handling';
+import { replacePathParameters } from './path-parameters';
 import { createServerLogger } from './server-logger';
 
 const LOGGER_SOURCE = 'Utility: madekApi';
@@ -102,13 +103,12 @@ export async function fetchData<T>(
 ): Promise<T> {
 	try {
 		const requestConfig = buildRequestConfig(event, apiOptions, apiToken, isDevelopmentEnvironment);
-
 		const response = await fetchFunction<T>(url, requestConfig);
 
 		return response as T;
 	}
 	catch (error) {
-		if (error instanceof FetchError) {
+		if (isFetchError(error)) {
 			throw convertFetchToH3Error(error);
 		}
 
@@ -161,11 +161,7 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 	}
 
 	async function fetchFromApiWithPathParameters(endpointTemplate: string, endpointPathParameters: Record<string, string>, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
-		let endpoint = endpointTemplate;
-
-		for (const [key, value] of Object.entries(endpointPathParameters)) {
-			endpoint = endpoint.replace(`:${key}`, value);
-		}
+		const endpoint = replacePathParameters(endpointTemplate, endpointPathParameters);
 
 		return fetchFromApi(endpoint, apiRequestConfig);
 	}

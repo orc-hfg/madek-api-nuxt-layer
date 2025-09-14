@@ -1,4 +1,3 @@
-import type { Context, Contexts } from '../../server/types/contexts';
 import type { ApiFunction } from '../types/api';
 
 interface ContextRepository {

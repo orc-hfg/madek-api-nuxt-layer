@@ -131,7 +131,7 @@ function createUserRepository(): UserRepository {
 ```
 +---------------------------------------+
 |           Pinia Store                 |
-|  (useUserStore, useUserSetsStore)     |
+|  (useUserStore, useSetsStore)     |
 +---------------------------------------+
                   ↑
 +---------------------------------------+
@@ -208,7 +208,7 @@ function createUserRepository($madekApi: ApiFunction): UserRepository {
 ```
 +---------------------------------------+
 |           Pinia Store                 |
-|  (useUserStore, useUserSetsStore)     |
+|  (useUserStore, useSetsStore)     |
 +---------------------------------------+
                   ↑
 +---------------------------------------+

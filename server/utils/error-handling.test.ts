@@ -1,8 +1,8 @@
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMockLoggerWithSpies } from '../../tests/mocks/logger';
 import { catchH3Error, createFetchError } from '../../tests/unit/helpers/error';
-import { convertFetchToH3Error, handleServiceError } from './error-handling';
+import { setupDirectLoggerMock } from '../../tests/unit/helpers/logger';
+import { convertFetchToH3Error, handleServiceError, isFetchError, isH3NotFoundError } from './error-handling';
 
 describe('convertFetchToH3Error()', () => {
 	it('passes FetchError status message correctly', () => {
@@ -90,10 +90,9 @@ describe('handleServiceError()', () => {
 	let loggerErrorSpy: ReturnType<typeof vi.spyOn>;
 
 	beforeEach(() => {
-		const mockLoggerSetup = createMockLoggerWithSpies();
-
-		mockLogger = mockLoggerSetup.logger;
-		loggerErrorSpy = mockLoggerSetup.errorSpy;
+		const { loggerErrorSpy: errorSpy, mockLogger: logger } = setupDirectLoggerMock();
+		loggerErrorSpy = errorSpy;
+		mockLogger = logger;
 	});
 
 	afterEach(() => {
@@ -141,5 +140,118 @@ describe('handleServiceError()', () => {
 		expect(loggerErrorSpy).toHaveBeenCalledTimes(1);
 
 		expect(caughtError).toBe(genericError);
+	});
+});
+
+describe('isFetchError()', () => {
+	it('correctly identifies valid FetchError objects', () => {
+		const fetchError = createFetchError({
+			statusCode: StatusCodes.NOT_FOUND,
+			statusMessage: 'Not Found',
+		});
+
+		expect(isFetchError(fetchError)).toBe(true);
+	});
+
+	it('returns false for H3Error objects', () => {
+		const h3Error = createError({
+			statusCode: StatusCodes.NOT_FOUND,
+			statusMessage: 'Not Found',
+		});
+
+		expect(isFetchError(h3Error)).toBe(false);
+	});
+
+	it('returns false for objects missing required properties', () => {
+		// Missing statusCode and message
+		const invalidError1 = { name: 'FetchError' };
+
+		// Missing message
+		const invalidError2 = { name: 'FetchError', statusCode: 404 };
+
+		// Missing statusCode
+		const invalidError3 = { name: 'FetchError', message: 'Error' };
+
+		// Wrong name
+		const invalidError4 = { name: 'SomeOtherError', statusCode: 404, message: 'Error' };
+
+		expect(isFetchError(invalidError1)).toBe(false);
+		expect(isFetchError(invalidError2)).toBe(false);
+		expect(isFetchError(invalidError3)).toBe(false);
+		expect(isFetchError(invalidError4)).toBe(false);
+	});
+
+	it('returns false for undefined and primitive values', () => {
+		expect(isFetchError(undefined)).toBe(false);
+		expect(isFetchError('string')).toBe(false);
+		expect(isFetchError(404)).toBe(false);
+		expect(isFetchError(true)).toBe(false);
+	});
+
+	it('validates statusCode is a number', () => {
+		const invalidError = {
+			name: 'FetchError',
+			statusCode: 'not-a-number',
+			message: 'Not Found',
+		};
+
+		expect(isFetchError(invalidError)).toBe(false);
+	});
+
+	it('validates message is a string', () => {
+		const invalidError = {
+			name: 'FetchError',
+			statusCode: StatusCodes.NOT_FOUND,
+			message: 404,
+		};
+
+		expect(isFetchError(invalidError)).toBe(false);
+	});
+});
+
+describe('isH3NotFoundError()', () => {
+	it('correctly identifies H3Error with 404 status code', () => {
+		const h3Error = createError({
+			statusCode: StatusCodes.NOT_FOUND,
+			statusMessage: 'Not Found',
+		});
+
+		expect(isH3NotFoundError(h3Error)).toBe(true);
+	});
+
+	it('returns false for H3Error with non-404 status codes', () => {
+		const h3Error500 = createError({
+			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+			statusMessage: 'Internal Server Error',
+		});
+		const h3Error400 = createError({
+			statusCode: StatusCodes.BAD_REQUEST,
+			statusMessage: 'Bad Request',
+		});
+
+		expect(isH3NotFoundError(h3Error500)).toBe(false);
+		expect(isH3NotFoundError(h3Error400)).toBe(false);
+	});
+
+	it('returns false for FetchError objects', () => {
+		const fetchError = createFetchError({
+			statusCode: StatusCodes.NOT_FOUND,
+			statusMessage: 'Not Found',
+		});
+
+		expect(isH3NotFoundError(fetchError)).toBe(false);
+	});
+
+	it('returns false for non-error objects', () => {
+		expect(isH3NotFoundError(undefined)).toBe(false);
+		expect(isH3NotFoundError({})).toBe(false);
+		expect(isH3NotFoundError('error')).toBe(false);
+		expect(isH3NotFoundError(404)).toBe(false);
+	});
+
+	it('returns false for generic Error objects', () => {
+		const genericError = new Error('Generic error');
+
+		expect(isH3NotFoundError(genericError)).toBe(false);
 	});
 });

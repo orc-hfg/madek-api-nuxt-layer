@@ -1,6 +1,3 @@
-import type { AuthInfo } from '../../server/types/auth-info';
-import { getUserRepository } from '../repositories/user';
-
 export const useUserStore = defineStore('user', () => {
 	const isInitialized = shallowRef(false);
 	const id = shallowRef<AuthInfo['id']>();

@@ -2,6 +2,8 @@ export default defineNuxtPlugin({
 	name: 'madek-api',
 	setup() {
 		const config = useRuntimeConfig();
+		const { apiBaseName } = config.public;
+
 		const appLogger = createAppLogger('Plugin: madek-api');
 		const shouldForwardCookieHeader = isServerEnvironment && !isDevelopmentEnvironment;
 
@@ -13,7 +15,7 @@ export default defineNuxtPlugin({
 		 * https://nuxt.com/docs/guide/recipes/custom-usefetch#custom-fetch
 		 */
 		const madekApi = $fetch.create({
-			baseURL: `${config.app.baseURL}api`,
+			baseURL: `${config.app.baseURL}${apiBaseName}`,
 
 			onRequest(context) {
 				if (shouldForwardCookieHeader && cookieHeader !== undefined) {

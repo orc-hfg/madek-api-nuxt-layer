@@ -3,43 +3,11 @@ import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { vi } from 'vitest';
 import { TEST_COOKIE } from '../../../shared/constants/test';
 
-function createRuntimeConfig() {
-	return {
-		madekApi: {
-			token: 'test-api-token',
-		},
-		public: {
-			enableServerSideCaching: true,
-			madekApi: {
-				baseURL: 'https://api.example.com/',
-			},
-		},
-	};
-}
-
-function createRequiredTestConfig() {
-	return {
-		// Required for Nuxt test initialization (router setup)
-		app: {
-			baseURL: '/',
-		},
-	};
-}
-
-function runtimeConfigMock() {
-	return {
-		...createRequiredTestConfig(),
-		...createRuntimeConfig(),
-	};
-}
-
 function getRequestHeadersMock() {
 	return {
 		cookie: TEST_COOKIE,
 	};
 }
-
-mockNuxtImport('useRuntimeConfig', () => runtimeConfigMock);
 
 // Mock payload composables to prevent Pinia payload errors
 mockNuxtImport('definePayloadReviver', () => vi.fn());

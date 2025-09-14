@@ -1,8 +1,11 @@
 import type { H3Event } from 'h3';
-import type { MadekCollectionMetaDatumResponse, MetaDatum } from '../types/collection-meta-datum';
 import { fiveMinutesCache } from '../constants/cache';
 
-export async function getCollectionMetaDatum(event: H3Event, collectionId: string, metaKeyId: string): Promise<MetaDatum> {
+type Collection = MadekCollectionMetaDatumPathParameters['collection_id'];
+
+type MetaKeyId = MadekCollectionMetaDatumPathParameters['meta_key_id'];
+
+export async function getCollectionMetaDatum(event: H3Event, collectionId: Collection, metaKeyId: MetaKeyId): Promise<MetaDatumString> {
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
 	const serverLogger = createServerLogger(event, 'Service: getCollectionMetaDatum');
 
@@ -25,11 +28,15 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: strin
 		);
 
 		return {
-			id: response['meta-data'].id,
 			string: response['meta-data'].string,
 		};
 	}
 	catch (error) {
+		// Allow 404 not found errors to propagate up to the API endpoint level for potential fallback handling
+		if (isH3NotFoundError(error)) {
+			throw error;
+		}
+
 		return handleServiceError(serverLogger, error, 'Failed to fetch collection meta datum.');
 	}
 }

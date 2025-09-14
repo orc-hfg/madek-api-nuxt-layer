@@ -21,8 +21,8 @@ export default defineNuxtConfig({
 		dirs: [],
 	},
 	imports: {
-		// Auto-import from repositories folder
-		dirs: ['repositories'],
+		// Auto-import from repositories and services folder
+		dirs: ['repositories', 'services'],
 	},
 	pinia: {
 
@@ -63,7 +63,9 @@ export default defineNuxtConfig({
 			enableLogging: false,
 			enableResponseDelay: false,
 			enableServerSideCaching: true,
+			enableApiMock: false,
 			version: composeVersion(),
+			apiBaseName: 'api',
 			madekApi: {
 				baseURL: '',
 			},
