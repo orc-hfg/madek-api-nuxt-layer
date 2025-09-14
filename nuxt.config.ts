@@ -63,7 +63,9 @@ export default defineNuxtConfig({
 			enableLogging: false,
 			enableResponseDelay: false,
 			enableServerSideCaching: true,
+			enableApiMock: false,
 			version: composeVersion(),
+			apiBaseName: 'api',
 			madekApi: {
 				baseURL: '',
 			},

@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3';
-import { StatusCodes } from 'http-status-codes';
 import { getCollectionMetaDatum } from '../../../../../madek-api-services/collection-meta-datum';
+import { routeParameterSchemas } from '../../../../../schemas/route';
 
 /*
  * Fallback rules for set title meta keys used by API routes
@@ -17,19 +17,11 @@ const META_KEY_FALLBACKS: Record<string, string> = {
 };
 
 export default defineEventHandler(async (event: H3Event) => {
-	const collectionId = getRouterParam(event, 'collection_id');
-	const metaKeyId = getRouterParam(event, 'meta_key_id');
-
-	if (!isValidRouteParameter(collectionId) || !isValidRouteParameter(metaKeyId)) {
-		throw createError({
-			statusCode: StatusCodes.BAD_REQUEST,
-			statusMessage: 'Missing required URL parameters.',
-		});
-	}
+	const parameters = await validateRouteParameters(event, routeParameterSchemas.collectionMetaDatum);
 
 	const pathParameters: MadekCollectionMetaDatumPathParameters = {
-		collection_id: collectionId,
-		meta_key_id: metaKeyId,
+		collection_id: parameters.collection_id,
+		meta_key_id: parameters.meta_key_id,
 	};
 
 	try {
@@ -40,9 +32,8 @@ export default defineEventHandler(async (event: H3Event) => {
 		);
 	}
 	catch (error: unknown) {
-		if (isH3NotFoundError(error) && META_KEY_FALLBACKS[metaKeyId]) {
-			const fallbackMetaKeyId = META_KEY_FALLBACKS[metaKeyId];
-
+		const fallbackMetaKeyId = META_KEY_FALLBACKS[parameters.meta_key_id];
+		if (isH3NotFoundError(error) && fallbackMetaKeyId) {
 			return getCollectionMetaDatum(
 				event,
 				pathParameters.collection_id,

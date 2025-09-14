@@ -23,7 +23,7 @@
 		"test:watch": "vitest watch",
 		"check:eslint": "npx @eslint/config-inspector@latest",
 		"check:types": "nuxt prepare && vue-tsc -b --noEmit",
-		"check:unused": "NODE_NO_WARNINGS=1 knip",
+		"check:unused": "knip",
 		"check:issues": "npm run lint && npm run check:types && npm run check:unused && npm run test",
 		"check:node": "node ./scripts/check-node-version.mjs",
 		"check:updates": "npm-check-updates --interactive --format group",
@@ -46,7 +46,8 @@
 		"@pinia/nuxt": "0.11.2",
 		"consola": "3.4.2",
 		"http-status-codes": "2.3.0",
-		"pinia": "3.0.3"
+		"pinia": "3.0.3",
+		"zod": "4.1.8"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "5.2.1",

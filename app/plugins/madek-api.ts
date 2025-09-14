@@ -1,9 +1,9 @@
-export const apiBaseName = 'api';
-
 export default defineNuxtPlugin({
 	name: 'madek-api',
 	setup() {
 		const config = useRuntimeConfig();
+		const { apiBaseName } = config.public;
+
 		const appLogger = createAppLogger('Plugin: madek-api');
 		const shouldForwardCookieHeader = isServerEnvironment && !isDevelopmentEnvironment;
 

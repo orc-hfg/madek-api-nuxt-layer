@@ -1,5 +1,4 @@
 import type { AppLocale } from '../types/i18n-locales';
-import { apiBaseName } from '../plugins/madek-api';
 
 interface SetService {
 	getTitleBatch: (setIds: string[], appLocale: AppLocale) => Promise<MetaDatumStrings>;
@@ -11,8 +10,11 @@ interface SetService {
 }
 
 function createSetService(): SetService {
-	const setRepository = getSetRepository();
+	const config = useRuntimeConfig();
+	const { apiBaseName } = config.public;
+
 	const appLogger = createAppLogger('Service: set');
+	const setRepository = getSetRepository();
 
 	return {
 		async getTitleBatch(setIds: string[], appLocale: AppLocale): Promise<MetaDatumStrings> {

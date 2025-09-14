@@ -11,9 +11,10 @@ function logInfo(logger: Logger, publicConfig: PublicRuntimeConfig): void {
 		{ name: 'Logging', isEnabled: publicConfig.enableLogging },
 		{ name: 'Response delay', isEnabled: publicConfig.enableResponseDelay },
 		{ name: 'Server-side caching', isEnabled: publicConfig.enableServerSideCaching },
+		{ name: 'API mock', isEnabled: publicConfig.enableApiMock },
 	];
 
-	logger.info('=== FEATURES ===');
+	logger.info('=== LAYER FEATURES ===');
 	for (const { name, isEnabled } of features) {
 		logger.info(`${name}: ${isEnabled ? 'enabled' : 'disabled'}`);
 	}

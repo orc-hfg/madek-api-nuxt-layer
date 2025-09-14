@@ -191,7 +191,7 @@ describe('isFetchError()', () => {
 	it('validates statusCode is a number', () => {
 		const invalidError = {
 			name: 'FetchError',
-			statusCode: '404',
+			statusCode: 'not-a-number',
 			message: 'Not Found',
 		};
 
@@ -201,7 +201,7 @@ describe('isFetchError()', () => {
 	it('validates message is a string', () => {
 		const invalidError = {
 			name: 'FetchError',
-			statusCode: 404,
+			statusCode: StatusCodes.NOT_FOUND,
 			message: 404,
 		};
 

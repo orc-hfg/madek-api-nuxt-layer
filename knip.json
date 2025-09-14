@@ -10,6 +10,7 @@
 		"server/api/*.ts",
 		"server/constants/*.ts",
 		"server/utils/*.ts",
+		"server/utils/mock/*.ts",
 		"shared/constants/*.ts",
 		"shared/types/*.ts",
 		"shared/utils/*.ts",
@@ -30,6 +31,8 @@
 		"nitropack",
 		"ofetch",
 		"pinia",
+		"radix3",
+		"ufo",
 		"vue"
 	],
 	"ignoreUnresolved": [

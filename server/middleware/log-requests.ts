@@ -2,8 +2,8 @@ export default defineEventHandler((event) => {
 	const serverLogger = createServerLogger(event, 'Middleware: log-requests');
 
 	const { headers } = event.node.req;
-	const forwardedHost = headers['x-forwarded-host'];
 	const { host } = headers;
+	const forwardedHost = headers['x-forwarded-host'];
 
 	/*
 	 * When running behind a reverse proxy (like Nginx), external requests will include the x-forwarded-host header.

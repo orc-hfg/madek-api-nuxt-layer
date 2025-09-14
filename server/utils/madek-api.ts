@@ -3,6 +3,8 @@ import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropa
 import { getRequestHeaders } from 'h3';
 import { isDevelopmentEnvironment as defaultIsDevelopmentEnvironment } from '../../shared/utils/environment';
 import { noCache } from '../constants/cache';
+import { isFetchError } from './error-handling';
+import { replacePathParameters } from './path-parameters';
 import { createServerLogger } from './server-logger';
 
 const LOGGER_SOURCE = 'Utility: madekApi';
@@ -159,11 +161,7 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 	}
 
 	async function fetchFromApiWithPathParameters(endpointTemplate: string, endpointPathParameters: Record<string, string>, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
-		let endpoint = endpointTemplate;
-
-		for (const [key, value] of Object.entries(endpointPathParameters)) {
-			endpoint = endpoint.replace(`:${key}`, value);
-		}
+		const endpoint = replacePathParameters(endpointTemplate, endpointPathParameters);
 
 		return fetchFromApi(endpoint, apiRequestConfig);
 	}

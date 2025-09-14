@@ -1,20 +1,13 @@
 import type { H3Event } from 'h3';
-import { StatusCodes } from 'http-status-codes';
 import { getMediaEntryPreview } from '../../../../madek-api-services/media-entry-preview';
+import { routeParameterSchemas, routeQuerySchemas } from '../../../../schemas/route';
 
 export default defineEventHandler(async (event: H3Event) => {
-	const mediaEntryId = getRouterParam(event, 'media_entry_id');
-	const query = getQuery<MediaEntryPreviewQuery>(event);
-
-	if (!isValidRouteParameter(mediaEntryId)) {
-		throw createError({
-			statusCode: StatusCodes.BAD_REQUEST,
-			statusMessage: 'Missing required URL parameters.',
-		});
-	}
+	const parameters = await validateRouteParameters(event, routeParameterSchemas.mediaEntryId);
+	const query = await validateQueryParameters(event, routeQuerySchemas.mediaEntryPreview);
 
 	const pathParameters: MadekMediaEntryPreviewPathParameters = {
-		media_entry_id: mediaEntryId,
+		media_entry_id: parameters.media_entry_id,
 	};
 
 	return getMediaEntryPreview(
