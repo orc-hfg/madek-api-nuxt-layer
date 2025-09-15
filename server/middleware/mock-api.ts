@@ -17,8 +17,13 @@ export default defineEventHandler(async (event) => {
 
 	const serverLogger = createServerLogger(event, 'Middleware: mock-api');
 
+	serverLogger.debug(`Checking mock for URL: ${url}`);
+	serverLogger.debug(`Registered patterns: ${getRegisteredMockPatterns().join(', ')}`);
+
 	try {
 		const mockResponse: MockResult = findAndExecuteMockUrl(url);
+
+		serverLogger.info(`Mock lookup result: found=${mockResponse.found}`);
 
 		if (mockResponse.found) {
 			serverLogger.info(`Mock response for: ${url}`);

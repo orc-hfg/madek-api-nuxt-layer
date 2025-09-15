@@ -62,7 +62,7 @@ export default defineNuxtConfig({
 		public: {
 			enableLogging: false,
 			enableResponseDelay: false,
-			enableServerSideCaching: true,
+			enableServerSideCaching: false,
 			enableApiMock: false,
 			version: composeVersion(),
 			apiBaseName: 'api',
@@ -75,14 +75,6 @@ export default defineNuxtConfig({
 		runtimeConfig: {
 			public: {
 				enableLogging: true,
-
-				/*
-				 * Controls server-side caching with Nitro for API requests
-				 * Caching only happens when:
-				 * - Authentication is not needed (no user-specific data should be cached)
-				 * - Cache options are explicitly defined
-				 */
-				enableServerSideCaching: false,
 				madekApi: {
 					baseURL: 'https://dev.madek.hfg-karlsruhe.de/api-v2/',
 				},
@@ -92,6 +84,13 @@ export default defineNuxtConfig({
 	$production: {
 		runtimeConfig: {
 			public: {
+				/*
+				 * Controls server-side caching with Nitro for API requests
+				 * Caching only happens when:
+				 * - Authentication is not needed (no user-specific data should be cached)
+				 * - Cache options are explicitly defined
+				 */
+				enableServerSideCaching: true,
 				madekApi: {
 					baseURL: 'https://dev.madek.hfg-karlsruhe.de/api-v2/',
 				},

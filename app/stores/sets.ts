@@ -20,7 +20,7 @@ export const useSetsStore = defineStore('sets', () => {
 		}
 
 		if (userStore.id !== undefined) {
-			const data = await setsRepository.getSets(
+			const userSets = await setsRepository.getSets(
 				{
 					responsible_user_id: userStore.id,
 					filter_by: JSON.stringify({
@@ -33,7 +33,7 @@ export const useSetsStore = defineStore('sets', () => {
 				},
 			);
 
-			sets.value = data;
+			sets.value = userSets;
 
 			const [titles, coverImageSources] = await Promise.all([
 				setService.getTitleBatch(

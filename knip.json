@@ -22,6 +22,9 @@
 		"shared/**",
 		"tests/**"
 	],
+	"ignore": [
+		".github/**"
+	],
 	"ignoreDependencies": [
 		"@nuxt/devtools",
 		"@nuxt/eslint",
