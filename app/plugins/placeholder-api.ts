@@ -1,3 +1,5 @@
+// This is part of a test implementation that shows how another external API can be connected.
+
 export default defineNuxtPlugin({
 	name: 'placeholder-api',
 	setup() {

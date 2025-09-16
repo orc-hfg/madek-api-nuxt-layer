@@ -1,7 +1,7 @@
 import { Buffer } from 'node:buffer';
 
 export default defineEventHandler(async (event) => {
-	const config = useRuntimeConfig();
+	const config = useRuntimeConfig(event);
 	const publicConfig = config.public;
 	const { apiBaseName } = publicConfig;
 	const isApiMockEnabled = publicConfig.enableApiMock;

@@ -1,3 +1,5 @@
+// TODO: Check if this repository is or will be needed
+
 import type { ApiFunction } from '../types/api';
 
 interface SettingsRepository {

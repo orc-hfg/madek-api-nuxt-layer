@@ -1,3 +1,5 @@
+// This is part of a test implementation that shows how another external API can be connected.
+
 import type { ApiFunction } from '../types/api';
 
 interface PlaceholderUserRepository {

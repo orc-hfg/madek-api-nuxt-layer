@@ -1,3 +1,8 @@
+/*
+ * See: documentation/architecture.md
+ * Example implementation: example2.vue and example3.vue in Uploader app
+ */
+
 import type { AsyncDataOptions } from '#app';
 
 export function useCachedAsyncData<T = any>(
