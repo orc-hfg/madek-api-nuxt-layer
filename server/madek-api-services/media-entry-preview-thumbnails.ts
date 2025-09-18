@@ -1,9 +1,9 @@
 import type { H3Event } from 'h3';
 import { fiveMinutesCache } from '../constants/cache';
 
-export async function getMediaEntryPreview(event: H3Event, mediaEntryId: MediaEntryId, query: MediaEntryPreviewQuery): Promise<MediaEntryPreviews> {
-	const { fetchFromApiWithPathParameters } = createMadekApiClient<MediaEntryPreviews>(event);
-	const serverLogger = createServerLogger(event, 'Service: getMediaEntryPreview');
+export async function getMediaEntryPreviewThumbnails(event: H3Event, mediaEntryId: MediaEntryId, query: MediaEntryPreviewQuery): Promise<MediaEntryPreviewThumbnails> {
+	const { fetchFromApiWithPathParameters } = createMadekApiClient<MediaEntryPreviewThumbnails>(event);
+	const serverLogger = createServerLogger(event, 'Service: getMediaEntryPreviewThumbnails');
 
 	serverLogger.info('Media Entry ID:', mediaEntryId);
 	serverLogger.info('Query params:', { media_type: query.media_type });

@@ -7,13 +7,7 @@ const FIXED_COLLECTION_IDS = [
 ] as const;
 
 export const mockData = {
-	metaDatum: (collectionId: string, metaKeyId: string): MetaDatumString => {
-		return {
-			string: `Test collectionId ${collectionId} / metaKeyId ${metaKeyId} Content`,
-		};
-	},
-
-	mediaEntryArcs: (collectionId: string): CollectionMediaEntryArcs => {
+	getCollectionMediaEntryArcs: (collectionId: string): CollectionMediaEntryArcs => {
 		switch (collectionId) {
 			case 'collection-id-1': {
 				return [
@@ -50,7 +44,47 @@ export const mockData = {
 		}
 	},
 
-	mediaEntryPreviews: (mediaEntryId: string): MediaEntryPreviews => [
+	getCollectionMetaDatum: (collectionId: string, metaKeyId: string): CollectionMetaDatum => {
+		return {
+			string: `Test collectionId ${collectionId} / metaKeyId ${metaKeyId} Content`,
+		};
+	},
+
+	getContext: (_id: string): Context => {
+		return {
+			id: 'core',
+			labels: {
+				de: 'Core DE',
+				en: 'Core EN',
+			},
+		};
+	},
+
+	getContexts: (): Contexts => [
+		{
+			id: 'core',
+			labels: {
+				de: 'Core DE',
+				en: 'Core EN',
+			},
+		},
+		{
+			id: 'media-object',
+			labels: {
+				de: 'Media Object DE',
+				en: 'Media Object EN',
+			},
+		},
+		{
+			id: 'set_creative-work',
+			labels: {
+				de: 'Set Creative Work DE',
+				en: 'Set Creative Work EN',
+			},
+		},
+	],
+
+	getMediaEntryPreviewThumbnails: (mediaEntryId: string, _query: MediaEntryPreviewQuery): MediaEntryPreviewThumbnails => [
 		{
 			id: `preview-small-${mediaEntryId}`,
 			thumbnail: 'small',
@@ -77,21 +111,30 @@ export const mockData = {
 		},
 	],
 
-	previews: (_previewId: string): PreviewDataStream => {
+	getPreviewDataStream: (_previewId: string): PreviewDataStream => {
 		const blob = dataUrlToBlob('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwkHBgoJCAkLCwoMDxkQDw4ODx4WFxIZJCAmJSMgIyIoLTkwKCo2KyIjMkQyNjs9QEBAJjBGS0U+Sjk/QD3/2wBDAQsLCw8NDx0QEB09KSMpPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT3/wgARCAFoAWgDAREAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAWAQEBAQAAAAAAAAAAAAAAAAAABAb/2gAMAwEAAhADEAAAAKZnaQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/EABQQAQAAAAAAAAAAAAAAAAAAAKD/2gAIAQEAAT8AfT//xAAUEQEAAAAAAAAAAAAAAAAAAACg/9oACAECAQE/AH0//8QAFBEBAAAAAAAAAAAAAAAAAAAAoP/aAAgBAwEBPwB9P//Z');
 
 		return blob as PreviewDataStream;
 	},
 
-	collections: (): Collections => FIXED_COLLECTION_IDS.map((id) => {
+	getAppSettings: (): AppSettings => {
+		return {
+			default_locale: 'de_DE',
+		};
+	},
+
+	getAuthInfo: (): AuthInfo => {
+		return {
+			id: 'user-id-1',
+			login: 'login',
+			first_name: 'first_name',
+			last_name: 'last_name',
+		};
+	},
+
+	getCollections: (_query: CollectionsQuery): Collections => FIXED_COLLECTION_IDS.map((id) => {
 		return {
 			id,
 		};
 	}),
-
-	collection: (id: string): Collection => {
-		return {
-			id,
-		};
-	},
 };

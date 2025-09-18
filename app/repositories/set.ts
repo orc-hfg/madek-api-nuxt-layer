@@ -7,17 +7,17 @@ const SET_TITLE_META_KEYS: Record<AppLocale, string> = {
 };
 
 interface SetRepository {
-	getTitle: (setId: string, appLocale: AppLocale) => Promise<MetaDatumString>;
+	getTitle: (setId: string, appLocale: AppLocale) => Promise<CollectionMetaDatum>;
 	getMediaEntries: (setId: string) => Promise<CollectionMediaEntryArcs>;
-	getMediaEntryImagePreviews: (mediaEntryId: string) => Promise<MediaEntryPreviews>;
+	getMediaEntryImagePreviews: (mediaEntryId: string) => Promise<MediaEntryPreviewThumbnails>;
 	getPreviewDataStream: (previewId: string) => Promise<PreviewDataStream>;
 }
 
 function createSetRepository($madekApi: ApiFunction): SetRepository {
 	return {
-		async getTitle(setId: string, appLocale: AppLocale): Promise<MetaDatumString> {
+		async getTitle(setId: string, appLocale: AppLocale): Promise<CollectionMetaDatum> {
 			const metaKeyId = SET_TITLE_META_KEYS[appLocale];
-			const response: MetaDatumString = await $madekApi(`/collection/${setId}/meta-datum/${metaKeyId}`);
+			const response: CollectionMetaDatum = await $madekApi(`/collection/${setId}/meta-datum/${metaKeyId}`);
 
 			return response;
 		},
@@ -26,7 +26,7 @@ function createSetRepository($madekApi: ApiFunction): SetRepository {
 			return $madekApi(`/collection/${setId}/media-entry-arcs`);
 		},
 
-		async getMediaEntryImagePreviews(mediaEntryId: string): Promise<MediaEntryPreviews> {
+		async getMediaEntryImagePreviews(mediaEntryId: string): Promise<MediaEntryPreviewThumbnails> {
 			return $madekApi(`/media-entry/${mediaEntryId}/preview`, {
 				query: {
 					media_type: 'image',

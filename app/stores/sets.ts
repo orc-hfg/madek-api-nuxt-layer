@@ -2,7 +2,7 @@ import type { AppLocale } from '../types/i18n-locales';
 
 interface SetData {
 	id: Collection['id'];
-	title: MetaDatumString['string'];
+	title: CollectionMetaDatum['string'];
 	coverImageSources: ThumbnailSources;
 }
 

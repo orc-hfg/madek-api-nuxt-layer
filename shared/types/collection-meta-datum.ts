@@ -30,5 +30,5 @@ export interface MadekCollectionMetaDatumResponse {
 	'defaultdata': string;
 }
 
-export type MetaDatumString = Pick<MadekCollectionMetaDatumResponse['meta-data'], 'string'>;
-export type MetaDatumStrings = MetaDatumString[];
+export type CollectionMetaDatum = Pick<MadekCollectionMetaDatumResponse['meta-data'], 'string'>;
+export type CollectionMetaData = CollectionMetaDatum[];

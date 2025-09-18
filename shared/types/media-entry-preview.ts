@@ -33,4 +33,4 @@ export type ThumbnailSources = Partial<Record<ThumbnailTypes, ThumbnailSource>>;
 
 export type MediaEntryPreviewId = MadekMediaEntryPreview['id'];
 export type MediaEntryPreview = Pick<MadekMediaEntryPreview, 'id' | 'width' | 'height' | 'thumbnail'>;
-export type MediaEntryPreviews = MediaEntryPreview[];
+export type MediaEntryPreviewThumbnails = MediaEntryPreview[];

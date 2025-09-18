@@ -5,7 +5,7 @@ type Collection = MadekCollectionMetaDatumPathParameters['collection_id'];
 
 type MetaKeyId = MadekCollectionMetaDatumPathParameters['meta_key_id'];
 
-export async function getCollectionMetaDatum(event: H3Event, collectionId: Collection, metaKeyId: MetaKeyId): Promise<MetaDatumString> {
+export async function getCollectionMetaDatum(event: H3Event, collectionId: Collection, metaKeyId: MetaKeyId): Promise<CollectionMetaDatum> {
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
 	const serverLogger = createServerLogger(event, 'Service: getCollectionMetaDatum');
 

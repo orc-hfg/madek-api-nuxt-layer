@@ -68,7 +68,7 @@ describe('getSetService()', () => {
 
 		it('should return preview id for matching thumbnail type', () => {
 			const service = getSetService();
-			const previews: MediaEntryPreviews = [
+			const previews: MediaEntryPreviewThumbnails = [
 				{ id: 'preview-1', thumbnail: 'small', width: 100, height: 100 },
 				{ id: 'preview-2', thumbnail: 'medium', width: 200, height: 200 },
 				{ id: 'preview-3', thumbnail: 'large', width: 300, height: 300 },
@@ -81,7 +81,7 @@ describe('getSetService()', () => {
 
 		it('should return undefined for non-matching thumbnail type', () => {
 			const service = getSetService();
-			const previews: MediaEntryPreviews = [
+			const previews: MediaEntryPreviewThumbnails = [
 				{ id: 'preview-1', thumbnail: 'small', width: 100, height: 100 },
 				{ id: 'preview-2', thumbnail: 'medium', width: 200, height: 200 },
 			];
@@ -93,7 +93,7 @@ describe('getSetService()', () => {
 
 		it('should log error for non-matching thumbnail type', () => {
 			const service = getSetService();
-			const previews: MediaEntryPreviews = [{ id: 'preview-1', thumbnail: 'small', width: 100, height: 100 }];
+			const previews: MediaEntryPreviewThumbnails = [{ id: 'preview-1', thumbnail: 'small', width: 100, height: 100 }];
 
 			service.getPreviewIdByThumbnailType(previews, 'large');
 

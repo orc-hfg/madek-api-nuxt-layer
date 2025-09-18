@@ -1,6 +1,8 @@
 import type { H3Event } from 'h3';
+import { mockData } from '../../../../../madek-api-mock/data';
+import { getApiMockOrUndefined } from '../../../../../madek-api-mock/handler';
 import { getCollectionMetaDatum } from '../../../../../madek-api-services/collection-meta-datum';
-import { routeParameterSchemas } from '../../../../../schemas/route';
+import { routeParameterSchemas } from '../../../../../schemas/madek-api-route';
 
 /*
  * Fallback rules for set title meta keys used by API routes
@@ -23,6 +25,18 @@ export default defineEventHandler(async (event: H3Event) => {
 		collection_id: parameters.collection_id,
 		meta_key_id: parameters.meta_key_id,
 	};
+
+	const apiMockResult = await getApiMockOrUndefined(
+		event,
+		'API: collection meta-datum',
+		'Returning mock: collection meta-datum',
+		{ collectionId: pathParameters.collection_id, metaKeyId: pathParameters.meta_key_id },
+		() => mockData.getCollectionMetaDatum(pathParameters.collection_id, pathParameters.meta_key_id),
+	);
+
+	if (apiMockResult !== undefined) {
+		return apiMockResult;
+	}
 
 	try {
 		return await getCollectionMetaDatum(

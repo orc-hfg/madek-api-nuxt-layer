@@ -1,6 +1,8 @@
 import type { H3Event } from 'h3';
-import { getMediaEntryPreview } from '../../../../madek-api-services/media-entry-preview';
-import { routeParameterSchemas, routeQuerySchemas } from '../../../../schemas/route';
+import { mockData } from '../../../../madek-api-mock/data';
+import { getApiMockOrExecute } from '../../../../madek-api-mock/handler';
+import { getMediaEntryPreviewThumbnails } from '../../../../madek-api-services/media-entry-preview-thumbnails';
+import { routeParameterSchemas, routeQuerySchemas } from '../../../../schemas/madek-api-route';
 
 export default defineEventHandler(async (event: H3Event) => {
 	const parameters = await validateRouteParameters(event, routeParameterSchemas.mediaEntryId);
@@ -10,9 +12,12 @@ export default defineEventHandler(async (event: H3Event) => {
 		media_entry_id: parameters.media_entry_id,
 	};
 
-	return getMediaEntryPreview(
+	return getApiMockOrExecute(
 		event,
-		pathParameters.media_entry_id,
-		query,
+		'API: media-entry preview',
+		'Returning mock: media-entry preview',
+		{ media_entry_id: pathParameters.media_entry_id, media_type: query.media_type },
+		() => mockData.getMediaEntryPreviewThumbnails(pathParameters.media_entry_id, query),
+		async () => getMediaEntryPreviewThumbnails(event, pathParameters.media_entry_id, query),
 	);
 });

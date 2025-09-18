@@ -25,9 +25,9 @@ export async function getContexts(event: H3Event): Promise<Contexts> {
 	}
 }
 
-export async function getContextById(event: H3Event, id: string): Promise<Context> {
+export async function getContext(event: H3Event, id: string): Promise<Context> {
 	const { fetchFromApi } = createMadekApiClient<Context>(event);
-	const serverLogger = createServerLogger(event, 'Service: getContextById');
+	const serverLogger = createServerLogger(event, 'Service: getContext');
 
 	serverLogger.info('Context ID:', id);
 
@@ -45,6 +45,6 @@ export async function getContextById(event: H3Event, id: string): Promise<Contex
 		};
 	}
 	catch (error) {
-		return handleServiceError(serverLogger, error, 'Failed to fetch context by ID.');
+		return handleServiceError(serverLogger, error, 'Failed to fetch context.');
 	}
 }

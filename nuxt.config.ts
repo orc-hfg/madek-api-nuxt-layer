@@ -22,7 +22,10 @@ export default defineNuxtConfig({
 	},
 	imports: {
 		// Auto-import from repositories and services folder
-		dirs: ['repositories', 'services'],
+		dirs: [
+			resolver.resolve('./app/repositories/**'),
+			resolver.resolve('./app/services/**'),
+		],
 	},
 	pinia: {
 

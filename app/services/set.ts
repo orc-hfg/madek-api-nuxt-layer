@@ -1,11 +1,11 @@
 import type { AppLocale } from '../types/i18n-locales';
 
 interface SetService {
-	getTitleBatch: (setIds: string[], appLocale: AppLocale) => Promise<MetaDatumStrings>;
-	getCoverImagePreviews: (setId: string) => Promise<MediaEntryPreviews | undefined>;
+	getTitleBatch: (setIds: string[], appLocale: AppLocale) => Promise<CollectionMetaData>;
+	getCoverImagePreviews: (setId: string) => Promise<MediaEntryPreviewThumbnails | undefined>;
 	getCoverImageThumbnailSources: (setId: string, thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources>;
 	getCoverImageThumbnailSourcesBatch: (setIds: string[], thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources[]>;
-	getPreviewIdByThumbnailType: (previews: MediaEntryPreviews, thumbnailType: ThumbnailTypes) => MediaEntryPreviewId | undefined;
+	getPreviewIdByThumbnailType: (previews: MediaEntryPreviewThumbnails, thumbnailType: ThumbnailTypes) => MediaEntryPreviewId | undefined;
 	findCoverImageMediaEntryId: (mediaEntries: CollectionMediaEntryArcs) => CollectionMediaEntryArc['media_entry_id'];
 }
 
@@ -17,13 +17,13 @@ function createSetService(): SetService {
 	const setRepository = getSetRepository();
 
 	return {
-		async getTitleBatch(setIds: string[], appLocale: AppLocale): Promise<MetaDatumStrings> {
+		async getTitleBatch(setIds: string[], appLocale: AppLocale): Promise<CollectionMetaData> {
 			const titlePromises = setIds.map(async setId => setRepository.getTitle(setId, appLocale));
 
 			return Promise.all(titlePromises);
 		},
 
-		async getCoverImagePreviews(setId: string): Promise<MediaEntryPreviews | undefined> {
+		async getCoverImagePreviews(setId: string): Promise<MediaEntryPreviewThumbnails | undefined> {
 			const mediaEntries = await setRepository.getMediaEntries(setId);
 
 			if (mediaEntries.length === 0) {
@@ -72,7 +72,7 @@ function createSetService(): SetService {
 			return thumbnailSources;
 		},
 
-		getPreviewIdByThumbnailType(previews: MediaEntryPreviews, thumbnailType: ThumbnailTypes): MediaEntryPreviewId | undefined {
+		getPreviewIdByThumbnailType(previews: MediaEntryPreviewThumbnails, thumbnailType: ThumbnailTypes): MediaEntryPreviewId | undefined {
 			const matchingPreview = previews.find(preview => preview.thumbnail === thumbnailType);
 
 			if (!matchingPreview) {

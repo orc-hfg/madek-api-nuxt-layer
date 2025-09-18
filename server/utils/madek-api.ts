@@ -4,7 +4,6 @@ import { getRequestHeaders } from 'h3';
 import { isDevelopmentEnvironment as defaultIsDevelopmentEnvironment } from '../../shared/utils/environment';
 import { noCache } from '../constants/cache';
 import { isFetchError } from './error-handling';
-import { replacePathParameters } from './path-parameters';
 import { createServerLogger } from './server-logger';
 
 const LOGGER_SOURCE = 'Utility: madekApi';
@@ -122,6 +121,16 @@ export function shouldUseCaching(
 	cacheOptions?: CacheOptions,
 ): boolean {
 	return isServerSideCachingEnabled && !isAuthenticationNeeded && cacheOptions !== undefined;
+}
+
+function replacePathParameters(template: string, parameters: Record<string, string>): string {
+	let result = template;
+
+	for (const [key, value] of Object.entries(parameters)) {
+		result = result.replace(`:${key}`, value);
+	}
+
+	return result;
 }
 
 export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetchData): {

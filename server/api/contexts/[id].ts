@@ -1,18 +1,22 @@
 import type { H3Event } from 'h3';
-import { StatusCodes } from 'http-status-codes';
-import { getContextById } from '../../madek-api-services/contexts';
+import { mockData } from '../../madek-api-mock/data';
+import { getApiMockOrExecute } from '../../madek-api-mock/handler';
+import { getContext } from '../../madek-api-services/contexts';
+import { routeParameterSchemas } from '../../schemas/madek-api-route';
 
 export default defineEventHandler(async (event: H3Event) => {
-	const contextId = getRouterParam(event, 'id');
+	const parameters = await validateRouteParameters(event, routeParameterSchemas.contextId);
 
-	if (contextId === undefined || contextId === '') {
-		throw createError({
-			statusCode: StatusCodes.BAD_REQUEST,
-			statusMessage: 'Context ID is required.',
-		});
-	}
+	const pathParameters: MadekContextsGetPathParameters = {
+		id: parameters.id,
+	};
 
-	const context = await getContextById(event, contextId);
-
-	return context;
+	return getApiMockOrExecute(
+		event,
+		'API: context',
+		'Returning mock: context',
+		{ contextId: pathParameters.id },
+		() => mockData.getContext(pathParameters.id),
+		async () => getContext(event, pathParameters.id),
+	);
 });

@@ -1,9 +1,18 @@
 import type { H3Event } from 'h3';
+import { mockData } from '../madek-api-mock/data';
+import { getApiMockOrExecute } from '../madek-api-mock/handler';
 import { getCollections } from '../madek-api-services/collections';
+import { routeQuerySchemas } from '../schemas/madek-api-route';
 
 export default defineEventHandler(async (event: H3Event) => {
-	const query = getQuery<CollectionsQuery>(event);
-	const collections = await getCollections(event, query);
+	const query = await validateQueryParameters(event, routeQuerySchemas.collections);
 
-	return collections;
+	return getApiMockOrExecute(
+		event,
+		'API: collections',
+		'Returning mock: collections',
+		{ responsible_user_id: query.responsible_user_id, filter_by: query.filter_by },
+		() => mockData.getCollections(query),
+		async () => getCollections(event, query),
+	);
 });
