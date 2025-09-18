@@ -7,6 +7,8 @@ interface SetData {
 }
 
 export const useSetsStore = defineStore('sets', () => {
+	const appLogger = createAppLogger('Store: sets');
+
 	const sets = shallowRef<Collections>([]);
 	const setsData = shallowRef<SetData[]>([]);
 
@@ -16,10 +18,12 @@ export const useSetsStore = defineStore('sets', () => {
 		const setService = getSetService();
 
 		if (userStore.id === undefined) {
+			appLogger.debug('User ID is undefined, initializing user store');
 			await userStore.initialize();
 		}
 
 		if (userStore.id !== undefined) {
+			appLogger.debug('User ID is defined, fetching user sets');
 			const userSets = await setsRepository.getSets(
 				{
 					responsible_user_id: userStore.id,
@@ -33,6 +37,7 @@ export const useSetsStore = defineStore('sets', () => {
 				},
 			);
 
+			appLogger.debug('User sets fetched successfully', { userSets });
 			sets.value = userSets;
 
 			const [titles, coverImageSources] = await Promise.all([
@@ -46,6 +51,7 @@ export const useSetsStore = defineStore('sets', () => {
 				),
 			]);
 
+			appLogger.debug('User sets processed successfully', { titles, coverImageSources });
 			setsData.value = sets.value.map((set, index) => {
 				return {
 					id: set.id,
@@ -53,6 +59,8 @@ export const useSetsStore = defineStore('sets', () => {
 					coverImageSources: coverImageSources[index] ?? {},
 				};
 			});
+
+			appLogger.debug('User sets processed successfully', { setsData });
 		}
 	}
 
