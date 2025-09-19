@@ -38,14 +38,15 @@ runs:
           COMMIT_COUNT="unknown"
         fi
 
-        # Get contributors for this release using git shortlog with robust deduplication
-        # git shortlog provides built-in normalization:
+        # Get contributors for this release using git shortlog with Perl-based Unicode normalization
+        # git shortlog provides built-in normalization, but PR merges can create Unicode variants:
         # -s = summarize (hide commit counts)
         # -n = sort by number of commits
-        # Multi-step deduplication: trim whitespace, normalize case, remove duplicates
+        # Perl normalization: NFC (precomposed) normalization handles all Unicode combining characters
         if ! CONTRIBUTORS=$(git shortlog -sn "${LAST_TAG}..HEAD" 2>/dev/null | \
           cut -f2- | \
           sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | \
+          perl -C -pe 'use Unicode::Normalize; $_ = NFC($_)' | \
           sort -fu | \
           paste -sd ', ' -); then
           echo "Warning: Could not determine contributors for this release"
