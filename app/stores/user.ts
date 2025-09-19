@@ -1,6 +1,4 @@
 export const useUserStore = defineStore('user', () => {
-	const appLogger = createAppLogger('Store: user');
-
 	const isInitialized = shallowRef(false);
 	const id = shallowRef<AuthInfo['id']>();
 	const login = shallowRef<AuthInfo['login']>();
@@ -12,8 +10,6 @@ export const useUserStore = defineStore('user', () => {
 		const userRepository = getUserRepository();
 		const data = await userRepository.getAuthInfo();
 
-		appLogger.debug('User data fetched successfully', { data });
-
 		id.value = data.id;
 		login.value = data.login;
 		firstName.value = data.first_name;
@@ -24,8 +20,6 @@ export const useUserStore = defineStore('user', () => {
 		if (isInitialized.value) {
 			return;
 		}
-
-		appLogger.debug('User store initialized');
 
 		await refreshData();
 		isInitialized.value = true;

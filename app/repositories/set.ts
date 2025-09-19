@@ -14,27 +14,19 @@ interface SetRepository {
 }
 
 function createSetRepository($madekApi: ApiFunction): SetRepository {
-	const appLogger = createAppLogger('Repository: set');
-
 	return {
 		async getTitle(setId: string, appLocale: AppLocale): Promise<CollectionMetaDatum> {
 			const metaKeyId = SET_TITLE_META_KEYS[appLocale];
 			const response: CollectionMetaDatum = await $madekApi(`/collection/${setId}/meta-datum/${metaKeyId}`);
 
-			appLogger.debug('getTitle: Title fetched successfully', { response });
-
 			return response;
 		},
 
 		async getMediaEntries(setId: string): Promise<CollectionMediaEntryArcs> {
-			appLogger.debug('getMediaEntries: Media entries fetched successfully', { setId });
-
 			return $madekApi(`/collection/${setId}/media-entry-arcs`);
 		},
 
 		async getMediaEntryImagePreviews(mediaEntryId: string): Promise<MediaEntryPreviewThumbnails> {
-			appLogger.debug('getMediaEntryImagePreviews: Media entry image previews fetched successfully', { mediaEntryId });
-
 			return $madekApi(`/media-entry/${mediaEntryId}/preview`, {
 				query: {
 					media_type: 'image',
@@ -43,8 +35,6 @@ function createSetRepository($madekApi: ApiFunction): SetRepository {
 		},
 
 		async getPreviewDataStream(previewId: string): Promise<PreviewDataStream> {
-			appLogger.debug('getPreviewDataStream: Preview data stream fetched successfully', { previewId });
-
 			return $madekApi(`/previews/${previewId}/data-stream`);
 		},
 	};
