@@ -1,7 +1,7 @@
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { setupDirectLoggerMock } from '../../tests/mocks/logger';
 import { catchH3Error, createFetchError } from '../../tests/unit/helpers/error';
-import { setupDirectLoggerMock } from '../../tests/unit/helpers/logger';
 import { convertFetchToH3Error, handleServiceError, isFetchError, isH3NotFoundError } from './error-handling';
 
 describe('convertFetchToH3Error()', () => {

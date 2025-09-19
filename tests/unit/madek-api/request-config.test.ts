@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildRequestConfig, getAuthenticationHeaders } from '../../../server/utils/madek-api';
-import { mockEvent } from '../helpers/madek-api';
+import { mockEvent } from '../../mocks/madek-api';
 
 describe('getAuthenticationHeaders()', () => {
 	it('returns empty object when token is undefined in development mode', () => {

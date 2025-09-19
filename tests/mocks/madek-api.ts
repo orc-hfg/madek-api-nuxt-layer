@@ -1,8 +1,8 @@
 import type { H3Event } from 'h3';
-import type { MadekApiRequestConfig } from '../../../server/utils/madek-api';
+import type { MadekApiRequestConfig } from '../../server/utils/madek-api';
 import type { ServerLoggerMock } from './logger';
 import { vi } from 'vitest';
-import { createMadekApiClient } from '../../../server/utils/madek-api';
+import { createMadekApiClient } from '../../server/utils/madek-api';
 import { setupServerLoggerMock } from './logger';
 
 export const mockEvent = { headers: {} } as H3Event;
