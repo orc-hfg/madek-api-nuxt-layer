@@ -10,7 +10,7 @@
 		"server/api/*.ts",
 		"server/constants/*.ts",
 		"server/utils/*.ts",
-		"server/utils/mock/*.ts",
+		"server/utils/__madek-api-tests__/*.ts",
 		"shared/constants/*.ts",
 		"shared/types/*.ts",
 		"shared/utils/*.ts",
@@ -34,8 +34,6 @@
 		"nitropack",
 		"ofetch",
 		"pinia",
-		"radix3",
-		"ufo",
 		"vue"
 	],
 	"ignoreUnresolved": [

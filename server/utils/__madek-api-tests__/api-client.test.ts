@@ -1,8 +1,8 @@
-import type { RuntimeConfigStructure } from '../../mocks/runtime-config';
+import type { RuntimeConfigStructure } from '../../../tests/mocks/runtime-config';
 import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { setupApiTestContext } from '../../mocks/madek-api';
-import { createRuntimeConfigMock } from '../../mocks/runtime-config';
+import { setupApiTestContext } from '../../../tests/mocks/madek-api';
+import { createRuntimeConfigMock } from '../../../tests/mocks/runtime-config';
 
 /*
  * TODO: @upgrade-node24

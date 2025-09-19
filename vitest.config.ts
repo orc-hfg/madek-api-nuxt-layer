@@ -12,7 +12,7 @@ export default defineConfig(async () => {
 						environment: 'node',
 						include: [
 							'**/*.test.ts',
-							'!tests/unit/madek-api/**/*.test.ts',
+							'!server/utils/__madek-api-tests__/**/*.test.ts',
 						],
 					},
 				}),
@@ -22,8 +22,8 @@ export default defineConfig(async () => {
 					test: {
 						name: { label: 'nuxt', color: 'magenta' },
 						environment: 'nuxt',
-						include: ['tests/unit/madek-api/**/*.test.ts'],
-						setupFiles: ['tests/unit/madek-api/vitest.setup.ts'],
+						include: ['server/utils/__madek-api-tests__/**/*.test.ts'],
+						setupFiles: ['server/utils/__madek-api-tests__/vitest.setup.ts'],
 					},
 				}),
 			],
