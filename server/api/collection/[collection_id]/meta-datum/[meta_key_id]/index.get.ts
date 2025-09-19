@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3';
 import { mockData } from '../../../../../madek-api-mock/data';
-import { getApiMockOrUndefined } from '../../../../../madek-api-mock/handler';
 import { getCollectionMetaDatum } from '../../../../../madek-api-services/collection-meta-datum';
+import { getApiMockOrUndefined } from '../../../../../madek-api-services/mock-handler';
 import { routeParameterSchemas } from '../../../../../schemas/madek-api-route';
 
 /*

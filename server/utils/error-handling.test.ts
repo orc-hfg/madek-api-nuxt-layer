@@ -1,7 +1,7 @@
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { catchH3Error, createFetchError } from '../../tests/unit/helpers/error';
-import { setupDirectLoggerMock } from '../../tests/unit/helpers/logger';
+import { catchH3Error, createFetchError } from '../../tests/helpers/error';
+import { setupDirectLoggerMock } from '../../tests/mocks/logger';
 import { convertFetchToH3Error, handleServiceError, isFetchError, isH3NotFoundError } from './error-handling';
 
 describe('convertFetchToH3Error()', () => {
@@ -167,13 +167,13 @@ describe('isFetchError()', () => {
 		const invalidError1 = { name: 'FetchError' };
 
 		// Missing message
-		const invalidError2 = { name: 'FetchError', statusCode: 404 };
+		const invalidError2 = { name: 'FetchError', statusCode: StatusCodes.NOT_FOUND };
 
 		// Missing statusCode
 		const invalidError3 = { name: 'FetchError', message: 'Error' };
 
 		// Wrong name
-		const invalidError4 = { name: 'SomeOtherError', statusCode: 404, message: 'Error' };
+		const invalidError4 = { name: 'SomeOtherError', statusCode: StatusCodes.NOT_FOUND, message: 'Error' };
 
 		expect(isFetchError(invalidError1)).toBe(false);
 		expect(isFetchError(invalidError2)).toBe(false);
@@ -184,7 +184,7 @@ describe('isFetchError()', () => {
 	it('returns false for undefined and primitive values', () => {
 		expect(isFetchError(undefined)).toBe(false);
 		expect(isFetchError('string')).toBe(false);
-		expect(isFetchError(404)).toBe(false);
+		expect(isFetchError(StatusCodes.NOT_FOUND)).toBe(false);
 		expect(isFetchError(true)).toBe(false);
 	});
 

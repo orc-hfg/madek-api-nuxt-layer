@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3';
 import { mockData } from '../../../../madek-api-mock/data';
-import { getApiMockOrExecute } from '../../../../madek-api-mock/handler';
 import { getCollectionMediaEntryArcs } from '../../../../madek-api-services/collection-media-entry-arcs';
+import { getApiMockOrExecute } from '../../../../madek-api-services/mock-handler';
 import { routeParameterSchemas } from '../../../../schemas/madek-api-route';
 
 export default defineEventHandler(async (event: H3Event) => {

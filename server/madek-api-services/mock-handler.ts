@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3';
+import { createServerLogger } from '../utils/server-logger';
 
 function checkApiMockEnabledAndLog(
 	event: H3Event,

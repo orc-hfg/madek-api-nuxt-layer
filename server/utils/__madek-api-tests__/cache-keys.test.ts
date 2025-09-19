@@ -1,6 +1,6 @@
-import type { MadekApiOptions } from '../../../server/utils/madek-api';
+import type { MadekApiOptions } from '../madek-api';
 import { describe, expect, it } from 'vitest';
-import { generateCacheKey, shouldUseCaching } from '../../../server/utils/madek-api';
+import { generateCacheKey, shouldUseCaching } from '../madek-api';
 
 describe('shouldUseCaching()', () => {
 	it('returns false when authentication is needed (do not allow caching for user sensitive data)', () => {

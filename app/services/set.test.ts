@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { setupAppLoggerMock } from '../../tests/unit/helpers/logger';
+import { setupAppLoggerMock } from '../../tests/mocks/logger';
 import { getSetService } from './set';
 
 describe('getSetService()', () => {
