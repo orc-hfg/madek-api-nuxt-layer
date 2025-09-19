@@ -134,3 +134,153 @@ Server Plugins laufen während des Server-Starts, nicht während individueller R
 ```env
 # In .env oder nuxt.config.ts
 NUXT_PUBLIC_ENABLE_LOGGING=true
+```
+
+## Mock API System
+
+Das Layer bietet ein vollständig integriertes Mock-API-System für Entwicklung und Tests. Mock-Daten ermöglichen die Entwicklung ohne Abhängigkeit von der echten Madek-API.
+
+### Mock-API aktivieren
+
+Mock-APIs werden über die Runtime-Konfiguration aktiviert:
+
+```env
+# In .env Datei
+NUXT_PUBLIC_ENABLE_API_MOCK=true
+```
+
+Oder direkt in der `nuxt.config.ts`:
+```typescript
+export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      enableApiMock: true
+    }
+  }
+})
+```
+
+### Mock-Handler-Pattern
+
+Das Layer verwendet zwei zentrale Mock-Handler für einheitliche Mock-Behandlung:
+
+#### Einfache API-Endpoints (`getApiMockOrExecute`)
+
+Für Standard-Endpoints ohne komplexe Fallback-Logik:
+
+```typescript
+// server/api/collections.get.ts
+export default defineEventHandler(async (event: H3Event) => {
+  const query = await validateQueryParameters(event, routeQuerySchemas.collections);
+
+  return getApiMockOrExecute(
+    event,
+    'API: collections',                           // Logger-Kontext
+    'Returning mock: collections',                // Log-Nachricht
+    { responsible_user_id: query.responsible_user_id }, // Log-Daten
+    () => mockData.getCollections(query),         // Mock-Funktion
+    async () => getCollections(event, query),     // Echte API-Funktion
+  );
+});
+```
+
+#### Komplexe API-Endpoints (`getApiMockOrUndefined`)
+
+Für Endpoints mit Fallback-Logik oder komplexer Verarbeitung:
+
+```typescript
+// server/api/collection/[id]/meta-datum/[key]/index.get.ts
+export default defineEventHandler(async (event: H3Event) => {
+  const parameters = await validateRouteParameters(event, routeParameterSchemas.collectionMetaDatum);
+
+  // Versuche zuerst Mock-Daten zu bekommen
+  const apiMockResult = await getApiMockOrUndefined(
+    event,
+    'API: collection meta-datum',
+    'Returning mock: collection meta-datum',
+    { collectionId: parameters.collection_id },
+    () => mockData.getCollectionMetaDatum(parameters.collection_id, parameters.meta_key_id),
+  );
+
+  if (apiMockResult !== undefined) {
+    return apiMockResult;
+  }
+
+  // Komplexe Fallback-Logik für echte API
+  try {
+    return await getCollectionMetaDatum(event, parameters.collection_id, parameters.meta_key_id);
+  } catch (error) {
+    // Fallback-Behandlung...
+  }
+});
+```
+
+**Wichtig:** Bei `getApiMockOrUndefined` immer `!== undefined` prüfen, nicht nur Truthiness, um auch falsy Mock-Daten korrekt zu behandeln.
+
+### Mock-Daten-Struktur
+
+Alle Mock-Daten sind zentral in `server/madek-api-mock/data.ts` definiert:
+
+```typescript
+export const mockData = {
+  getCollections: (query: CollectionsQuery): Collections => [
+    { id: 'collection-id-1' },
+    { id: 'collection-id-2' },
+  ],
+
+  getCollectionMetaDatum: (collectionId: string, metaKeyId: string): CollectionMetaDatum => ({
+    string: `Test collectionId ${collectionId} / metaKeyId ${metaKeyId} Content`,
+  }),
+
+  getAuthInfo: (): AuthInfo => ({
+    id: 'user-id-1',
+    login: 'test-user',
+    first_name: 'Test',
+    last_name: 'User',
+  }),
+
+  // Weitere Mock-Funktionen...
+};
+```
+
+### Mock-Daten erweitern
+
+Neue Mock-Daten können einfach hinzugefügt werden:
+
+1. **Mock-Funktion in `data.ts` hinzufügen:**
+   ```typescript
+   getMyNewEndpoint: (parameters: MyParameters): MyResponse => ({
+     // Mock-Daten-Struktur
+   }),
+   ```
+
+2. **Endpoint implementieren:**
+   ```typescript
+   export default defineEventHandler(async (event: H3Event) => {
+     return getApiMockOrExecute(
+       event,
+       'API: my-endpoint',
+       'Returning mock: my-endpoint',
+       { param: 'value' },
+       () => mockData.getMyNewEndpoint(parameters),
+       async () => getRealData(event, parameters),
+     );
+   });
+   ```
+
+### Debugging Mock-APIs
+
+Bei aktiviertem Logging werden Mock-Aufrufe automatisch geloggt:
+
+```
+[INFO] API: collections - Returning mock: collections { responsible_user_id: 'user-123' }
+```
+
+Mock-Status wird auch in den Debug-Plugins angezeigt:
+
+```
+=== LAYER FEATURES ===
+Logging: enabled
+Response delay: disabled
+Server-side caching: disabled
+API mock: enabled
