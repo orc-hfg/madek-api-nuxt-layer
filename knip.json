@@ -10,11 +10,11 @@
 		"server/api/*.ts",
 		"server/constants/*.ts",
 		"server/utils/*.ts",
-		"server/utils/__madek-api-tests__/*.ts",
 		"shared/constants/*.ts",
 		"shared/types/*.ts",
 		"shared/utils/*.ts",
-		"tests/**/*.ts"
+		"**/*.setup.ts",
+		"**/*.test.ts"
 	],
 	"project": [
 		"app/**",

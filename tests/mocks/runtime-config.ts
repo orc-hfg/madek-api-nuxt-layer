@@ -1,5 +1,6 @@
 interface RuntimeConfigOptions {
 	enableServerSideCaching?: boolean;
+	enableApiMock?: boolean;
 }
 
 export interface RuntimeConfigStructure {
@@ -10,6 +11,7 @@ export interface RuntimeConfigStructure {
 		token: string;
 	};
 	public: {
+		enableApiMock: boolean;
 		enableServerSideCaching: boolean;
 		madekApi: {
 			baseURL: string;
@@ -26,6 +28,7 @@ export function createRuntimeConfigMock(options: RuntimeConfigOptions = {}): Run
 			token: 'test-api-token',
 		},
 		public: {
+			enableApiMock: options.enableApiMock ?? false,
 			enableServerSideCaching: options.enableServerSideCaching ?? true,
 			madekApi: {
 				baseURL: 'https://api.example.com/',

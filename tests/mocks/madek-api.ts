@@ -5,7 +5,7 @@ import { vi } from 'vitest';
 import { createMadekApiClient } from '../../server/utils/madek-api';
 import { setupServerLoggerMock } from './logger';
 
-export const mockEvent = { headers: {} } as H3Event;
+export const mockEvent = {} as H3Event;
 
 /*
  * TODO: @upgrade-node24

@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 import * as appLoggerModule from '../../app/utils/app-logger';
 import * as serverLoggerModule from '../../server/utils/server-logger';
 
-export interface MockLoggerResult {
+interface MockLoggerResult {
 	debugSpy: ReturnType<typeof vi.spyOn>;
 	infoSpy: ReturnType<typeof vi.spyOn>;
 	warnSpy: ReturnType<typeof vi.spyOn>;
@@ -39,7 +39,7 @@ export function createMockLogger(): Logger {
 	};
 }
 
-export function createMockLoggerWithSpies(): MockLoggerResult {
+function createMockLoggerWithSpies(): MockLoggerResult {
 	const mockLogger = createMockLogger();
 
 	const debugSpy = vi.spyOn(mockLogger, 'debug');
