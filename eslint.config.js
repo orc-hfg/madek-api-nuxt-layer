@@ -98,6 +98,7 @@ export default withNuxt(
 				'prefer-numeric-literals': 'error',
 				'prefer-object-has-own': 'error',
 				'prefer-object-spread': 'error',
+				'preserve-caught-error': 'error',
 				'radix': 'error',
 				'require-unicode-regexp': 'error',
 				'require-yield': 'error',

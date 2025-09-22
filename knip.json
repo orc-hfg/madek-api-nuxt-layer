@@ -22,18 +22,12 @@
 		"shared/**",
 		"tests/**"
 	],
-	"ignore": [
-		".github/**"
-	],
 	"ignoreDependencies": [
 		"@nuxt/devtools",
-		"@nuxt/eslint",
 		"@nuxt/kit",
-		"@pinia/nuxt",
 		"h3",
 		"nitropack",
 		"ofetch",
-		"pinia",
 		"vue"
 	],
 	"ignoreUnresolved": [
