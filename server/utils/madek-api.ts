@@ -23,7 +23,7 @@ export function generateCacheKey(endpoint: string, query?: Record<string, string
 	const sortedQuery: Record<string, string> = {};
 	if (query) {
 		for (const key of Object.keys(query)
-			.sort((a, b) => a.localeCompare(b))) {
+			.toSorted((a, b) => a.localeCompare(b))) {
 			sortedQuery[key] = query[key] ?? '';
 		}
 	}
