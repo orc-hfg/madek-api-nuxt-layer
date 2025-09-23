@@ -1,12 +1,11 @@
 export const useUserStore = defineStore('user', () => {
-	const isInitialized = shallowRef(false);
 	const id = shallowRef<AuthInfo['id']>();
 	const login = shallowRef<AuthInfo['login']>();
 	const firstName = shallowRef<AuthInfo['first_name']>();
 	const lastName = shallowRef<AuthInfo['last_name']>();
 	const displayName = computed(() => `${firstName.value} ${lastName.value}`);
 
-	async function refreshData(): Promise<void> {
+	async function refresh(): Promise<void> {
 		const userRepository = getUserRepository();
 		const data = await userRepository.getAuthInfo();
 
@@ -16,23 +15,13 @@ export const useUserStore = defineStore('user', () => {
 		lastName.value = data.last_name;
 	}
 
-	async function initialize(): Promise<void> {
-		if (isInitialized.value) {
-			return;
-		}
-
-		await refreshData();
-		isInitialized.value = true;
-	}
-
 	return {
 		id,
 		login,
 		firstName,
 		lastName,
 		displayName,
-		refreshData,
-		initialize,
+		refresh,
 	};
 });
 

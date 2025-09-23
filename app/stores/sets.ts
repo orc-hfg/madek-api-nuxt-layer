@@ -10,13 +10,13 @@ export const useSetsStore = defineStore('sets', () => {
 	const sets = shallowRef<Collections>([]);
 	const setsData = shallowRef<SetData[]>([]);
 
-	async function refreshData(appLocale: AppLocale): Promise<void> {
+	async function refresh(appLocale: AppLocale): Promise<void> {
 		const userStore = useUserStore();
 		const setsRepository = getSetsRepository();
 		const setService = getSetService();
 
 		if (userStore.id === undefined) {
-			await userStore.initialize();
+			await userStore.refresh();
 		}
 
 		if (userStore.id !== undefined) {
@@ -56,10 +56,21 @@ export const useSetsStore = defineStore('sets', () => {
 		}
 	}
 
+	function getSetTitleById(id: SetData['id'] | undefined): SetData['title'] | undefined {
+		if (id === undefined) {
+			return undefined;
+		}
+
+		const setTitle = setsData.value.find(set => set.id === id)?.title;
+
+		return setTitle;
+	}
+
 	return {
 		sets,
 		setsData,
-		refreshData,
+		refresh,
+		getSetTitleById,
 	};
 });
 
