@@ -25941,7 +25941,9 @@ export type paths = {
         /** PUBLIC/USER Context: Get media-file data-stream for media-entry id. */
         readonly get: {
             readonly parameters: {
-                readonly query?: never;
+                readonly query?: {
+                    readonly tk?: string;
+                };
                 readonly header?: never;
                 readonly path: {
                     readonly media_entry_id: string;
@@ -28493,6 +28495,7 @@ export type paths = {
             readonly parameters: {
                 readonly query?: {
                     readonly size?: string;
+                    readonly tk?: string;
                 };
                 readonly header?: never;
                 readonly path: {
@@ -28752,7 +28755,9 @@ export type paths = {
         /** PUBLIC/USER Context: Get media-file data-stream for id. */
         readonly get: {
             readonly parameters: {
-                readonly query?: never;
+                readonly query?: {
+                    readonly tk?: string;
+                };
                 readonly header?: never;
                 readonly path: {
                     readonly media_file_id: string;
@@ -30034,7 +30039,9 @@ export type paths = {
         /** Get preview data-stream for id. */
         readonly get: {
             readonly parameters: {
-                readonly query?: never;
+                readonly query?: {
+                    readonly tk?: string;
+                };
                 readonly header?: never;
                 readonly path: {
                     readonly preview_id: string;

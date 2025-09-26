@@ -24,6 +24,9 @@ Folgende Dateien entsprechend anpassen:
 
 - `npm run upgrade` ausführen, um Nuxt zu updaten.
 - `npm run check:updates` verwenden, Updates installieren und währenddessen immer wieder die Funktionalität testen.
+- Nuxt compatibility date in `nuxt.config.ts` aktualisieren (https://nuxt.com/docs/4.x/api/nuxt-config#compatibilitydate)
+- ggf. neue OpenAPI-Definitionen herunterladen (https://dev.madek.hfg-karlsruhe.de/api-v2/api-docs/openapi.json) und `npm run generate:api` ausführen, um die API-Definitionen zu aktualisieren
+- API-Änderungen überprüfen und ggf. die API-Services entsprechend anpassen
 
 ### Überprüfen der offenen Wartungsaufgaben
 
