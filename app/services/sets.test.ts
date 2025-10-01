@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setupAppLoggerMock } from '../../tests/mocks/logger';
-import { getSetService } from './set';
+import { getSetsService } from './sets';
 
-describe('getSetService()', () => {
+describe('getSetsService()', () => {
 	describe('findCoverImageMediaEntryId()', () => {
 		it('should return cover image when available', () => {
-			const service = getSetService();
+			const service = getSetsService();
 			const mediaEntries = [
 				{ media_entry_id: 'entry-1', cover: false, position: 0 },
 				{ media_entry_id: 'entry-2', cover: true, position: 1 },
@@ -18,7 +18,7 @@ describe('getSetService()', () => {
 		});
 
 		it('should return position 0 entry when no cover image exists', () => {
-			const service = getSetService();
+			const service = getSetsService();
 			const mediaEntries = [
 				{ media_entry_id: 'entry-1', cover: false, position: 0 },
 				{ media_entry_id: 'entry-2', cover: false, position: 1 },
@@ -30,7 +30,7 @@ describe('getSetService()', () => {
 		});
 
 		it('should return first entry as fallback when no cover or position 0', () => {
-			const service = getSetService();
+			const service = getSetsService();
 			const mediaEntries = [
 				{ media_entry_id: 'entry-1', cover: false, position: 5 },
 				{ media_entry_id: 'entry-2', cover: false, position: 3 },
@@ -42,7 +42,7 @@ describe('getSetService()', () => {
 		});
 
 		it('should prioritize cover image over position 0', () => {
-			const service = getSetService();
+			const service = getSetsService();
 			const mediaEntries = [
 				{ media_entry_id: 'entry-1', cover: false, position: 0 },
 				{ media_entry_id: 'entry-2', cover: true, position: 5 },
@@ -67,7 +67,7 @@ describe('getSetService()', () => {
 		});
 
 		it('should return preview id for matching thumbnail type', () => {
-			const service = getSetService();
+			const service = getSetsService();
 			const previews: MediaEntryPreviewThumbnails = [
 				{ id: 'preview-1', thumbnail: 'small', width: 100, height: 100 },
 				{ id: 'preview-2', thumbnail: 'medium', width: 200, height: 200 },
@@ -80,7 +80,7 @@ describe('getSetService()', () => {
 		});
 
 		it('should return undefined for non-matching thumbnail type', () => {
-			const service = getSetService();
+			const service = getSetsService();
 			const previews: MediaEntryPreviewThumbnails = [
 				{ id: 'preview-1', thumbnail: 'small', width: 100, height: 100 },
 				{ id: 'preview-2', thumbnail: 'medium', width: 200, height: 200 },
@@ -92,7 +92,7 @@ describe('getSetService()', () => {
 		});
 
 		it('should log error for non-matching thumbnail type', () => {
-			const service = getSetService();
+			const service = getSetsService();
 			const previews: MediaEntryPreviewThumbnails = [{ id: 'preview-1', thumbnail: 'small', width: 100, height: 100 }];
 
 			service.getPreviewIdByThumbnailType(previews, 'large');

@@ -13,7 +13,7 @@ export const useSetsStore = defineStore('sets', () => {
 	async function refresh(appLocale: AppLocale): Promise<void> {
 		const userStore = useUserStore();
 		const setsRepository = getSetsRepository();
-		const setService = getSetService();
+		const setsService = getSetsService();
 
 		if (userStore.id === undefined) {
 			await userStore.refresh();
@@ -36,11 +36,11 @@ export const useSetsStore = defineStore('sets', () => {
 			sets.value = userSets;
 
 			const [titles, coverImageSources] = await Promise.all([
-				setService.getTitleBatch(
+				setsService.getTitleBatch(
 					sets.value.map(set => set.id),
 					appLocale,
 				),
-				setService.getCoverImageThumbnailSourcesBatch(
+				setsService.getCoverImageThumbnailSourcesBatch(
 					sets.value.map(set => set.id),
 					['small', 'medium', 'large', 'x_large'],
 				),
@@ -56,21 +56,10 @@ export const useSetsStore = defineStore('sets', () => {
 		}
 	}
 
-	function getSetTitleById(id: SetData['id'] | undefined): SetData['title'] | undefined {
-		if (id === undefined) {
-			return undefined;
-		}
-
-		const setTitle = setsData.value.find(set => set.id === id)?.title;
-
-		return setTitle;
-	}
-
 	return {
 		sets,
 		setsData,
 		refresh,
-		getSetTitleById,
 	};
 });
 

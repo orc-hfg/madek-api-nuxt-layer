@@ -12,11 +12,11 @@ export const routeParameterSchemas = {
 	mediaEntryId: z.object({
 		media_entry_id: nonEmptyStringSchema,
 	}),
+	metaKeysId: z.object({
+		id: nonEmptyStringSchema,
+	}),
 	metaKeyId: z.object({
 		meta_key_id: nonEmptyStringSchema,
-	}),
-	contextId: z.object({
-		id: nonEmptyStringSchema,
 	}),
 	collectionMetaDatum: z.object({
 		collection_id: nonEmptyStringSchema,

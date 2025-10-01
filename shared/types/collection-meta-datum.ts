@@ -1,6 +1,8 @@
 import type { paths } from '../../generated/api/madek-api';
 
-export type MadekCollectionMetaDatumPathParameters = paths['/api-v2/collection/{collection_id}/meta-datum/{meta_key_id}']['get']['parameters']['path'];
+type MadekCollectionMetaDatumGet = paths['/api-v2/collection/{collection_id}/meta-datum/{meta_key_id}']['get'];
+
+export type MadekCollectionMetaDatumPathParameters = MadekCollectionMetaDatumGet['parameters']['path'];
 
 /*
  * Manual type definition for collection meta datum response.
@@ -30,5 +32,14 @@ export interface MadekCollectionMetaDatumResponse {
 	'defaultdata': string;
 }
 
-export type CollectionMetaDatum = Pick<MadekCollectionMetaDatumResponse['meta-data'], 'string'>;
+/*
+ * Normalized collection meta datum with guaranteed non-null string value.
+ *
+ * This type represents the data AFTER server-side normalization:
+ * - null values are converted to empty strings
+ * - Line endings are normalized to \n for consistent hydration
+ */
+export interface CollectionMetaDatum {
+	string: string;
+}
 export type CollectionMetaData = CollectionMetaDatum[];

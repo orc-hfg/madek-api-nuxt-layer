@@ -7,7 +7,7 @@ const FIXED_COLLECTION_IDS = [
 ] as const;
 
 export const mockData = {
-	getCollectionMediaEntryArcs: (collectionId: string): CollectionMediaEntryArcs => {
+	getCollectionMediaEntryArcs: (collectionId: MadekCollectionMediaEntryArcsPathParameters['collection_id']): CollectionMediaEntryArcs => {
 		switch (collectionId) {
 			case 'collection-id-1': {
 				return [
@@ -44,47 +44,13 @@ export const mockData = {
 		}
 	},
 
-	getCollectionMetaDatum: (collectionId: string, metaKeyId: string): CollectionMetaDatum => {
+	getCollectionMetaDatum: (collectionId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']): CollectionMetaDatum => {
 		return {
 			string: `Test collectionId ${collectionId} / metaKeyId ${metaKeyId} Content`,
 		};
 	},
 
-	getContext: (_id: string): Context => {
-		return {
-			id: 'core',
-			labels: {
-				de: 'Core DE',
-				en: 'Core EN',
-			},
-		};
-	},
-
-	getContexts: (): Contexts => [
-		{
-			id: 'core',
-			labels: {
-				de: 'Core DE',
-				en: 'Core EN',
-			},
-		},
-		{
-			id: 'media-object',
-			labels: {
-				de: 'Media Object DE',
-				en: 'Media Object EN',
-			},
-		},
-		{
-			id: 'set_creative-work',
-			labels: {
-				de: 'Set Creative Work DE',
-				en: 'Set Creative Work EN',
-			},
-		},
-	],
-
-	getMediaEntryPreviewThumbnails: (mediaEntryId: string, _query: MediaEntryPreviewQuery): MediaEntryPreviewThumbnails => [
+	getMediaEntryPreviewThumbnails: (mediaEntryId: MadekMediaEntryPreviewPathParameters['media_entry_id'], _query: MediaEntryPreviewQuery): MediaEntryPreviewThumbnails => [
 		{
 			id: `preview-small-${mediaEntryId}`,
 			thumbnail: 'small',
@@ -111,7 +77,16 @@ export const mockData = {
 		},
 	],
 
-	getPreviewDataStream: (_previewId: string): PreviewDataStream => {
+	getMetaKeyLabels: (_id: MadekMetaKeysGetPathParameters['id']): MetaKeyLabels => {
+		return {
+			labels: {
+				de: 'Meta Key DE',
+				en: 'Meta Key EN',
+			},
+		};
+	},
+
+	getPreviewDataStream: (_previewId: MadekPreviewsDataStreamPathParameters['preview_id']): PreviewDataStream => {
 		const blob = dataUrlToBlob('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwkHBgoJCAkLCwoMDxkQDw4ODx4WFxIZJCAmJSMgIyIoLTkwKCo2KyIjMkQyNjs9QEBAJjBGS0U+Sjk/QD3/2wBDAQsLCw8NDx0QEB09KSMpPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT3/wgARCAFoAWgDAREAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAWAQEBAQAAAAAAAAAAAAAAAAAABAb/2gAMAwEAAhADEAAAAKZnaQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/EABQQAQAAAAAAAAAAAAAAAAAAAKD/2gAIAQEAAT8AfT//xAAUEQEAAAAAAAAAAAAAAAAAAACg/9oACAECAQE/AH0//8QAFBEBAAAAAAAAAAAAAAAAAAAAoP/aAAgBAwEBPwB9P//Z');
 
 		return blob as PreviewDataStream;

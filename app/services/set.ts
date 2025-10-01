@@ -1,104 +1,106 @@
 import type { AppLocale } from '../types/i18n-locales';
 
+const SET_META_KEYS = {
+	title: {
+		de: 'madek_core:title',
+		en: 'creative_work:title_en',
+	},
+	subtitle: {
+		de: 'madek_core:subtitle',
+		en: 'creative_work:subtitle_en',
+	},
+	description: {
+		de: 'madek_core:description',
+		en: 'creative_work:description_en',
+	},
+} as const satisfies Record<string, Record<AppLocale, MadekCollectionMetaDatumPathParameters['meta_key_id']>>;
+
+export interface MetaKeyFieldData {
+	readonly label: string;
+	readonly value: string;
+}
+
 interface SetService {
-	getTitleBatch: (setIds: string[], appLocale: AppLocale) => Promise<CollectionMetaData>;
-	getCoverImagePreviews: (setId: string) => Promise<MediaEntryPreviewThumbnails | undefined>;
-	getCoverImageThumbnailSources: (setId: string, thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources>;
-	getCoverImageThumbnailSourcesBatch: (setIds: string[], thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources[]>;
-	getPreviewIdByThumbnailType: (previews: MediaEntryPreviewThumbnails, thumbnailType: ThumbnailTypes) => MediaEntryPreviewId | undefined;
-	findCoverImageMediaEntryId: (mediaEntries: CollectionMediaEntryArcs) => CollectionMediaEntryArc['media_entry_id'];
+	getMetaKeyLabel: (metaKeyId: MadekMetaKeysGetPathParameters['id'], appLocale: AppLocale) => Promise<MetaKeyLabels['labels'][AppLocale]>;
+	getTitle: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<CollectionMetaDatum>;
+	getTitleFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<MetaKeyFieldData>;
+	getSubtitle: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<CollectionMetaDatum>;
+	getSubtitleFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<MetaKeyFieldData>;
+	getDescription: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<CollectionMetaDatum>;
+	getDescriptionFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<MetaKeyFieldData>;
 }
 
 function createSetService(): SetService {
-	const config = useRuntimeConfig();
-	const { apiBaseName } = config.public;
-
-	const appLogger = createAppLogger('Service: set');
 	const setRepository = getSetRepository();
 
 	return {
-		async getTitleBatch(setIds: string[], appLocale: AppLocale): Promise<CollectionMetaData> {
-			const titlePromises = setIds.map(async setId => setRepository.getTitle(setId, appLocale));
+		async getMetaKeyLabel(metaKeyId: MadekMetaKeysGetPathParameters['id'], appLocale: AppLocale): Promise<MetaKeyLabels['labels'][AppLocale]> {
+			const metaKeyLabels = await setRepository.getMetaKeyLabels(metaKeyId);
 
-			return Promise.all(titlePromises);
+			return metaKeyLabels.labels[appLocale];
 		},
 
-		async getCoverImagePreviews(setId: string): Promise<MediaEntryPreviewThumbnails | undefined> {
-			const mediaEntries = await setRepository.getMediaEntries(setId);
+		async getTitle(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<CollectionMetaDatum> {
+			const metaKeyId = SET_META_KEYS.title[appLocale];
+			const response: CollectionMetaDatum = await setRepository.getCollectionMetaDatum(setId, metaKeyId);
 
-			if (mediaEntries.length === 0) {
-				return undefined;
-			}
-
-			const coverImageMediaEntryId = this.findCoverImageMediaEntryId(mediaEntries);
-
-			const coverImagePreviews = await setRepository.getMediaEntryImagePreviews(coverImageMediaEntryId);
-
-			if (coverImagePreviews.length === 0) {
-				return undefined;
-			}
-
-			return coverImagePreviews;
+			return response;
 		},
 
-		async getCoverImageThumbnailSources(setId: string, thumbnailTypes: ThumbnailTypes[]): Promise<ThumbnailSources> {
-			const coverImagePreviews = await this.getCoverImagePreviews(setId);
+		async getTitleFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<MetaKeyFieldData> {
+			const metaKeyId = SET_META_KEYS.title[appLocale];
 
-			if (!coverImagePreviews) {
-				appLogger.error('getCoverImageThumbnailSources: No cover image previews found.', setId);
+			const [metaKeyLabel, metaKeyValue] = await Promise.all([
+				this.getMetaKeyLabel(metaKeyId, appLocale),
+				this.getTitle(setId, appLocale),
+			]);
 
-				return {};
-			}
-
-			const thumbnailSources: ThumbnailSources = {};
-			for (const thumbnailType of thumbnailTypes) {
-				const previewId = this.getPreviewIdByThumbnailType(coverImagePreviews, thumbnailType);
-
-				if (previewId !== undefined) {
-					(thumbnailSources as Record<ThumbnailTypes, ThumbnailSource>)[thumbnailType] = {
-						url: `/${apiBaseName}/previews/${previewId}/data-stream`,
-						width: getThumbnailPixelSize(thumbnailType),
-					};
-				}
-			}
-
-			return thumbnailSources;
+			return {
+				label: metaKeyLabel,
+				value: metaKeyValue.string,
+			};
 		},
 
-		async getCoverImageThumbnailSourcesBatch(setIds: string[], thumbnailTypes: ThumbnailTypes[]): Promise<ThumbnailSources[]> {
-			const thumbnailSourcesPromises = setIds.map(async setId => this.getCoverImageThumbnailSources(setId, thumbnailTypes));
-			const thumbnailSources = await Promise.all(thumbnailSourcesPromises);
+		async getSubtitle(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<CollectionMetaDatum> {
+			const metaKeyId = SET_META_KEYS.subtitle[appLocale];
+			const response: CollectionMetaDatum = await setRepository.getCollectionMetaDatum(setId, metaKeyId);
 
-			return thumbnailSources;
+			return response;
 		},
 
-		getPreviewIdByThumbnailType(previews: MediaEntryPreviewThumbnails, thumbnailType: ThumbnailTypes): MediaEntryPreviewId | undefined {
-			const matchingPreview = previews.find(preview => preview.thumbnail === thumbnailType);
+		async getSubtitleFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<MetaKeyFieldData> {
+			const metaKeyId = SET_META_KEYS.subtitle[appLocale];
 
-			if (!matchingPreview) {
-				appLogger.error('No preview found for thumbnail type.', thumbnailType);
+			const [metaKeyLabel, metaKeyValue] = await Promise.all([
+				this.getMetaKeyLabel(metaKeyId, appLocale),
+				this.getSubtitle(setId, appLocale),
+			]);
 
-				return undefined;
-			}
-
-			return matchingPreview.id;
+			return {
+				label: metaKeyLabel,
+				value: metaKeyValue.string,
+			};
 		},
 
-		findCoverImageMediaEntryId(mediaEntries: CollectionMediaEntryArcs): CollectionMediaEntryArc['media_entry_id'] {
-			// Priority 1: Cover image
-			const coverImage = mediaEntries.find((entry: CollectionMediaEntryArc) => entry.cover === true);
-			if (coverImage) {
-				return coverImage.media_entry_id;
-			}
+		async getDescription(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<CollectionMetaDatum> {
+			const metaKeyId = SET_META_KEYS.description[appLocale];
+			const response: CollectionMetaDatum = await setRepository.getCollectionMetaDatum(setId, metaKeyId);
 
-			// Priority 2: Position 0
-			const positionZeroImage = mediaEntries.find((entry: CollectionMediaEntryArc) => entry.position === 0);
-			if (positionZeroImage) {
-				return positionZeroImage.media_entry_id;
-			}
+			return response;
+		},
 
-			// Priority 3: First entry as fallback
-			return mediaEntries[0]!.media_entry_id;
+		async getDescriptionFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<MetaKeyFieldData> {
+			const metaKeyId = SET_META_KEYS.description[appLocale];
+
+			const [metaKeyLabel, metaKeyValue] = await Promise.all([
+				this.getMetaKeyLabel(metaKeyId, appLocale),
+				this.getDescription(setId, appLocale),
+			]);
+
+			return {
+				label: metaKeyLabel,
+				value: metaKeyValue.string,
+			};
 		},
 	};
 }

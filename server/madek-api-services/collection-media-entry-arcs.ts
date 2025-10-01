@@ -1,9 +1,7 @@
 import type { H3Event } from 'h3';
 import { fiveMinutesCache } from '../constants/cache';
 
-type Collection = MadekCollectionMediaEntryArcsPathParameters['collection_id'];
-
-export async function getCollectionMediaEntryArcs(event: H3Event, collectionId: Collection): Promise<CollectionMediaEntryArcs> {
+export async function getCollectionMediaEntryArcs(event: H3Event, collectionId: MadekCollectionMediaEntryArcsPathParameters['collection_id']): Promise<CollectionMediaEntryArcs> {
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMediaEntryArcsResponse>(event);
 	const serverLogger = createServerLogger(event, 'Service: getCollectionMediaEntryArcs');
 
