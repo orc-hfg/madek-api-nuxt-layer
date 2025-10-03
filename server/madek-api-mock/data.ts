@@ -47,6 +47,68 @@ export const mockData = {
 	getCollectionMetaDatum: (collectionId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']): CollectionMetaDatum => {
 		return {
 			string: `Test collectionId ${collectionId} / metaKeyId ${metaKeyId} Content`,
+			people: [
+				{
+					first_name: 'Anja',
+					last_name: 'Casser',
+				},
+				{
+					first_name: 'Hubert',
+					last_name: 'Distel',
+				},
+				{
+					first_name: 'Lizzy',
+					last_name: 'Ellbrück ',
+				},
+				{
+					first_name: 'Tiffany Justine ',
+					last_name: 'Erndwein',
+				},
+				{
+					first_name: 'Yvonne ',
+					last_name: 'Fomferra ',
+				},
+				{
+					first_name: 'Hanne',
+					last_name: 'König',
+				},
+				{
+					first_name: 'Malte',
+					last_name: 'Pawelczyk',
+				},
+				{
+					first_name: 'Christina',
+					last_name: 'Scheib',
+				},
+				{
+					first_name: 'Lisa-Kathrin',
+					last_name: 'Welzel',
+				},
+				{
+					first_name: 'Hanna',
+					last_name: 'Franke',
+				},
+				{
+					first_name: 'Hanne',
+					last_name: 'König',
+				},
+				{
+					first_name: 'Malte',
+					last_name: 'Pawelczyk',
+				},
+				{
+					first_name: 'Christina',
+					last_name: 'Scheib',
+				},
+				{
+					first_name: 'Lisa-Kathrin',
+					last_name: 'Welzel',
+				},
+				{
+					first_name: 'Hanna',
+					last_name: 'Franke',
+				},
+			],
 		};
 	},
 

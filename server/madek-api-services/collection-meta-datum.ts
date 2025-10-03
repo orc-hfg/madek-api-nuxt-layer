@@ -16,12 +16,22 @@ const SET_TITLE_META_KEY_FALLBACKS: Record<MadekCollectionMetaDatumPathParameter
  * Meta keys that should return empty string instead of throwing 404 error
  * When a requested meta key returns 404, return empty string instead
  */
-const META_KEYS_RETURN_EMPTY_ON_404 = new Set<MadekCollectionMetaDatumPathParameters['meta_key_id']>([
+const META_KEYS_RETURN_EMPTY_STRING_ON_404 = new Set<MadekCollectionMetaDatumPathParameters['meta_key_id']>([
 	'creative_work:description_en',
+	'creative_work:dimension',
+	'creative_work:duration',
+	'creative_work:format',
 	'creative_work:subtitle_en',
 	'madek_core:description',
+	'madek_core:portrayed_object_date_en',
 	'madek_core:subtitle',
 ]);
+
+/*
+ * Meta keys that should return empty array instead of throwing 404 error
+ * When a requested meta key returns 404, return empty array instead
+ */
+const META_KEYS_RETURN_EMPTY_ARRAY_ON_404 = new Set<MadekCollectionMetaDatumPathParameters['meta_key_id']>(['madek_core:authors']);
 
 /*
  * Meta keys where leading/trailing whitespace should be trimmed
@@ -34,8 +44,12 @@ const META_KEYS_RETURN_EMPTY_ON_404 = new Set<MadekCollectionMetaDatumPathParame
  * Non-trimmed fields: description
  */
 const META_KEYS_SHOULD_TRIM = new Set<MadekCollectionMetaDatumPathParameters['meta_key_id']>([
+	'creative_work:dimension',
+	'creative_work:duration',
+	'creative_work:format',
 	'creative_work:subtitle_en',
 	'creative_work:title_en',
+	'madek_core:portrayed_object_date_en',
 	'madek_core:subtitle',
 	'madek_core:title',
 ]);
@@ -68,12 +82,30 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 				response['meta-data'].string,
 				META_KEYS_SHOULD_TRIM.has(metaKeyId),
 			),
+			...(response.people && {
+				people: response.people.map((person) => {
+					return {
+						first_name: person.first_name,
+						last_name: person.last_name,
+					};
+				}),
+			}),
 		};
 	}
 	catch (error) {
 		if (isH3NotFoundError(error)) {
+			// Check if this meta key should return empty array on 404
+			if (META_KEYS_RETURN_EMPTY_ARRAY_ON_404.has(metaKeyId)) {
+				serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty people array instead.`);
+
+				return {
+					string: '',
+					people: [],
+				};
+			}
+
 			// Check if this meta key should return empty string on 404
-			if (META_KEYS_RETURN_EMPTY_ON_404.has(metaKeyId)) {
+			if (META_KEYS_RETURN_EMPTY_STRING_ON_404.has(metaKeyId)) {
 				serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty string instead.`);
 
 				return {

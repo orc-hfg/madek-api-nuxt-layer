@@ -15,6 +15,32 @@ export type MadekCollectionMetaDatumPathParameters = MadekCollectionMetaDatumGet
  * paths['/api-v2/collection/{collection_id}/meta-datum/{meta_key_id}']['get']['responses']['200']['schema']
  * which is defined as 'unknown'.
  */
+
+interface MadekMetaDatumPerson {
+	meta_datum_id: string;
+	person_id: string;
+	created_by_id: string;
+	meta_data_updated_at: string;
+	id: string;
+}
+
+interface MadekPerson {
+	institution: string;
+	institutional_id: string | null;
+	description: string | null;
+	first_name: string;
+	external_uris: string[];
+	identification_info: string | null;
+	searchable: string;
+	updated_at: string;
+	id: string;
+	last_name: string;
+	admin_comment: string | null;
+	pseudonym: string | null;
+	created_at: string;
+	subtype: string;
+}
+
 export interface MadekCollectionMetaDatumResponse {
 	'meta-data': {
 		created_by_id: string;
@@ -28,9 +54,15 @@ export interface MadekCollectionMetaDatumResponse {
 		json: Record<string, any> | null;
 		other_media_entry_id: string | null;
 	};
-	'defaultmetadata': string;
-	'defaultdata': string;
+	'md_people'?: MadekMetaDatumPerson[];
+	'people'?: MadekPerson[];
 }
+
+/**
+ * Simplified person information for collection meta data.
+ * Contains only essential display fields.
+ */
+export type CollectionPersonInfo = Pick<MadekPerson, 'first_name' | 'last_name'>;
 
 /*
  * Normalized collection meta datum with guaranteed non-null string value.
@@ -41,5 +73,6 @@ export interface MadekCollectionMetaDatumResponse {
  */
 export interface CollectionMetaDatum {
 	string: string;
+	people?: CollectionPersonInfo[];
 }
 export type CollectionMetaData = CollectionMetaDatum[];
