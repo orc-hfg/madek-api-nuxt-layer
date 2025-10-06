@@ -1,4 +1,4 @@
-import type { CollectionPersonInfo } from '../../shared/types/collection-meta-datum';
+import type { CollectionKeywordInfo, CollectionPersonInfo } from '../../shared/types/collection-meta-datum';
 import type { AppLocale } from '../types/i18n-locales';
 
 const SET_META_KEYS = {
@@ -21,6 +21,22 @@ const SET_META_KEYS = {
 	portrayedObjectDate: {
 		de: 'madek_core:portrayed_object_date',
 		en: 'madek_core:portrayed_object_date',
+	},
+	keywords: {
+		de: 'madek_core:keywords',
+		en: 'madek_core:keywords',
+	},
+	semester: {
+		de: 'institution:semester',
+		en: 'institution:semester',
+	},
+	programOfStudy: {
+		de: 'institution:program_of_study',
+		en: 'institution:program_of_study',
+	},
+	material: {
+		de: 'creative_work:material',
+		en: 'creative_work:material',
 	},
 	dimension: {
 		de: 'creative_work:dimension',
@@ -48,16 +64,22 @@ export interface PeopleMetaKeyFieldData {
 	readonly value: CollectionPersonInfo[];
 }
 
+export interface KeywordsMetaKeyFieldData {
+	readonly label: string;
+	readonly value: CollectionKeywordInfo[];
+}
+
 interface SetService {
-	getMetaKeyLabel: (metaKeyId: MadekMetaKeysGetPathParameters['id'], appLocale: AppLocale) => Promise<MetaKeyLabels['labels'][AppLocale]>;
-	getMetaDatumValue: (field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<CollectionMetaDatum>;
-	getMetaDatumFieldData: (field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getAuthorsFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<PeopleMetaKeyFieldData>;
 	getTitle: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<CollectionMetaDatum>;
 	getTitleFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getSubtitleFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getDescriptionFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getPortrayedObjectDateFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
+	getKeywordsFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
+	getSemesterFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
+	getProgramOfStudyFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
+	getMaterialFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
 	getDimensionFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getDurationFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getFormatFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
@@ -66,77 +88,112 @@ interface SetService {
 function createSetService(): SetService {
 	const setRepository = getSetRepository();
 
+	async function getMetaKeyLabel(metaKeyId: MadekMetaKeysGetPathParameters['id'], appLocale: AppLocale): Promise<MetaKeyLabels['labels'][AppLocale]> {
+		const metaKeyLabels = await setRepository.getMetaKeyLabels(metaKeyId);
+
+		return metaKeyLabels.labels[appLocale];
+	};
+
+	async function getMetaDatumValue(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<CollectionMetaDatum> {
+		const metaKeyId = SET_META_KEYS[field][appLocale];
+		const response: CollectionMetaDatum = await setRepository.getCollectionMetaDatum(setId, metaKeyId);
+
+		return response;
+	};
+
+	async function getMetaDatumFieldData(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
+		const metaKeyId = SET_META_KEYS[field][appLocale];
+
+		const [metaKeyLabel, metaKeyValue] = await Promise.all([
+			getMetaKeyLabel(metaKeyId, appLocale),
+			getMetaDatumValue(field, setId, appLocale),
+		]);
+
+		return {
+			label: metaKeyLabel,
+			value: metaKeyValue.string,
+		};
+	};
+
+	async function getPeopleBasedFieldData(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<PeopleMetaKeyFieldData> {
+		const metaKeyId = SET_META_KEYS[field][appLocale];
+
+		const [metaKeyLabel, metaKeyValue] = await Promise.all([
+			getMetaKeyLabel(metaKeyId, appLocale),
+			getMetaDatumValue(field, setId, appLocale),
+		]);
+
+		return {
+			label: metaKeyLabel,
+			value: metaKeyValue.people ?? [],
+		};
+	}
+
+	async function getKeywordsBasedFieldData(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<KeywordsMetaKeyFieldData> {
+		const metaKeyId = SET_META_KEYS[field][appLocale];
+
+		const [metaKeyLabel, metaKeyValue] = await Promise.all([
+			getMetaKeyLabel(metaKeyId, appLocale),
+			getMetaDatumValue(field, setId, appLocale),
+		]);
+
+		return {
+			label: metaKeyLabel,
+			value: metaKeyValue.keywords ?? [],
+		};
+	}
+
 	return {
-		async getMetaKeyLabel(metaKeyId: MadekMetaKeysGetPathParameters['id'], appLocale: AppLocale): Promise<MetaKeyLabels['labels'][AppLocale]> {
-			const metaKeyLabels = await setRepository.getMetaKeyLabels(metaKeyId);
-
-			return metaKeyLabels.labels[appLocale];
-		},
-
-		async getMetaDatumValue(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<CollectionMetaDatum> {
-			const metaKeyId = SET_META_KEYS[field][appLocale];
-			const response: CollectionMetaDatum = await setRepository.getCollectionMetaDatum(setId, metaKeyId);
-
-			return response;
-		},
-
-		async getMetaDatumFieldData(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-			const metaKeyId = SET_META_KEYS[field][appLocale];
-
-			const [metaKeyLabel, metaKeyValue] = await Promise.all([
-				this.getMetaKeyLabel(metaKeyId, appLocale),
-				this.getMetaDatumValue(field, setId, appLocale),
-			]);
-
-			return {
-				label: metaKeyLabel,
-				value: metaKeyValue.string,
-			};
-		},
-
 		async getAuthorsFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<PeopleMetaKeyFieldData> {
-			const metaKeyId = SET_META_KEYS.authors[appLocale];
-
-			const [metaKeyLabel, metaKeyValue] = await Promise.all([
-				this.getMetaKeyLabel(metaKeyId, appLocale),
-				this.getMetaDatumValue('authors', setId, appLocale),
-			]);
-
-			return {
-				label: metaKeyLabel,
-				value: metaKeyValue.people ?? [],
-			};
+			return getPeopleBasedFieldData('authors', setId, appLocale);
 		},
+
 		async getTitle(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<CollectionMetaDatum> {
-			return this.getMetaDatumValue('title', setId, appLocale);
+			return getMetaDatumValue('title', setId, appLocale);
 		},
 
 		async getTitleFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-			return this.getMetaDatumFieldData('title', setId, appLocale);
+			return getMetaDatumFieldData('title', setId, appLocale);
 		},
 
 		async getSubtitleFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-			return this.getMetaDatumFieldData('subtitle', setId, appLocale);
+			return getMetaDatumFieldData('subtitle', setId, appLocale);
 		},
 
 		async getDescriptionFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-			return this.getMetaDatumFieldData('description', setId, appLocale);
+			return getMetaDatumFieldData('description', setId, appLocale);
 		},
 
 		async getPortrayedObjectDateFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-			return this.getMetaDatumFieldData('portrayedObjectDate', setId, appLocale);
+			return getMetaDatumFieldData('portrayedObjectDate', setId, appLocale);
+		},
+
+		async getKeywordsFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<KeywordsMetaKeyFieldData> {
+			return getKeywordsBasedFieldData('keywords', setId, appLocale);
+		},
+
+		async getSemesterFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<KeywordsMetaKeyFieldData> {
+			return getKeywordsBasedFieldData('semester', setId, appLocale);
+		},
+
+		async getProgramOfStudyFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<KeywordsMetaKeyFieldData> {
+			return getKeywordsBasedFieldData('programOfStudy', setId, appLocale);
+		},
+
+		async getMaterialFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<KeywordsMetaKeyFieldData> {
+			return getKeywordsBasedFieldData('material', setId, appLocale);
 		},
 
 		async getDimensionFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-			return this.getMetaDatumFieldData('dimension', setId, appLocale);
+			return getMetaDatumFieldData('dimension', setId, appLocale);
 		},
 
 		async getDurationFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-			return this.getMetaDatumFieldData('duration', setId, appLocale);
+			return getMetaDatumFieldData('duration', setId, appLocale);
 		},
 
 		async getFormatFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-			return this.getMetaDatumFieldData('format', setId, appLocale);
+			return getMetaDatumFieldData('format', setId, appLocale);
 		},
 	};
 }

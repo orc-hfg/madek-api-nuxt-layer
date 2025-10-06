@@ -13,6 +13,7 @@
 		"shared/constants/*.ts",
 		"shared/types/*.ts",
 		"shared/utils/*.ts",
+		"tests/mocks/logger.ts",
 		"**/*.setup.ts",
 		"**/*.test.ts"
 	],

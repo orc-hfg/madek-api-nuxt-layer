@@ -3,11 +3,35 @@ import { getSetService } from './set';
 
 interface SetsService {
 	getTitleBatch: (setIds: MadekCollectionMetaDatumPathParameters['collection_id'][], appLocale: AppLocale) => Promise<CollectionMetaData>;
-	getCoverImagePreviews: (setId: MadekMediaEntryPreviewPathParameters['media_entry_id']) => Promise<MediaEntryPreviewThumbnails | undefined>;
 	getCoverImageThumbnailSources: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources>;
 	getCoverImageThumbnailSourcesBatch: (setIds: MadekCollectionMediaEntryArcsPathParameters['collection_id'][], thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources[]>;
-	getPreviewIdByThumbnailType: (previews: MediaEntryPreviewThumbnails, thumbnailType: ThumbnailTypes) => MadekMediaEntryPreview['id'] | undefined;
-	findCoverImageMediaEntryId: (mediaEntries: CollectionMediaEntryArcs) => CollectionMediaEntryArc['media_entry_id'];
+}
+
+export function findCoverImageMediaEntryId(mediaEntries: CollectionMediaEntryArcs): CollectionMediaEntryArc['media_entry_id'] {
+	// Priority 1: Cover image
+	const coverImage = mediaEntries.find((entry: CollectionMediaEntryArc) => entry.cover === true);
+	if (coverImage) {
+		return coverImage.media_entry_id;
+	}
+
+	// Priority 2: Position 0
+	const positionZeroImage = mediaEntries.find((entry: CollectionMediaEntryArc) => entry.position === 0);
+	if (positionZeroImage) {
+		return positionZeroImage.media_entry_id;
+	}
+
+	// Priority 3: First entry as fallback
+	return mediaEntries[0]!.media_entry_id;
+}
+
+export function getPreviewIdByThumbnailType(previews: MediaEntryPreviewThumbnails, thumbnailType: ThumbnailTypes): MadekMediaEntryPreview['id'] | undefined {
+	const matchingPreview = previews.find(preview => preview.thumbnail === thumbnailType);
+
+	if (!matchingPreview) {
+		return undefined;
+	}
+
+	return matchingPreview.id;
 }
 
 function createSetsService(): SetsService {
@@ -18,6 +42,24 @@ function createSetsService(): SetsService {
 	const setRepository = getSetRepository();
 	const setService = getSetService();
 
+	async function getCoverImagePreviews(setId: MadekMediaEntryPreviewPathParameters['media_entry_id']): Promise<MediaEntryPreviewThumbnails | undefined> {
+		const mediaEntries = await setRepository.getMediaEntries(setId);
+
+		if (mediaEntries.length === 0) {
+			return undefined;
+		}
+
+		const coverImageMediaEntryId = findCoverImageMediaEntryId(mediaEntries);
+
+		const coverImagePreviews = await setRepository.getMediaEntryImagePreviews(coverImageMediaEntryId);
+
+		if (coverImagePreviews.length === 0) {
+			return undefined;
+		}
+
+		return coverImagePreviews;
+	}
+
 	return {
 		async getTitleBatch(setIds: MadekCollectionMetaDatumPathParameters['collection_id'][], appLocale: AppLocale): Promise<CollectionMetaData> {
 			const titlePromises = setIds.map(async setId => setService.getTitle(setId, appLocale));
@@ -25,26 +67,8 @@ function createSetsService(): SetsService {
 			return Promise.all(titlePromises);
 		},
 
-		async getCoverImagePreviews(setId: MadekMediaEntryPreviewPathParameters['media_entry_id']): Promise<MediaEntryPreviewThumbnails | undefined> {
-			const mediaEntries = await setRepository.getMediaEntries(setId);
-
-			if (mediaEntries.length === 0) {
-				return undefined;
-			}
-
-			const coverImageMediaEntryId = this.findCoverImageMediaEntryId(mediaEntries);
-
-			const coverImagePreviews = await setRepository.getMediaEntryImagePreviews(coverImageMediaEntryId);
-
-			if (coverImagePreviews.length === 0) {
-				return undefined;
-			}
-
-			return coverImagePreviews;
-		},
-
 		async getCoverImageThumbnailSources(setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], thumbnailTypes: ThumbnailTypes[]): Promise<ThumbnailSources> {
-			const coverImagePreviews = await this.getCoverImagePreviews(setId);
+			const coverImagePreviews = await getCoverImagePreviews(setId);
 
 			if (!coverImagePreviews) {
 				appLogger.error('getCoverImageThumbnailSources: No cover image previews found.', setId);
@@ -54,7 +78,11 @@ function createSetsService(): SetsService {
 
 			const thumbnailSources: ThumbnailSources = {};
 			for (const thumbnailType of thumbnailTypes) {
-				const previewId = this.getPreviewIdByThumbnailType(coverImagePreviews, thumbnailType);
+				const previewId = getPreviewIdByThumbnailType(coverImagePreviews, thumbnailType);
+
+				if (previewId === undefined) {
+					appLogger.error('getCoverImageThumbnailSources: No preview found for thumbnail type.', thumbnailType);
+				}
 
 				if (previewId !== undefined) {
 					(thumbnailSources as Record<ThumbnailTypes, ThumbnailSource>)[thumbnailType] = {
@@ -72,35 +100,6 @@ function createSetsService(): SetsService {
 			const thumbnailSources = await Promise.all(thumbnailSourcesPromises);
 
 			return thumbnailSources;
-		},
-
-		getPreviewIdByThumbnailType(previews: MediaEntryPreviewThumbnails, thumbnailType: ThumbnailTypes): MadekMediaEntryPreview['id'] | undefined {
-			const matchingPreview = previews.find(preview => preview.thumbnail === thumbnailType);
-
-			if (!matchingPreview) {
-				appLogger.error('No preview found for thumbnail type.', thumbnailType);
-
-				return undefined;
-			}
-
-			return matchingPreview.id;
-		},
-
-		findCoverImageMediaEntryId(mediaEntries: CollectionMediaEntryArcs): CollectionMediaEntryArc['media_entry_id'] {
-			// Priority 1: Cover image
-			const coverImage = mediaEntries.find((entry: CollectionMediaEntryArc) => entry.cover === true);
-			if (coverImage) {
-				return coverImage.media_entry_id;
-			}
-
-			// Priority 2: Position 0
-			const positionZeroImage = mediaEntries.find((entry: CollectionMediaEntryArc) => entry.position === 0);
-			if (positionZeroImage) {
-				return positionZeroImage.media_entry_id;
-			}
-
-			// Priority 3: First entry as fallback
-			return mediaEntries[0]!.media_entry_id;
 		},
 	};
 }

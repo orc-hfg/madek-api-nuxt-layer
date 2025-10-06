@@ -31,7 +31,13 @@ const META_KEYS_RETURN_EMPTY_STRING_ON_404 = new Set<MadekCollectionMetaDatumPat
  * Meta keys that should return empty array instead of throwing 404 error
  * When a requested meta key returns 404, return empty array instead
  */
-const META_KEYS_RETURN_EMPTY_ARRAY_ON_404 = new Set<MadekCollectionMetaDatumPathParameters['meta_key_id']>(['madek_core:authors']);
+const META_KEYS_RETURN_EMPTY_ARRAY_ON_404 = new Set<MadekCollectionMetaDatumPathParameters['meta_key_id']>([
+	'creative_work:material',
+	'institution:program_of_study',
+	'institution:semester',
+	'madek_core:authors',
+	'madek_core:keywords',
+]);
 
 /*
  * Meta keys where leading/trailing whitespace should be trimmed
@@ -90,17 +96,25 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 					};
 				}),
 			}),
+			...(response.keywords && {
+				keywords: response.keywords.map((keyword) => {
+					return {
+						term: keyword.term,
+					};
+				}),
+			}),
 		};
 	}
 	catch (error) {
 		if (isH3NotFoundError(error)) {
 			// Check if this meta key should return empty array on 404
 			if (META_KEYS_RETURN_EMPTY_ARRAY_ON_404.has(metaKeyId)) {
-				serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty people array instead.`);
+				serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty array instead.`);
 
 				return {
 					string: '',
 					people: [],
+					keywords: [],
 				};
 			}
 

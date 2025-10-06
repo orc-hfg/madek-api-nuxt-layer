@@ -1,4 +1,4 @@
-import type { PeopleMetaKeyFieldData, StringMetaKeyFieldData } from '../services/set';
+import type { KeywordsMetaKeyFieldData, PeopleMetaKeyFieldData, StringMetaKeyFieldData } from '../services/set';
 import type { AppLocale } from '../types/i18n-locales';
 
 interface SetData {
@@ -10,6 +10,10 @@ interface SetData {
 	subtitleAlternativeLocale: StringMetaKeyFieldData;
 	descriptionAlternativeLocale: StringMetaKeyFieldData;
 	portrayedObjectDate: StringMetaKeyFieldData;
+	keywords: KeywordsMetaKeyFieldData;
+	semester: KeywordsMetaKeyFieldData;
+	programOfStudy: KeywordsMetaKeyFieldData;
+	material: KeywordsMetaKeyFieldData;
 	dimension: StringMetaKeyFieldData;
 	duration: StringMetaKeyFieldData;
 	format: StringMetaKeyFieldData;
@@ -33,6 +37,10 @@ export const useSetStore = defineStore('set', () => {
 		const descriptionAlternativeLocaleFieldData = await setService.getDescriptionFieldData(setId, alternativeLocale);
 
 		const portrayedObjectDateFieldData = await setService.getPortrayedObjectDateFieldData(setId, appLocale);
+		const keywordsFieldData = await setService.getKeywordsFieldData(setId, appLocale);
+		const semesterFieldData = await setService.getSemesterFieldData(setId, appLocale);
+		const programOfStudyFieldData = await setService.getProgramOfStudyFieldData(setId, appLocale);
+		const materialFieldData = await setService.getMaterialFieldData(setId, appLocale);
 		const dimensionFieldData = await setService.getDimensionFieldData(setId, appLocale);
 		const durationFieldData = await setService.getDurationFieldData(setId, appLocale);
 		const formatFieldData = await setService.getFormatFieldData(setId, appLocale);
@@ -46,6 +54,10 @@ export const useSetStore = defineStore('set', () => {
 			subtitleAlternativeLocale: subtitleAlternativeLocaleFieldData,
 			descriptionAlternativeLocale: descriptionAlternativeLocaleFieldData,
 			portrayedObjectDate: portrayedObjectDateFieldData,
+			keywords: keywordsFieldData,
+			semester: semesterFieldData,
+			programOfStudy: programOfStudyFieldData,
+			material: materialFieldData,
 			dimension: dimensionFieldData,
 			duration: durationFieldData,
 			format: formatFieldData,

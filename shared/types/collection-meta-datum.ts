@@ -41,6 +41,29 @@ interface MadekPerson {
 	subtype: string;
 }
 
+interface MadekMetaDatumKeyword {
+	id: string;
+	created_by_id: string;
+	meta_datum_id: string;
+	keyword_id: string;
+	created_at: string;
+	updated_at: string;
+	meta_data_updated_at: string;
+}
+
+interface MadekKeyword {
+	description: string | null;
+	external_uris: string[];
+	meta_key_id: string;
+	creator_id: string;
+	term: string;
+	updated_at: string;
+	rdf_class: string;
+	id: string;
+	position: number;
+	created_at: string;
+}
+
 export interface MadekCollectionMetaDatumResponse {
 	'meta-data': {
 		created_by_id: string;
@@ -56,6 +79,8 @@ export interface MadekCollectionMetaDatumResponse {
 	};
 	'md_people'?: MadekMetaDatumPerson[];
 	'people'?: MadekPerson[];
+	'md_keywords'?: MadekMetaDatumKeyword[];
+	'keywords'?: MadekKeyword[];
 }
 
 /**
@@ -63,6 +88,12 @@ export interface MadekCollectionMetaDatumResponse {
  * Contains only essential display fields.
  */
 export type CollectionPersonInfo = Pick<MadekPerson, 'first_name' | 'last_name'>;
+
+/**
+ * Simplified keyword information for collection meta data.
+ * Contains only the term field for display.
+ */
+export type CollectionKeywordInfo = Pick<MadekKeyword, 'term'>;
 
 /*
  * Normalized collection meta datum with guaranteed non-null string value.
@@ -74,5 +105,6 @@ export type CollectionPersonInfo = Pick<MadekPerson, 'first_name' | 'last_name'>
 export interface CollectionMetaDatum {
 	string: string;
 	people?: CollectionPersonInfo[];
+	keywords?: CollectionKeywordInfo[];
 }
 export type CollectionMetaData = CollectionMetaDatum[];

@@ -67,7 +67,7 @@ function createBaseLoggerSpies(): { logger: Logger } & BaseLoggerSpies {
 	};
 }
 
-// For tests where logger is passed directly as parameter (like error-handling.test.ts)
+// For tests where logger is passed directly as parameter
 export function setupDirectLoggerMock(): DirectLoggerMock {
 	const { logger, ...spies } = createBaseLoggerSpies();
 
@@ -77,7 +77,7 @@ export function setupDirectLoggerMock(): DirectLoggerMock {
 	};
 }
 
-// For tests where service creates logger internally via createAppLogger (like set.test.ts)
+// For tests where service creates logger internally via createAppLogger
 export function setupAppLoggerMock(): AppLoggerMock {
 	const { logger, ...spies } = createBaseLoggerSpies();
 	const appLoggerSpy = vi.spyOn(appLoggerModule, 'createAppLogger').mockReturnValue(logger);
