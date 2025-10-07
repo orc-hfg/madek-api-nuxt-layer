@@ -23,7 +23,7 @@ const META_KEYS_RETURN_EMPTY_STRING_ON_404 = new Set<MadekCollectionMetaDatumPat
 	'creative_work:format',
 	'creative_work:subtitle_en',
 	'madek_core:description',
-	'madek_core:portrayed_object_date_en',
+	'madek_core:portrayed_object_date',
 	'madek_core:subtitle',
 ]);
 
@@ -45,9 +45,6 @@ const META_KEYS_RETURN_EMPTY_ARRAY_ON_404 = new Set<MadekCollectionMetaDatumPath
  * Trimming is applied to structured short text fields (titles, subtitles) to ensure
  * clean display in UI components. Description fields are NOT trimmed to preserve
  * intentional formatting and line breaks in longer text content.
- *
- * Trimmed fields: title, subtitle
- * Non-trimmed fields: description
  */
 const META_KEYS_SHOULD_TRIM = new Set<MadekCollectionMetaDatumPathParameters['meta_key_id']>([
 	'creative_work:dimension',
@@ -55,7 +52,7 @@ const META_KEYS_SHOULD_TRIM = new Set<MadekCollectionMetaDatumPathParameters['me
 	'creative_work:format',
 	'creative_work:subtitle_en',
 	'creative_work:title_en',
-	'madek_core:portrayed_object_date_en',
+	'madek_core:portrayed_object_date',
 	'madek_core:subtitle',
 	'madek_core:title',
 ]);

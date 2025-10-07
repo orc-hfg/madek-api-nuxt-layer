@@ -3,7 +3,14 @@ export const useUserStore = defineStore('user', () => {
 	const login = shallowRef<AuthInfo['login']>();
 	const firstName = shallowRef<AuthInfo['first_name']>();
 	const lastName = shallowRef<AuthInfo['last_name']>();
-	const displayName = computed(() => `${firstName.value} ${lastName.value}`);
+	const displayName = computed(() => {
+		if (firstName.value !== undefined && firstName.value !== ''
+			&& lastName.value !== undefined && lastName.value !== '') {
+			return `${firstName.value} ${lastName.value}`;
+		}
+
+		return '';
+	});
 
 	async function refresh(): Promise<void> {
 		const userRepository = getUserRepository();

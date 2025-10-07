@@ -26,24 +26,43 @@ export const useSetStore = defineStore('set', () => {
 		const setService = getSetService();
 		const alternativeLocale: AppLocale = appLocale === 'de' ? 'en' : 'de';
 
-		const authorsFieldData = await setService.getAuthorsFieldData(setId, appLocale);
-
-		const titleFieldData = await setService.getTitleFieldData(setId, appLocale);
-		const subtitleFieldData = await setService.getSubtitleFieldData(setId, appLocale);
-		const descriptionFieldData = await setService.getDescriptionFieldData(setId, appLocale);
-
-		const titleAlternativeLocaleFieldData = await setService.getTitleFieldData(setId, alternativeLocale);
-		const subtitleAlternativeLocaleFieldData = await setService.getSubtitleFieldData(setId, alternativeLocale);
-		const descriptionAlternativeLocaleFieldData = await setService.getDescriptionFieldData(setId, alternativeLocale);
-
-		const portrayedObjectDateFieldData = await setService.getPortrayedObjectDateFieldData(setId, appLocale);
-		const keywordsFieldData = await setService.getKeywordsFieldData(setId, appLocale);
-		const semesterFieldData = await setService.getSemesterFieldData(setId, appLocale);
-		const programOfStudyFieldData = await setService.getProgramOfStudyFieldData(setId, appLocale);
-		const materialFieldData = await setService.getMaterialFieldData(setId, appLocale);
-		const dimensionFieldData = await setService.getDimensionFieldData(setId, appLocale);
-		const durationFieldData = await setService.getDurationFieldData(setId, appLocale);
-		const formatFieldData = await setService.getFormatFieldData(setId, appLocale);
+		/*
+		 * Execute all service calls in parallel to minimize latency
+		 * Each service call internally fetches label + value in parallel (2 HTTP requests)
+		 */
+		const [
+			authorsFieldData,
+			titleFieldData,
+			subtitleFieldData,
+			descriptionFieldData,
+			titleAlternativeLocaleFieldData,
+			subtitleAlternativeLocaleFieldData,
+			descriptionAlternativeLocaleFieldData,
+			portrayedObjectDateFieldData,
+			keywordsFieldData,
+			semesterFieldData,
+			programOfStudyFieldData,
+			materialFieldData,
+			dimensionFieldData,
+			durationFieldData,
+			formatFieldData,
+		] = await Promise.all([
+			setService.getAuthorsFieldData(setId, appLocale),
+			setService.getTitleFieldData(setId, appLocale),
+			setService.getSubtitleFieldData(setId, appLocale),
+			setService.getDescriptionFieldData(setId, appLocale),
+			setService.getTitleFieldData(setId, alternativeLocale),
+			setService.getSubtitleFieldData(setId, alternativeLocale),
+			setService.getDescriptionFieldData(setId, alternativeLocale),
+			setService.getPortrayedObjectDateFieldData(setId, appLocale),
+			setService.getKeywordsFieldData(setId, appLocale),
+			setService.getSemesterFieldData(setId, appLocale),
+			setService.getProgramOfStudyFieldData(setId, appLocale),
+			setService.getMaterialFieldData(setId, appLocale),
+			setService.getDimensionFieldData(setId, appLocale),
+			setService.getDurationFieldData(setId, appLocale),
+			setService.getFormatFieldData(setId, appLocale),
+		]);
 
 		setData.value = {
 			authors: authorsFieldData,

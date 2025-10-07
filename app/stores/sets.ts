@@ -15,45 +15,56 @@ export const useSetsStore = defineStore('sets', () => {
 		const setsRepository = getSetsRepository();
 		const setsService = getSetsService();
 
+		// Ensure user is loaded
 		if (userStore.id === undefined) {
 			await userStore.refresh();
 		}
 
-		if (userStore.id !== undefined) {
-			const userSets = await setsRepository.getSets(
-				{
-					responsible_user_id: userStore.id,
-					filter_by: JSON.stringify({
-						meta_data: [
-							{
-								key: 'settings:is_node',
-							},
-						],
-					}),
-				},
-			);
+		// If still no user after refresh, clear data and exit
+		if (userStore.id === undefined) {
+			sets.value = [];
+			setsData.value = [];
 
-			sets.value = userSets;
-
-			const [titles, coverImageSources] = await Promise.all([
-				setsService.getTitleBatch(
-					sets.value.map(set => set.id),
-					appLocale,
-				),
-				setsService.getCoverImageThumbnailSourcesBatch(
-					sets.value.map(set => set.id),
-					['small', 'medium', 'large', 'x_large'],
-				),
-			]);
-
-			setsData.value = sets.value.map((set, index) => {
-				return {
-					id: set.id,
-					title: titles[index]?.string ?? '',
-					coverImageSources: coverImageSources[index] ?? {},
-				};
-			});
+			return;
 		}
+
+		const userSets = await setsRepository.getSets(
+			{
+				responsible_user_id: userStore.id,
+				filter_by: JSON.stringify({
+					meta_data: [
+						{
+							key: 'settings:is_node',
+						},
+					],
+				}),
+			},
+		);
+
+		// Use local snapshot to avoid race conditions
+		const currentSets = userSets;
+		const setIds = currentSets.map(set => set.id);
+
+		const [titles, coverImageSources] = await Promise.all([
+			setsService.getTitleBatch(setIds, appLocale),
+			setsService.getCoverImageThumbnailSourcesBatch(
+				setIds,
+				['small', 'medium', 'large', 'x_large'],
+			),
+		]);
+
+		// Only update reactive state after all data is fetched and mapped
+		const mappedData = currentSets.map((set, index) => {
+			return {
+				id: set.id,
+				title: titles[index]?.string ?? '',
+				coverImageSources: coverImageSources[index] ?? {},
+			};
+		});
+
+		// Atomic update: both refs updated together with consistent data
+		sets.value = currentSets;
+		setsData.value = mappedData;
 	}
 
 	return {
