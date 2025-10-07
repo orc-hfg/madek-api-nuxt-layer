@@ -52,7 +52,7 @@ export function getAuthenticationHeaders(
 	const headers: Record<string, string> = {};
 
 	// For development: use API token if available
-	if (isDevelopmentEnvironment && apiToken !== undefined && apiToken !== '') {
+	if (isDevelopmentEnvironment && apiToken !== undefined && apiToken.trim() !== '') {
 		serverLogger.info('Using API token for authentication.');
 		headers.Authorization = `token ${apiToken}`;
 	}

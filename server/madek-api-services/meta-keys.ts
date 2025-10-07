@@ -17,7 +17,6 @@ export async function getMetaKeyLabels(event: H3Event, id: MadekMetaKeysGetPathP
 
 		return {
 			labels: {
-				// Normalize and trim UI labels to ensure clean display without unwanted whitespace
 				de: normalizeTextContent(response.labels.de, true),
 				en: normalizeTextContent(response.labels.en, true),
 			},

@@ -10,6 +10,7 @@ interface SetData {
 	subtitleAlternativeLocale: StringMetaKeyFieldData;
 	descriptionAlternativeLocale: StringMetaKeyFieldData;
 	portrayedObjectDate: StringMetaKeyFieldData;
+	projectCategory: KeywordsMetaKeyFieldData;
 	keywords: KeywordsMetaKeyFieldData;
 	semester: KeywordsMetaKeyFieldData;
 	programOfStudy: KeywordsMetaKeyFieldData;
@@ -39,6 +40,7 @@ export const useSetStore = defineStore('set', () => {
 			subtitleAlternativeLocaleFieldData,
 			descriptionAlternativeLocaleFieldData,
 			portrayedObjectDateFieldData,
+			projectCategoryFieldData,
 			keywordsFieldData,
 			semesterFieldData,
 			programOfStudyFieldData,
@@ -55,6 +57,7 @@ export const useSetStore = defineStore('set', () => {
 			setService.getSubtitleFieldData(setId, alternativeLocale),
 			setService.getDescriptionFieldData(setId, alternativeLocale),
 			setService.getPortrayedObjectDateFieldData(setId, appLocale),
+			setService.getProjectCategoryFieldData(setId, appLocale),
 			setService.getKeywordsFieldData(setId, appLocale),
 			setService.getSemesterFieldData(setId, appLocale),
 			setService.getProgramOfStudyFieldData(setId, appLocale),
@@ -73,6 +76,7 @@ export const useSetStore = defineStore('set', () => {
 			subtitleAlternativeLocale: subtitleAlternativeLocaleFieldData,
 			descriptionAlternativeLocale: descriptionAlternativeLocaleFieldData,
 			portrayedObjectDate: portrayedObjectDateFieldData,
+			projectCategory: projectCategoryFieldData,
 			keywords: keywordsFieldData,
 			semester: semesterFieldData,
 			programOfStudy: programOfStudyFieldData,

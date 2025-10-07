@@ -15,9 +15,9 @@ export async function getAuthInfo(event: H3Event): Promise<AuthInfo> {
 
 		return {
 			id: response.id,
-			login: response.login,
-			first_name: response.first_name,
-			last_name: response.last_name,
+			login: normalizeTextContent(response.login, true),
+			first_name: normalizeTextContent(response.first_name, true),
+			last_name: normalizeTextContent(response.last_name, true),
 		};
 	}
 	catch (error) {

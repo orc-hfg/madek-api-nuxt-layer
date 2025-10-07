@@ -22,6 +22,10 @@ const SET_META_KEYS = {
 		de: 'madek_core:portrayed_object_date',
 		en: 'madek_core:portrayed_object_date',
 	},
+	projectCategory: {
+		de: 'institution:project_category',
+		en: 'institution:project_category',
+	},
 	keywords: {
 		de: 'madek_core:keywords',
 		en: 'madek_core:keywords',
@@ -76,6 +80,7 @@ interface SetService {
 	getSubtitleFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getDescriptionFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getPortrayedObjectDateFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
+	getProjectCategoryFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
 	getKeywordsFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
 	getSemesterFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
 	getProgramOfStudyFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
@@ -166,6 +171,10 @@ function createSetService(): SetService {
 
 		async getPortrayedObjectDateFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
 			return getMetaDatumFieldData('portrayedObjectDate', setId, appLocale);
+		},
+
+		async getProjectCategoryFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<KeywordsMetaKeyFieldData> {
+			return getKeywordsBasedFieldData('projectCategory', setId, appLocale);
 		},
 
 		async getKeywordsFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<KeywordsMetaKeyFieldData> {

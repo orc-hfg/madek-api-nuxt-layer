@@ -4,8 +4,7 @@ export const useUserStore = defineStore('user', () => {
 	const firstName = shallowRef<AuthInfo['first_name']>();
 	const lastName = shallowRef<AuthInfo['last_name']>();
 	const displayName = computed(() => {
-		if (firstName.value !== undefined && firstName.value !== ''
-			&& lastName.value !== undefined && lastName.value !== '') {
+		if (firstName.value !== '' && lastName.value !== '') {
 			return `${firstName.value} ${lastName.value}`;
 		}
 

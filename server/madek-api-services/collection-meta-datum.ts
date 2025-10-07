@@ -34,6 +34,7 @@ const META_KEYS_RETURN_EMPTY_STRING_ON_404 = new Set<MadekCollectionMetaDatumPat
 const META_KEYS_RETURN_EMPTY_ARRAY_ON_404 = new Set<MadekCollectionMetaDatumPathParameters['meta_key_id']>([
 	'creative_work:material',
 	'institution:program_of_study',
+	'institution:project_category',
 	'institution:semester',
 	'madek_core:authors',
 	'madek_core:keywords',
@@ -88,15 +89,15 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 			...(response.people && {
 				people: response.people.map((person) => {
 					return {
-						first_name: person.first_name,
-						last_name: person.last_name,
+						first_name: normalizeTextContent(person.first_name, true),
+						last_name: normalizeTextContent(person.last_name, true),
 					};
 				}),
 			}),
 			...(response.keywords && {
 				keywords: response.keywords.map((keyword) => {
 					return {
-						term: keyword.term,
+						term: normalizeTextContent(keyword.term, true),
 					};
 				}),
 			}),
