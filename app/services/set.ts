@@ -76,9 +76,9 @@ export interface KeywordsMetaKeyFieldData {
 interface SetService {
 	getAuthorsFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<PeopleMetaKeyFieldData>;
 	getTitle: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<CollectionMetaDatum>;
-	getTitleFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
-	getSubtitleFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
-	getDescriptionFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
+	getTitleFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, alternativeLocale?: AppLocale) => Promise<StringMetaKeyFieldData>;
+	getSubtitleFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, alternativeLocale?: AppLocale) => Promise<StringMetaKeyFieldData>;
+	getDescriptionFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, alternativeLocale?: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getPortrayedObjectDateFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getProjectCategoryFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
 	getKeywordsFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
@@ -97,35 +97,43 @@ function createSetService(): SetService {
 		const metaKeyLabels = await setRepository.getMetaKeyLabels(metaKeyId);
 
 		return metaKeyLabels.labels[appLocale];
-	};
+	}
 
-	async function getMetaDatumValue(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<CollectionMetaDatum> {
+	async function getMetaDatum(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<CollectionMetaDatum> {
 		const metaKeyId = SET_META_KEYS[field][appLocale];
-		const response: CollectionMetaDatum = await setRepository.getCollectionMetaDatum(setId, metaKeyId);
 
-		return response;
-	};
+		return setRepository.getCollectionMetaDatum(setId, metaKeyId);
+	}
 
-	async function getMetaDatumFieldData(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-		const metaKeyId = SET_META_KEYS[field][appLocale];
+	async function getMetaDatumByMetaKeyId(setId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']): Promise<CollectionMetaDatum> {
+		return setRepository.getCollectionMetaDatum(setId, metaKeyId);
+	}
+
+	async function getMetaDatumFieldData(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, alternativeLocale?: AppLocale): Promise<StringMetaKeyFieldData> {
+		/*
+		 * Use alternativeLocale (if provided) to determine which field to fetch,
+		 * But always display the label in the current appLocale
+		 */
+		const metaKeyLocale = alternativeLocale ?? appLocale;
+		const metaKeyId = SET_META_KEYS[field][metaKeyLocale];
 
 		const [metaKeyLabel, metaKeyValue] = await Promise.all([
 			getMetaKeyLabel(metaKeyId, appLocale),
-			getMetaDatumValue(field, setId, appLocale),
+			getMetaDatumByMetaKeyId(setId, metaKeyId),
 		]);
 
 		return {
 			label: metaKeyLabel,
 			value: metaKeyValue.string,
 		};
-	};
+	}
 
 	async function getPeopleBasedFieldData(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<PeopleMetaKeyFieldData> {
 		const metaKeyId = SET_META_KEYS[field][appLocale];
 
 		const [metaKeyLabel, metaKeyValue] = await Promise.all([
 			getMetaKeyLabel(metaKeyId, appLocale),
-			getMetaDatumValue(field, setId, appLocale),
+			getMetaDatum(field, setId, appLocale),
 		]);
 
 		return {
@@ -139,7 +147,7 @@ function createSetService(): SetService {
 
 		const [metaKeyLabel, metaKeyValue] = await Promise.all([
 			getMetaKeyLabel(metaKeyId, appLocale),
-			getMetaDatumValue(field, setId, appLocale),
+			getMetaDatum(field, setId, appLocale),
 		]);
 
 		return {
@@ -154,19 +162,19 @@ function createSetService(): SetService {
 		},
 
 		async getTitle(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<CollectionMetaDatum> {
-			return getMetaDatumValue('title', setId, appLocale);
+			return getMetaDatum('title', setId, appLocale);
 		},
 
-		async getTitleFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-			return getMetaDatumFieldData('title', setId, appLocale);
+		async getTitleFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, alternativeLocale?: AppLocale): Promise<StringMetaKeyFieldData> {
+			return getMetaDatumFieldData('title', setId, appLocale, alternativeLocale);
 		},
 
-		async getSubtitleFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-			return getMetaDatumFieldData('subtitle', setId, appLocale);
+		async getSubtitleFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, alternativeLocale?: AppLocale): Promise<StringMetaKeyFieldData> {
+			return getMetaDatumFieldData('subtitle', setId, appLocale, alternativeLocale);
 		},
 
-		async getDescriptionFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
-			return getMetaDatumFieldData('description', setId, appLocale);
+		async getDescriptionFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, alternativeLocale?: AppLocale): Promise<StringMetaKeyFieldData> {
+			return getMetaDatumFieldData('description', setId, appLocale, alternativeLocale);
 		},
 
 		async getPortrayedObjectDateFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
