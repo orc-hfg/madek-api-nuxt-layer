@@ -26,20 +26,20 @@ interface MadekMetaDatumPerson {
 }
 
 interface MadekPerson {
-	institution: string;
+	institution: string | null;
 	institutional_id: string | null;
 	description: string | null;
-	first_name: string;
+	first_name: string | null;
 	external_uris: string[];
 	identification_info: string | null;
 	searchable: string;
 	updated_at: string;
 	id: string;
-	last_name: string;
+	last_name: string | null;
 	admin_comment: string | null;
 	pseudonym: string | null;
 	created_at: string;
-	subtype: string;
+	subtype: string | null;
 }
 
 interface MadekMetaDatumKeyword {
@@ -57,7 +57,7 @@ interface MadekKeyword {
 	external_uris: string[];
 	meta_key_id: string;
 	creator_id: string;
-	term: string;
+	term: string | null;
 	updated_at: string;
 	rdf_class: string;
 	id: string;
@@ -68,8 +68,8 @@ interface MadekKeyword {
 interface MadekMetaDatumRole {
 	id: string;
 	meta_datum_id: string;
-	person_id: string;
-	role_id: string;
+	person_id: string | null;
+	role_id: string | null;
 	position: number;
 }
 
@@ -96,30 +96,42 @@ export interface MadekCollectionMetaDatumResponse {
 		other_media_entry_id: string | null;
 	};
 	'md_people'?: MadekMetaDatumPerson[];
-	'people'?: MadekPerson[];
+	'people'?: (MadekPerson | null)[];
 	'md_keywords'?: MadekMetaDatumKeyword[];
-	'keywords'?: MadekKeyword[];
+	'keywords'?: (MadekKeyword | null)[];
 	'md_roles'?: MadekMetaDatumRole[];
-	'roles'?: MadekRole[];
+	'roles'?: (MadekRole | null)[];
 }
 
 /**
  * Simplified person information for collection meta data.
  * Contains only essential display fields.
+ * Note: Names are normalized strings (never null), but may be empty if only one name is present.
  */
-export type PersonInfo = Pick<MadekPerson, 'first_name' | 'last_name'>;
+export interface PersonInfo {
+	first_name: string;
+	last_name: string;
+}
 
 /**
  * Simplified keyword information for collection meta data.
  * Contains only the term field for display.
+ * Note: Term is normalized and guaranteed to be a non-empty string (empty terms are filtered out).
  */
-export type KeywordInfo = Pick<MadekKeyword, 'term'>;
+export interface KeywordInfo {
+	term: string;
+}
 
 /**
  * Simplified role information for collection meta data.
  * Combines fields from md_roles (for linking) and roles (for display).
+ * Note: person_id and role_id are guaranteed non-null because server-side filtering removes null values.
  */
-type RoleInfo = Pick<MadekMetaDatumRole, 'person_id' | 'role_id'> & Pick<MadekRole, 'labels'>;
+interface RoleInfo {
+	person_id: string;
+	role_id: string;
+	labels: LocalizedLabel;
+}
 
 /*
  * Normalized collection meta datum with guaranteed non-null string value.

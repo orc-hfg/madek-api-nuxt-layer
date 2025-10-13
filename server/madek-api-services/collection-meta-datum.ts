@@ -88,19 +88,46 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 				META_KEYS_SHOULD_TRIM.has(metaKeyId),
 			),
 			...(response.people && {
-				people: response.people.map((person) => {
-					return {
-						first_name: normalizeTextContent(person.first_name, true),
-						last_name: normalizeTextContent(person.last_name, true),
-					};
-				}),
+				people: response.people
+					.flatMap((person) => {
+						if (person === null) {
+							return [];
+						}
+
+						const firstName = normalizeTextContent(person.first_name, true);
+						const lastName = normalizeTextContent(person.last_name, true);
+
+						if (!firstName && !lastName) {
+							return [];
+						}
+
+						return [
+							{
+								first_name: firstName,
+								last_name: lastName,
+							},
+						];
+					}),
 			}),
 			...(response.keywords && {
-				keywords: response.keywords.map((keyword) => {
-					return {
-						term: normalizeTextContent(keyword.term, true),
-					};
-				}),
+				keywords: response.keywords
+					.flatMap((keyword) => {
+						if (keyword === null) {
+							return [];
+						}
+
+						const term = normalizeTextContent(keyword.term, true);
+
+						if (!term) {
+							return [];
+						}
+
+						return [
+							{
+								term,
+							},
+						];
+					}),
 			}),
 
 			/*
@@ -113,27 +140,34 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 			 * a complete role info object with person_id and normalized labels.
 			 */
 			...(response.md_roles && response.roles && {
-				roles: response.md_roles.map((mdRole) => {
-					const role = response.roles?.find(roleItem => roleItem.id === mdRole.role_id);
-					const normalizedLabels: LocalizedLabel = {
-						// eslint-disable-next-line unicorn/no-null
-						de: null,
-						// eslint-disable-next-line unicorn/no-null
-						en: null,
-					};
+				roles: response.md_roles
+					.filter((mdRole): mdRole is { role_id: string; person_id: string } & typeof mdRole => mdRole.role_id !== null && mdRole.person_id !== null)
+					.flatMap((mdRole) => {
+						const role = response.roles?.find(roleItem => roleItem !== null && roleItem.id === mdRole.role_id);
 
-					if (role?.labels) {
+						if (!role) {
+							return [];
+						}
+
+						const normalizedLabels: LocalizedLabel = {
+							// eslint-disable-next-line unicorn/no-null
+							de: null,
+							// eslint-disable-next-line unicorn/no-null
+							en: null,
+						};
+
 						for (const [key, value] of Object.entries(role.labels)) {
 							normalizedLabels[key as keyof LocalizedLabel] = normalizeTextContent(value, true);
 						}
-					}
 
-					return {
-						role_id: mdRole.role_id,
-						person_id: mdRole.person_id,
-						labels: normalizedLabels,
-					};
-				}),
+						return [
+							{
+								role_id: mdRole.role_id,
+								person_id: mdRole.person_id,
+								labels: normalizedLabels,
+							},
+						];
+					}),
 			}),
 		};
 	}

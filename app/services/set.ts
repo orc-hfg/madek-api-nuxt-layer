@@ -187,7 +187,7 @@ function createSetService(): SetService {
 		};
 	}
 
-	function getRoleLabel(labels: MadekRole['labels'], appLocale: AppLocale, roleId: MadekRole['id']): string {
+	function getRoleLabel(labels: MadekRole['labels'], appLocale: AppLocale, roleId: MadekRole['id'] | null): string {
 		const primaryLabel = labels[appLocale];
 
 		if (isNonEmptyString(primaryLabel)) {
@@ -198,12 +198,12 @@ function createSetService(): SetService {
 		const fallbackLabel = labels[fallbackLocale];
 
 		if (isNonEmptyString(fallbackLabel)) {
-			appLogger.warn(`Role ${roleId}: Label for locale '${appLocale}' is empty, using fallback locale '${fallbackLocale}'. This may result in mixed languages in UI.`);
+			appLogger.warn(`Role ${roleId ?? 'unknown'}: Label for locale '${appLocale}' is empty, using fallback locale '${fallbackLocale}'. This may result in mixed languages in UI.`);
 
 			return fallbackLabel;
 		}
 
-		appLogger.warn(`Role ${roleId}: No label found for locale '${appLocale}' or fallback '${fallbackLocale}', returning empty string.`);
+		appLogger.warn(`Role ${roleId ?? 'unknown'}: No label found for locale '${appLocale}' or fallback '${fallbackLocale}', returning empty string.`);
 
 		return '';
 	}
