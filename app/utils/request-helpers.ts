@@ -23,13 +23,15 @@ export function forwardCookieHeader(
 		return;
 	}
 
-	const cookieValue = cookieHeader.cookie?.trim();
+	const { cookie } = cookieHeader;
 
-	if (cookieValue === undefined || cookieValue === '') {
+	if (cookie === undefined || isEmptyString(cookie)) {
 		logger.info('No cookie header found to forward.');
 
 		return;
 	}
+
+	const cookieValue = cookie.trim();
 
 	const requestHeaders = new Headers(context.options.headers);
 	requestHeaders.set('cookie', cookieValue);
