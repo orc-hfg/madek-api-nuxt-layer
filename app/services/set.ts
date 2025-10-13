@@ -1,5 +1,4 @@
-import type { CollectionKeywordInfo, CollectionPersonInfo } from '../../shared/types/collection-meta-datum';
-import type { AppLocale } from '../types/i18n-locales';
+import type { AppLocale } from '../types/locale';
 
 const SET_META_KEYS = {
 	authors: {
@@ -38,6 +37,10 @@ const SET_META_KEYS = {
 		de: 'institution:program_of_study',
 		en: 'institution:program_of_study',
 	},
+	otherCreativeParticipants: {
+		de: 'creative_work:other_creative_participants',
+		en: 'creative_work:other_creative_participants',
+	},
 	material: {
 		de: 'creative_work:material',
 		en: 'creative_work:material',
@@ -65,12 +68,22 @@ export interface StringMetaKeyFieldData {
 
 export interface PeopleMetaKeyFieldData {
 	readonly label: string;
-	readonly value: CollectionPersonInfo[];
+	readonly value: PersonInfo[];
 }
 
 export interface KeywordsMetaKeyFieldData {
 	readonly label: string;
-	readonly value: CollectionKeywordInfo[];
+	readonly value: KeywordInfo[];
+}
+
+interface ResolvedRoleInfo {
+	readonly roleName: string;
+	readonly person: PersonInfo;
+}
+
+export interface RolesMetaKeyFieldData {
+	readonly label: string;
+	readonly value: ResolvedRoleInfo[];
 }
 
 interface SetService {
@@ -84,6 +97,7 @@ interface SetService {
 	getKeywordsFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
 	getSemesterFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
 	getProgramOfStudyFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
+	getOtherCreativeParticipantsFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<RolesMetaKeyFieldData>;
 	getMaterialFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<KeywordsMetaKeyFieldData>;
 	getDimensionFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getDurationFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
@@ -91,12 +105,29 @@ interface SetService {
 }
 
 function createSetService(): SetService {
+	const appLogger = createAppLogger('Service: Set');
 	const setRepository = getSetRepository();
 
-	async function getMetaKeyLabel(metaKeyId: MadekMetaKeysGetPathParameters['id'], appLocale: AppLocale): Promise<MetaKeyLabels['labels'][AppLocale]> {
+	async function getMetaKeyLabel(metaKeyId: MadekMetaKeysGetPathParameters['id'], appLocale: AppLocale): Promise<string> {
 		const metaKeyLabels = await setRepository.getMetaKeyLabels(metaKeyId);
+		const primaryLabel = metaKeyLabels.labels[appLocale];
 
-		return metaKeyLabels.labels[appLocale];
+		if (isNonEmptyString(primaryLabel)) {
+			return primaryLabel;
+		}
+
+		const fallbackLocale = getAlternativeLocale(appLocale);
+		const fallbackLabel = metaKeyLabels.labels[fallbackLocale];
+
+		if (isNonEmptyString(fallbackLabel)) {
+			appLogger.warn(`Meta key ${metaKeyId}: Label for locale '${appLocale}' is empty, using fallback locale '${fallbackLocale}'. This may result in mixed languages in UI.`);
+
+			return fallbackLabel;
+		}
+
+		appLogger.warn(`Meta key ${metaKeyId}: No label found for locale '${appLocale}' or fallback '${fallbackLocale}', returning empty string.`);
+
+		return '';
 	}
 
 	async function getMetaDatum(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<CollectionMetaDatum> {
@@ -156,6 +187,58 @@ function createSetService(): SetService {
 		};
 	}
 
+	function getRoleLabel(labels: MadekRole['labels'], appLocale: AppLocale, roleId: MadekRole['id']): string {
+		const primaryLabel = labels[appLocale];
+
+		if (isNonEmptyString(primaryLabel)) {
+			return primaryLabel;
+		}
+
+		const fallbackLocale = getAlternativeLocale(appLocale);
+		const fallbackLabel = labels[fallbackLocale];
+
+		if (isNonEmptyString(fallbackLabel)) {
+			appLogger.warn(`Role ${roleId}: Label for locale '${appLocale}' is empty, using fallback locale '${fallbackLocale}'. This may result in mixed languages in UI.`);
+
+			return fallbackLabel;
+		}
+
+		appLogger.warn(`Role ${roleId}: No label found for locale '${appLocale}' or fallback '${fallbackLocale}', returning empty string.`);
+
+		return '';
+	}
+
+	async function getRolesBasedFieldData(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<RolesMetaKeyFieldData> {
+		const metaKeyId = SET_META_KEYS[field][appLocale];
+
+		const [metaKeyLabel, metaKeyValue] = await Promise.all([
+			getMetaKeyLabel(metaKeyId, appLocale),
+			getMetaDatum(field, setId, appLocale),
+		]);
+
+		const roles = metaKeyValue.roles ?? [];
+
+		const resolvedRoles = await Promise.all(
+			roles.map(async (role) => {
+				const roleName = getRoleLabel(role.labels, appLocale, role.role_id);
+				const person = await setRepository.getAdminPerson(role.person_id);
+
+				return {
+					roleName,
+					person: {
+						first_name: person.first_name,
+						last_name: person.last_name,
+					},
+				};
+			}),
+		);
+
+		return {
+			label: metaKeyLabel,
+			value: resolvedRoles,
+		};
+	}
+
 	return {
 		async getAuthorsFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<PeopleMetaKeyFieldData> {
 			return getPeopleBasedFieldData('authors', setId, appLocale);
@@ -195,6 +278,10 @@ function createSetService(): SetService {
 
 		async getProgramOfStudyFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<KeywordsMetaKeyFieldData> {
 			return getKeywordsBasedFieldData('programOfStudy', setId, appLocale);
+		},
+
+		async getOtherCreativeParticipantsFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<RolesMetaKeyFieldData> {
+			return getRolesBasedFieldData('otherCreativeParticipants', setId, appLocale);
 		},
 
 		async getMaterialFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<KeywordsMetaKeyFieldData> {

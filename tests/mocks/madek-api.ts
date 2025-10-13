@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import type { MadekApiRequestConfig } from '../../server/utils/madek-api';
+import type { MadekApiRequestConfig, PathParameters } from '../../server/utils/madek-api';
 import type { ServerLoggerMock } from './logger';
 import { vi } from 'vitest';
 import { createMadekApiClient } from '../../server/utils/madek-api';
@@ -21,7 +21,7 @@ interface ApiTestContext extends ServerLoggerMock {
 		fetchFromApi: (endpoint: string, config?: MadekApiRequestConfig) => Promise<unknown>;
 		fetchFromApiWithPathParameters: (
 			endpointTemplate: string,
-			pathParameters: Record<string, string>,
+			pathParameters: PathParameters,
 			config?: MadekApiRequestConfig
 		) => Promise<unknown>;
 	};

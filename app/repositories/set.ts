@@ -1,6 +1,7 @@
 import type { ApiFunction } from '../types/api';
 
 interface SetRepository {
+	getAdminPerson: (id: MadekAdminPeopleGetPathParameters['id']) => Promise<AdminPerson>;
 	getCollectionMetaDatum: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']) => Promise<CollectionMetaDatum>;
 	getMediaEntries: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id']) => Promise<CollectionMediaEntryArcs>;
 	getMediaEntryImagePreviews: (mediaEntryId: MadekMediaEntryPreviewPathParameters['media_entry_id']) => Promise<MediaEntryPreviewThumbnails>;
@@ -10,6 +11,10 @@ interface SetRepository {
 
 function createSetRepository($madekApi: ApiFunction): SetRepository {
 	return {
+		async getAdminPerson(id: MadekAdminPeopleGetPathParameters['id']): Promise<AdminPerson> {
+			return $madekApi(`/admin/people/${id}`);
+		},
+
 		async getCollectionMetaDatum(setId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']): Promise<CollectionMetaDatum> {
 			return $madekApi(`/collection/${setId}/meta-datum/${metaKeyId}`);
 		},

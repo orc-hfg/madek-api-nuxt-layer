@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3';
+import type { LocalizedLabel } from '../../shared/types/meta-keys';
 import { fiveMinutesCache } from '../constants/cache';
 import { handleServiceError, isH3NotFoundError } from '../utils/error-handling';
 import { createMadekApiClient } from '../utils/madek-api';
@@ -33,6 +34,7 @@ const META_KEYS_RETURN_EMPTY_STRING_ON_404 = new Set<MadekCollectionMetaDatumPat
  */
 const META_KEYS_RETURN_EMPTY_ARRAY_ON_404 = new Set<MadekCollectionMetaDatumPathParameters['meta_key_id']>([
 	'creative_work:material',
+	'creative_work:other_creative_participants',
 	'institution:program_of_study',
 	'institution:project_category',
 	'institution:semester',
@@ -60,7 +62,7 @@ const META_KEYS_SHOULD_TRIM = new Set<MadekCollectionMetaDatumPathParameters['me
 
 export async function getCollectionMetaDatum(event: H3Event, collectionId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']): Promise<CollectionMetaDatum> {
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
-	const serverLogger = createServerLogger(event, 'Service: getCollectionMetaDatum');
+	const serverLogger = createServerLogger(event, 'API Service: getCollectionMetaDatum');
 
 	serverLogger.info('Collection ID:', collectionId);
 	serverLogger.info('Meta Key ID:', metaKeyId);
@@ -81,7 +83,6 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 		);
 
 		return {
-			// Normalize line endings and conditionally trim based on meta key type
 			string: normalizeTextContent(
 				response['meta-data'].string,
 				META_KEYS_SHOULD_TRIM.has(metaKeyId),
@@ -101,6 +102,39 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 					};
 				}),
 			}),
+
+			/*
+			 * Merge md_roles with roles to create combined role information
+			 *
+			 * md_roles contains the person-role associations (person_id, role_id)
+			 * roles contains the role definitions (labels, metadata)
+			 *
+			 * We merge them by matching md_roles.role_id with roles.id to create
+			 * a complete role info object with person_id and normalized labels.
+			 */
+			...(response.md_roles && response.roles && {
+				roles: response.md_roles.map((mdRole) => {
+					const role = response.roles?.find(roleItem => roleItem.id === mdRole.role_id);
+					const normalizedLabels: LocalizedLabel = {
+						// eslint-disable-next-line unicorn/no-null
+						de: null,
+						// eslint-disable-next-line unicorn/no-null
+						en: null,
+					};
+
+					if (role?.labels) {
+						for (const [key, value] of Object.entries(role.labels)) {
+							normalizedLabels[key as keyof LocalizedLabel] = normalizeTextContent(value, true);
+						}
+					}
+
+					return {
+						role_id: mdRole.role_id,
+						person_id: mdRole.person_id,
+						labels: normalizedLabels,
+					};
+				}),
+			}),
 		};
 	}
 	catch (error) {
@@ -113,6 +147,7 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 					string: '',
 					people: [],
 					keywords: [],
+					roles: [],
 				};
 			}
 

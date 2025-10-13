@@ -1,5 +1,5 @@
-import type { KeywordsMetaKeyFieldData, PeopleMetaKeyFieldData, StringMetaKeyFieldData } from '../services/set';
-import type { AppLocale } from '../types/i18n-locales';
+import type { KeywordsMetaKeyFieldData, PeopleMetaKeyFieldData, RolesMetaKeyFieldData, StringMetaKeyFieldData } from '../services/set';
+import type { AppLocale } from '../types/locale';
 
 interface SetData {
 	authors: PeopleMetaKeyFieldData;
@@ -14,6 +14,7 @@ interface SetData {
 	keywords: KeywordsMetaKeyFieldData;
 	semester: KeywordsMetaKeyFieldData;
 	programOfStudy: KeywordsMetaKeyFieldData;
+	otherCreativeParticipants: RolesMetaKeyFieldData;
 	material: KeywordsMetaKeyFieldData;
 	dimension: StringMetaKeyFieldData;
 	duration: StringMetaKeyFieldData;
@@ -25,7 +26,7 @@ export const useSetStore = defineStore('set', () => {
 
 	async function refresh(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<void> {
 		const setService = getSetService();
-		const alternativeLocale: AppLocale = appLocale === 'de' ? 'en' : 'de';
+		const alternativeLocale = getAlternativeLocale(appLocale);
 
 		/*
 		 * Execute all service calls in parallel to minimize latency
@@ -44,6 +45,7 @@ export const useSetStore = defineStore('set', () => {
 			keywordsFieldData,
 			semesterFieldData,
 			programOfStudyFieldData,
+			otherCreativeParticipantsFieldData,
 			materialFieldData,
 			dimensionFieldData,
 			durationFieldData,
@@ -61,6 +63,7 @@ export const useSetStore = defineStore('set', () => {
 			setService.getKeywordsFieldData(setId, appLocale),
 			setService.getSemesterFieldData(setId, appLocale),
 			setService.getProgramOfStudyFieldData(setId, appLocale),
+			setService.getOtherCreativeParticipantsFieldData(setId, appLocale),
 			setService.getMaterialFieldData(setId, appLocale),
 			setService.getDimensionFieldData(setId, appLocale),
 			setService.getDurationFieldData(setId, appLocale),
@@ -80,6 +83,7 @@ export const useSetStore = defineStore('set', () => {
 			keywords: keywordsFieldData,
 			semester: semesterFieldData,
 			programOfStudy: programOfStudyFieldData,
+			otherCreativeParticipants: otherCreativeParticipantsFieldData,
 			material: materialFieldData,
 			dimension: dimensionFieldData,
 			duration: durationFieldData,

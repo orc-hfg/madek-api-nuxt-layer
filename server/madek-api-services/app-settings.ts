@@ -3,7 +3,7 @@ import { twentyFourHoursCache } from '../constants/cache';
 
 export async function getAppSettings(event: H3Event): Promise<AppSettings> {
 	const { fetchFromApi } = createMadekApiClient<MadekAppSettingsResponse>(event);
-	const serverLogger = createServerLogger(event, 'Service: getAppSettings');
+	const serverLogger = createServerLogger(event, 'API Service: getAppSettings');
 
 	try {
 		const response = await fetchFromApi('app-settings', {

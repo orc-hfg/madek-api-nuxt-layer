@@ -7,6 +7,12 @@ const FIXED_COLLECTION_IDS = [
 ] as const;
 
 export const mockData = {
+	getAdminPerson: (_id: MadekAdminPeopleGetPathParameters['id']): AdminPerson => {
+		return {
+			first_name: 'Anja',
+			last_name: 'Casser',
+		};
+	},
 	getCollectionMediaEntryArcs: (collectionId: MadekCollectionMediaEntryArcsPathParameters['collection_id']): CollectionMediaEntryArcs => {
 		switch (collectionId) {
 			case 'collection-id-1': {

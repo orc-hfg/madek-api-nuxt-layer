@@ -3,7 +3,7 @@ import { twentyFourHoursCache } from '../constants/cache';
 
 export async function getMetaKeyLabels(event: H3Event, id: MadekMetaKeysGetPathParameters['id']): Promise<MetaKeyLabels> {
 	const { fetchFromApi } = createMadekApiClient<MadekMetaKeysGetResponse>(event);
-	const serverLogger = createServerLogger(event, 'Service: getMetaKeyLabels');
+	const serverLogger = createServerLogger(event, 'API Service: getMetaKeyLabels');
 
 	serverLogger.info('MetaKey ID:', id);
 

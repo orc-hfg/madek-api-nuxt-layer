@@ -8,6 +8,12 @@ import { createServerLogger } from './server-logger';
 
 const LOGGER_SOURCE = 'Utility: madekApi';
 
+type QueryParameters = Record<string, string>;
+
+type HttpHeaders = Record<string, string>;
+
+export type PathParameters = Record<string, string>;
+
 export interface MadekApiOptions {
 	isAuthenticationNeeded?: boolean;
 	query?: NitroFetchOptions<NitroFetchRequest>['query'];
@@ -18,9 +24,9 @@ export interface MadekApiRequestConfig {
 	publicDataCache?: CacheOptions;
 }
 
-export function generateCacheKey(endpoint: string, query?: Record<string, string>): string {
+export function generateCacheKey(endpoint: string, query?: QueryParameters): string {
 	// Ensure query parameters are consistently ordered by sorting them alphabetically
-	const sortedQuery: Record<string, string> = {};
+	const sortedQuery: QueryParameters = {};
 	if (query) {
 		for (const key of Object.keys(query)
 			.toSorted((a, b) => a.localeCompare(b))) {
@@ -47,9 +53,9 @@ export function getAuthenticationHeaders(
 	event: H3Event,
 	apiToken?: string,
 	isDevelopmentEnvironment = defaultIsDevelopmentEnvironment,
-): Record<string, string> {
+): HttpHeaders {
 	const serverLogger = createServerLogger(event, LOGGER_SOURCE);
-	const headers: Record<string, string> = {};
+	const headers: HttpHeaders = {};
 
 	// For development: use API token if available
 	if (isDevelopmentEnvironment && apiToken !== undefined && apiToken.trim() !== '') {
@@ -123,7 +129,7 @@ export function shouldUseCaching(
 	return isServerSideCachingEnabled && !isAuthenticationNeeded && cacheOptions !== undefined;
 }
 
-function replacePathParameters(template: string, parameters: Record<string, string>): string {
+function replacePathParameters(template: string, parameters: PathParameters): string {
 	let result = template;
 
 	for (const [key, value] of Object.entries(parameters)) {
@@ -135,7 +141,7 @@ function replacePathParameters(template: string, parameters: Record<string, stri
 
 export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetchData): {
 	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
-	fetchFromApiWithPathParameters: (endpointTemplate: string, endpointPathParameters: Record<string, string>, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
+	fetchFromApiWithPathParameters: (endpointTemplate: string, endpointPathParameters: PathParameters, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
 } {
 	const serverLogger = createServerLogger(event, LOGGER_SOURCE);
 	const config = useRuntimeConfig(event);
@@ -169,7 +175,7 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 		return fetchDataFunction<T>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken);
 	}
 
-	async function fetchFromApiWithPathParameters(endpointTemplate: string, endpointPathParameters: Record<string, string>, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
+	async function fetchFromApiWithPathParameters(endpointTemplate: string, endpointPathParameters: PathParameters, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
 		const endpoint = replacePathParameters(endpointTemplate, endpointPathParameters);
 
 		return fetchFromApi(endpoint, apiRequestConfig);

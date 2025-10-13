@@ -1,4 +1,5 @@
 import type { paths } from '../../generated/api/madek-api';
+import type { LocalizedLabel } from './meta-keys';
 
 type MadekCollectionMetaDatumGet = paths['/api-v2/collection/{collection_id}/meta-datum/{meta_key_id}']['get'];
 
@@ -64,6 +65,23 @@ interface MadekKeyword {
 	created_at: string;
 }
 
+interface MadekMetaDatumRole {
+	id: string;
+	meta_datum_id: string;
+	person_id: string;
+	role_id: string;
+	position: number;
+}
+
+export interface MadekRole {
+	id: string;
+	labels: LocalizedLabel;
+	meta_key_id: string;
+	creator_id: string;
+	created_at: string;
+	updated_at: string;
+}
+
 export interface MadekCollectionMetaDatumResponse {
 	'meta-data': {
 		created_by_id: string;
@@ -81,19 +99,27 @@ export interface MadekCollectionMetaDatumResponse {
 	'people'?: MadekPerson[];
 	'md_keywords'?: MadekMetaDatumKeyword[];
 	'keywords'?: MadekKeyword[];
+	'md_roles'?: MadekMetaDatumRole[];
+	'roles'?: MadekRole[];
 }
 
 /**
  * Simplified person information for collection meta data.
  * Contains only essential display fields.
  */
-export type CollectionPersonInfo = Pick<MadekPerson, 'first_name' | 'last_name'>;
+export type PersonInfo = Pick<MadekPerson, 'first_name' | 'last_name'>;
 
 /**
  * Simplified keyword information for collection meta data.
  * Contains only the term field for display.
  */
-export type CollectionKeywordInfo = Pick<MadekKeyword, 'term'>;
+export type KeywordInfo = Pick<MadekKeyword, 'term'>;
+
+/**
+ * Simplified role information for collection meta data.
+ * Combines fields from md_roles (for linking) and roles (for display).
+ */
+type RoleInfo = Pick<MadekMetaDatumRole, 'person_id' | 'role_id'> & Pick<MadekRole, 'labels'>;
 
 /*
  * Normalized collection meta datum with guaranteed non-null string value.
@@ -104,7 +130,8 @@ export type CollectionKeywordInfo = Pick<MadekKeyword, 'term'>;
  */
 export interface CollectionMetaDatum {
 	string: string;
-	people?: CollectionPersonInfo[];
-	keywords?: CollectionKeywordInfo[];
+	people?: PersonInfo[];
+	keywords?: KeywordInfo[];
+	roles?: RoleInfo[];
 }
 export type CollectionMetaData = CollectionMetaDatum[];

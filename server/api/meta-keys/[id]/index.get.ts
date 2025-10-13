@@ -1,8 +1,7 @@
 import type { H3Event } from 'h3';
-import { mockData } from '../../madek-api-mock/data';
-import { getMetaKeyLabels } from '../../madek-api-services/meta-keys';
-import { getApiMockOrExecute } from '../../madek-api-services/mock-handler';
-import { routeParameterSchemas } from '../../schemas/madek-api-route';
+import { mockData } from '../../../madek-api-mock/data';
+import { getMetaKeyLabels } from '../../../madek-api-services/meta-keys';
+import { routeParameterSchemas } from '../../../schemas/madek-api-route';
 
 export default defineEventHandler(async (event: H3Event) => {
 	const parameters = await validateRouteParameters(event, routeParameterSchemas.metaKeysId);

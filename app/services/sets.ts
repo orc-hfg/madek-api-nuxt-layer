@@ -1,4 +1,4 @@
-import type { AppLocale } from '../types/i18n-locales';
+import type { AppLocale } from '../types/locale';
 import { getSetService } from './set';
 
 interface SetsService {
