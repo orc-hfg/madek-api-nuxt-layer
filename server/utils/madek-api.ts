@@ -58,7 +58,7 @@ export function getAuthenticationHeaders(
 	const headers: HttpHeaders = {};
 
 	// For development: use API token if available
-	if (isDevelopmentEnvironment && apiToken !== undefined && apiToken.trim() !== '') {
+	if (isDevelopmentEnvironment && isNonEmptyString(apiToken)) {
 		serverLogger.info('Using API token for authentication.');
 		headers.Authorization = `token ${apiToken}`;
 	}
@@ -66,7 +66,7 @@ export function getAuthenticationHeaders(
 	// For production: forward cookie from request if available
 	else if (!isDevelopmentEnvironment) {
 		const { cookie } = getRequestHeaders(event);
-		if (cookie !== undefined) {
+		if (isNonEmptyString(cookie)) {
 			serverLogger.info('Using cookie for authentication.');
 			headers.cookie = cookie;
 		}

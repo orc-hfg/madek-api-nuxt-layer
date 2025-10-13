@@ -4,7 +4,7 @@ export const useUserStore = defineStore('user', () => {
 	const firstName = shallowRef<AuthInfo['first_name']>();
 	const lastName = shallowRef<AuthInfo['last_name']>();
 	const displayName = computed(() => {
-		if (firstName.value !== '' && lastName.value !== '') {
+		if (isNonEmptyString(firstName.value) && isNonEmptyString(lastName.value)) {
 			return `${firstName.value} ${lastName.value}`;
 		}
 
