@@ -11,32 +11,12 @@ export default defineEventHandler(async (event: H3Event) => {
 		meta_key_id: parameters.meta_key_id,
 	};
 
-	/*
-	 *Return getApiMockOrExecute(
-	 *	event,
-	 *	'API: collection meta-datum',
-	 *	'Returning mock: collection meta-datum',
-	 *	{ collectionId: pathParameters.collection_id, metaKeyId: pathParameters.meta_key_id },
-	 *	() => mockData.getCollectionMetaDatum(pathParameters.collection_id, pathParameters.meta_key_id),
-	 *	async () => getCollectionMetaDatum(event, pathParameters.collection_id, pathParameters.meta_key_id),
-	 *);
-	 */
-
-	const apiMockResult = await getApiMockOrUndefined(
+	return getApiMockOrExecute(
 		event,
 		'API: collection meta-datum',
 		'Returning mock: collection meta-datum',
 		{ collectionId: pathParameters.collection_id, metaKeyId: pathParameters.meta_key_id },
 		() => mockData.getCollectionMetaDatum(pathParameters.collection_id, pathParameters.meta_key_id),
-	);
-
-	if (apiMockResult !== undefined) {
-		return apiMockResult;
-	}
-
-	return getCollectionMetaDatum(
-		event,
-		pathParameters.collection_id,
-		pathParameters.meta_key_id,
+		async () => getCollectionMetaDatum(event, pathParameters.collection_id, pathParameters.meta_key_id),
 	);
 });

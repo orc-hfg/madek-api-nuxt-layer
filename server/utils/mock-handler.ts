@@ -34,22 +34,3 @@ export async function getApiMockOrExecute<T>(
 
 	return realApiFunction();
 }
-
-export async function getApiMockOrUndefined<T>(
-	event: H3Event,
-	loggerContext: string,
-	logMessage: string,
-	logData: Record<string, unknown> | undefined,
-	mockDataFunction: () => T | Promise<T>,
-): Promise<T | undefined> {
-	return getApiMockOrExecute(
-		event,
-		loggerContext,
-		logMessage,
-		logData,
-		mockDataFunction,
-
-		// Returns undefined when mocks are disabled
-		() => undefined as T,
-	);
-}

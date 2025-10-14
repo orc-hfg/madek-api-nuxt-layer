@@ -4,7 +4,7 @@ import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setupServerLoggerMock } from '../../tests/mocks/logger';
 import { createRuntimeConfigMock } from '../../tests/mocks/runtime-config';
-import { getApiMockOrExecute, getApiMockOrUndefined } from './mock-handler';
+import { getApiMockOrExecute } from './mock-handler';
 
 const mockEvent = {} as H3Event;
 
@@ -72,57 +72,6 @@ describe('getApiMockOrExecute()', () => {
 
 		expect(result).toStrictEqual(realData);
 		expect(realApiFunction).toHaveBeenCalledOnce();
-		expect(mockDataFunction).not.toHaveBeenCalled();
-	});
-});
-
-describe('getApiMockOrUndefined()', () => {
-	let mockDataFunction: ReturnType<typeof vi.fn>;
-	let loggerMock: ReturnType<typeof setupServerLoggerMock>;
-
-	beforeEach(() => {
-		mockDataFunction = vi.fn();
-		loggerMock = setupServerLoggerMock();
-	});
-
-	afterEach(() => {
-		vi.restoreAllMocks();
-	});
-
-	it('should return mock data when API mocks are enabled', async () => {
-		runtimeConfigReturnValue = createRuntimeConfigMock({ enableApiMock: true });
-		const mockData = { id: 'test-mock' };
-		mockDataFunction.mockReturnValue(mockData);
-
-		const result = await getApiMockOrUndefined<{ id: string }>(
-			mockEvent,
-			'Test Context',
-			'Test message',
-			undefined,
-			mockDataFunction,
-		);
-
-		expect(result).toStrictEqual(mockData);
-		expect(mockDataFunction).toHaveBeenCalledOnce();
-
-		expect(loggerMock.serverLoggerSpy).toHaveBeenCalledWith(mockEvent, 'Test Context');
-		expect(loggerMock.loggerInfoSpy).toHaveBeenCalledWith('Test message', undefined);
-	});
-
-	it('should return undefined when API mocks are disabled', async () => {
-		runtimeConfigReturnValue = createRuntimeConfigMock({ enableApiMock: false });
-		const mockData = { id: 'test-mock' };
-		mockDataFunction.mockReturnValue(mockData);
-
-		const result = await getApiMockOrUndefined<{ id: string }>(
-			mockEvent,
-			'Test Context',
-			'Test message',
-			undefined,
-			mockDataFunction,
-		);
-
-		expect(result).toBeUndefined();
 		expect(mockDataFunction).not.toHaveBeenCalled();
 	});
 });
