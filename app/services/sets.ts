@@ -71,7 +71,7 @@ function createSetsService(): SetsService {
 			const coverImagePreviews = await getCoverImagePreviews(setId);
 
 			if (!coverImagePreviews) {
-				appLogger.error('getCoverImageThumbnailSources: No cover image previews found.', setId);
+				appLogger.warn('getCoverImageThumbnailSources: No cover image previews found.', setId);
 
 				return {};
 			}
@@ -81,7 +81,7 @@ function createSetsService(): SetsService {
 				const previewId = getPreviewIdByThumbnailType(coverImagePreviews, thumbnailType);
 
 				if (previewId === undefined) {
-					appLogger.error('getCoverImageThumbnailSources: No preview found for thumbnail type.', thumbnailType);
+					appLogger.warn('getCoverImageThumbnailSources: No preview found for thumbnail type.', thumbnailType);
 				}
 
 				if (previewId !== undefined) {
