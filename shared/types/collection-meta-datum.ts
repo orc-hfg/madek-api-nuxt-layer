@@ -103,31 +103,43 @@ export interface MadekCollectionMetaDatumResponse {
 	'roles'?: (MadekRole | null)[];
 }
 
-/**
+/*
  * Simplified person information for collection meta data.
  * Contains only essential display fields.
- * Note: Names are normalized strings (never null), but may be empty if only one name is present.
+ *
+ * Server-side filtering guarantees:
+ * - Null persons are removed
+ * - At least one name field (first_name or last_name) contains a non-empty value
+ * - Individual fields may be empty strings if only one name is present
  */
 export interface PersonInfo {
 	first_name: string;
 	last_name: string;
 }
 
-/**
+/*
  * Simplified keyword information for collection meta data.
  * Contains only the term field for display.
- * Note: Term is normalized and guaranteed to be a non-empty string (empty terms are filtered out).
+ *
+ * Server-side filtering guarantees:
+ * - Null keywords are removed
+ * - Term field always contains a non-empty value (empty terms are filtered out)
  */
 export interface KeywordInfo {
 	term: string;
 }
 
-/**
+/*
  * Simplified role information for collection meta data.
  * Combines fields from md_roles (for linking) and roles (for display).
- * Note: person_id and role_id are guaranteed non-null because server-side filtering removes null values.
+ *
+ * Server-side filtering guarantees:
+ * - Null md_roles entries are removed
+ * - person_id and role_id are non-null (null values filtered out)
+ * - Role definitions without matching role_id are excluded
+ * - Label values are normalized but may be null if not provided in source data
  */
-interface RoleInfo {
+export interface RoleInfo {
 	person_id: string;
 	role_id: string;
 	labels: LocalizedLabel;

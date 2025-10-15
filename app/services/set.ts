@@ -110,24 +110,8 @@ function createSetService(): SetService {
 
 	async function getMetaKeyLabel(metaKeyId: MadekMetaKeysGetPathParameters['id'], appLocale: AppLocale): Promise<string> {
 		const metaKeyLabels = await setRepository.getMetaKeyLabels(metaKeyId);
-		const primaryLabel = metaKeyLabels.labels[appLocale];
 
-		if (isNonEmptyString(primaryLabel)) {
-			return primaryLabel;
-		}
-
-		const fallbackLocale = getAlternativeLocale(appLocale);
-		const fallbackLabel = metaKeyLabels.labels[fallbackLocale];
-
-		if (isNonEmptyString(fallbackLabel)) {
-			appLogger.warn(`Meta key ${metaKeyId}: Label for locale '${appLocale}' is empty, using fallback locale '${fallbackLocale}'. This may result in mixed languages in UI.`);
-
-			return fallbackLabel;
-		}
-
-		appLogger.warn(`Meta key ${metaKeyId}: No label found for locale '${appLocale}' or fallback '${fallbackLocale}', returning empty string.`);
-
-		return '';
+		return getLocalizedLabel(metaKeyLabels.labels, appLocale, 'Meta key', metaKeyId, appLogger);
 	}
 
 	async function getMetaDatum(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<CollectionMetaDatum> {
@@ -187,25 +171,8 @@ function createSetService(): SetService {
 		};
 	}
 
-	function getRoleLabel(labels: MadekRole['labels'], appLocale: AppLocale, roleId: MadekRole['id'] | null): string {
-		const primaryLabel = labels[appLocale];
-
-		if (isNonEmptyString(primaryLabel)) {
-			return primaryLabel;
-		}
-
-		const fallbackLocale = getAlternativeLocale(appLocale);
-		const fallbackLabel = labels[fallbackLocale];
-
-		if (isNonEmptyString(fallbackLabel)) {
-			appLogger.warn(`Role ${roleId ?? 'unknown'}: Label for locale '${appLocale}' is empty, using fallback locale '${fallbackLocale}'. This may result in mixed languages in UI.`);
-
-			return fallbackLabel;
-		}
-
-		appLogger.warn(`Role ${roleId ?? 'unknown'}: No label found for locale '${appLocale}' or fallback '${fallbackLocale}', returning empty string.`);
-
-		return '';
+	function getRoleLabel(labels: MadekRole['labels'], appLocale: AppLocale, roleId: MadekRole['id']): string {
+		return getLocalizedLabel(labels, appLocale, 'Role', roleId, appLogger);
 	}
 
 	async function getRolesBasedFieldData(field: SetMetaKeyField, setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<RolesMetaKeyFieldData> {
@@ -233,9 +200,14 @@ function createSetService(): SetService {
 			}),
 		);
 
+		// Filter out roles where person has no valid name (consistent with PersonInfo filtering)
+		const validRoles = resolvedRoles.filter(
+			role => role.person.first_name || role.person.last_name,
+		);
+
 		return {
 			label: metaKeyLabel,
-			value: resolvedRoles,
+			value: validRoles,
 		};
 	}
 
