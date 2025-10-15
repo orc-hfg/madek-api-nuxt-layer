@@ -25,7 +25,7 @@ export function forwardCookieHeader(
 
 	const { cookie } = cookieHeader;
 
-	if (cookie === undefined || isEmptyString(cookie)) {
+	if (cookie === undefined || !isNonEmptyString(cookie)) {
 		logger.info('No cookie header found to forward.');
 
 		return;

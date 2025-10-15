@@ -190,27 +190,37 @@ function createSetService(): SetService {
 		 * Note: We must fetch AdminPerson data before we can determine if the person
 		 * has valid names, so filtering happens after resolution (not before)
 		 */
-		const resolvedRoles = await Promise.all(
-			roles.map(async (role) => {
-				const roleName = getRoleLabel(role.labels, appLocale, role.role_id);
-				const person = await setRepository.getAdminPerson(role.person_id);
+		const rolePromises = roles.map(async (role): Promise<{ roleName: string; person: AdminPerson | undefined }> => {
+			const roleName = getRoleLabel(role.labels, appLocale, role.role_id);
+			const person = await setRepository.getAdminPerson(role.person_id);
 
-				return {
-					roleName,
-					person: {
-						first_name: person.first_name,
-						last_name: person.last_name,
-					},
-				};
-			}),
-		);
+			return {
+				roleName,
+				person,
+			};
+		});
+
+		const resolvedRoles = await Promise.all(rolePromises);
 
 		/*
-		 * Filter out roles where person has no valid name
+		 * Filter out roles where:
+		 * - Person does not exist (undefined from 404, person was deleted)
+		 * - Person has no valid name (both fields empty)
+		 *
 		 * Note: This filtering must happen in app layer because person data
 		 * is fetched separately via AdminPerson API (not available in API layer)
 		 */
-		const validRoles = resolvedRoles.filter(role => role.person.first_name || role.person.last_name);
+		const validRoles = resolvedRoles
+			.filter((role): role is { roleName: string; person: AdminPerson } => role.person !== undefined && Boolean(role.person.first_name || role.person.last_name))
+			.map((role) => {
+				return {
+					roleName: role.roleName,
+					person: {
+						first_name: role.person.first_name,
+						last_name: role.person.last_name,
+					},
+				};
+			});
 
 		return {
 			label: metaKeyLabel,
