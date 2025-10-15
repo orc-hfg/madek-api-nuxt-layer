@@ -104,13 +104,13 @@ export interface MadekCollectionMetaDatumResponse {
 }
 
 /*
- * Simplified person information for collection meta data.
- * Contains only essential display fields.
+ * Person information with normalized string fields.
  *
- * Server-side filtering guarantees:
- * - Null persons are removed
- * - At least one name field (first_name or last_name) contains a non-empty value
- * - Individual fields may be empty strings if only one name is present
+ * API service layer guarantees:
+ * - Null entries are removed
+ * - Name fields are normalized (trimmed)
+ * - At least one name field (first_name OR last_name) is non-empty
+ * - Individual fields may still be empty strings if only one name is present
  */
 export interface PersonInfo {
 	first_name: string;
@@ -118,26 +118,29 @@ export interface PersonInfo {
 }
 
 /*
- * Simplified keyword information for collection meta data.
- * Contains only the term field for display.
+ * Keyword information with normalized term field.
  *
- * Server-side filtering guarantees:
- * - Null keywords are removed
- * - Term field always contains a non-empty value (empty terms are filtered out)
+ * API service layer guarantees:
+ * - Null entries are removed
+ * - Term is normalized (trimmed)
+ * - Term is always non-empty
  */
 export interface KeywordInfo {
 	term: string;
 }
 
 /*
- * Simplified role information for collection meta data.
- * Combines fields from md_roles (for linking) and roles (for display).
+ * Role information combining person-role associations with role definitions.
  *
- * Server-side filtering guarantees:
- * - Null md_roles entries are removed
- * - person_id and role_id are non-null (null values filtered out)
- * - Role definitions without matching role_id are excluded
- * - Label values are normalized but may be null if not provided in source data
+ * API service layer guarantees:
+ * - Null entries are removed
+ * - person_id and role_id are non-null
+ * - Roles without matching role definitions are excluded (referential integrity)
+ * - Labels are normalized (may be null if not provided in source)
+ *
+ * Note: Person name validation happens in app service layer because
+ * person data must be fetched separately via AdminPerson API.
+ * See app/services/set.ts getRolesBasedFieldData() for filtering logic.
  */
 export interface RoleInfo {
 	person_id: string;
@@ -146,11 +149,14 @@ export interface RoleInfo {
 }
 
 /*
- * Normalized collection meta datum with guaranteed non-null string value.
+ * Normalized collection meta datum response.
  *
- * This type represents the data AFTER server-side normalization:
- * - null values are converted to empty strings
- * - Line endings are normalized to \n for consistent hydration
+ * API service layer guarantees:
+ * - string field is never null (converted to empty string)
+ * - Line endings normalized to \n for consistent hydration
+ * - people: Only entries with at least one non-empty name (see PersonInfo)
+ * - keywords: Only entries with non-empty terms (see KeywordInfo)
+ * - roles: Valid structure, but person name validation happens in app layer (see RoleInfo)
  */
 export interface CollectionMetaDatum {
 	string: string;
@@ -158,4 +164,5 @@ export interface CollectionMetaDatum {
 	keywords?: KeywordInfo[];
 	roles?: RoleInfo[];
 }
+
 export type CollectionMetaData = CollectionMetaDatum[];

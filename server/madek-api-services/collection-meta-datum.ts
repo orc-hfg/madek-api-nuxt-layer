@@ -5,6 +5,18 @@ import { handleServiceError, isH3NotFoundError } from '../utils/error-handling';
 import { createMadekApiClient } from '../utils/madek-api';
 
 /*
+ * API Service Layer - Collection Meta Datum
+ *
+ * Responsibility: Data retrieval and normalization
+ * - Fetch data from external APIs
+ * - Normalize data (null conversion, whitespace trimming, line ending normalization)
+ * - Technical filtering: Data structure integrity (null-safety, referential integrity)
+ *
+ * App Service Layer handles business-logic filtering (e.g., filtering entries with empty display values)
+ * See readme.development.md "Service Layer Architektur" for complete architecture documentation
+ */
+
+/*
  * Fallback rules for set title meta keys
  * When a requested meta key returns 404, try the fallback meta key instead
  * Example: 'creative_work:title_en' (English) → 'madek_core:title' (German fallback)
@@ -87,47 +99,48 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 				response['meta-data'].string,
 				META_KEYS_SHOULD_TRIM.has(metaKeyId),
 			),
+
+			/*
+			 * People normalization and filtering (API Layer responsibility)
+			 *
+			 * API Layer filters for DATA INTEGRITY:
+			 * - Remove null entries (null-safety)
+			 * - Normalize name fields to empty strings
+			 * - Filter out people where BOTH name fields are empty (structural validity)
+			 *
+			 * App Layer filters for BUSINESS LOGIC (see app/services/set.ts):
+			 * - Roles filtering requires AdminPerson API data (not available here)
+			 *
+			 * Guarantees: PersonInfo always has at least one non-empty name field
+			 */
 			...(response.people && {
 				people: response.people
-					.flatMap((person) => {
-						if (person === null) {
-							return [];
-						}
-
-						const firstName = normalizeTextContent(person.first_name, true);
-						const lastName = normalizeTextContent(person.last_name, true);
-
-						if (!firstName && !lastName) {
-							return [];
-						}
-
-						return [
-							{
-								first_name: firstName,
-								last_name: lastName,
-							},
-						];
-					}),
+					.filter((person): person is NonNullable<typeof person> => person !== null)
+					.map((person) => {
+						return {
+							first_name: normalizeTextContent(person.first_name, true),
+							last_name: normalizeTextContent(person.last_name, true),
+						};
+					})
+					.filter(person => person.first_name || person.last_name),
 			}),
+
+			/*
+			 * Keywords normalization and filtering
+			 * - Remove null entries (null-safety)
+			 * - Normalize term to empty string
+			 * - Filter out keywords with empty terms (data integrity)
+			 * Guarantees: KeywordInfo always has non-empty term
+			 */
 			...(response.keywords && {
 				keywords: response.keywords
-					.flatMap((keyword) => {
-						if (keyword === null) {
-							return [];
-						}
-
-						const term = normalizeTextContent(keyword.term, true);
-
-						if (!term) {
-							return [];
-						}
-
-						return [
-							{
-								term,
-							},
-						];
-					}),
+					.filter((keyword): keyword is NonNullable<typeof keyword> => keyword !== null)
+					.map((keyword) => {
+						return {
+							term: normalizeTextContent(keyword.term, true),
+						};
+					})
+					.filter(keyword => keyword.term),
 			}),
 
 			/*
@@ -138,6 +151,11 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 			 *
 			 * We merge them by matching md_roles.role_id with roles.id to create
 			 * a complete role info object with person_id and normalized labels.
+			 *
+			 * Note: Technical filtering (null-safety, referential integrity) happens here
+			 * in the API service layer to ensure data structure can be built.
+			 * Business-logic filtering (e.g., person name validity) happens in the
+			 * app service layer (see app/services/set.ts getRolesBasedFieldData).
 			 */
 			...(response.md_roles && response.roles && {
 				roles: response.md_roles

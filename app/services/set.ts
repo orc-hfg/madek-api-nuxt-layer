@@ -185,6 +185,11 @@ function createSetService(): SetService {
 
 		const roles = metaKeyValue.roles ?? [];
 
+		/*
+		 * Resolve all roles with their person information first
+		 * Note: We must fetch AdminPerson data before we can determine if the person
+		 * has valid names, so filtering happens after resolution (not before)
+		 */
 		const resolvedRoles = await Promise.all(
 			roles.map(async (role) => {
 				const roleName = getRoleLabel(role.labels, appLocale, role.role_id);
@@ -200,10 +205,12 @@ function createSetService(): SetService {
 			}),
 		);
 
-		// Filter out roles where person has no valid name (consistent with PersonInfo filtering)
-		const validRoles = resolvedRoles.filter(
-			role => role.person.first_name || role.person.last_name,
-		);
+		/*
+		 * Filter out roles where person has no valid name
+		 * Note: This filtering must happen in app layer because person data
+		 * is fetched separately via AdminPerson API (not available in API layer)
+		 */
+		const validRoles = resolvedRoles.filter(role => role.person.first_name || role.person.last_name);
 
 		return {
 			label: metaKeyLabel,
