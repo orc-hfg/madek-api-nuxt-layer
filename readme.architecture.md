@@ -44,8 +44,10 @@ Die Codebasis folgt einer klaren Trennung zwischen API Service Layer und App Ser
 - Mehrere Datenquellen koordinieren
 - Locale-spezifische Logik anwenden
 - **Roles-spezifisches Filtering:**
-  - Person-Daten werden separat über AdminPerson API geholt
-  - Filtering auf Namen-Validität erfolgt nach dem Fetch (nicht im API Layer möglich)
+  - Person-Daten sind nicht in Collection-Meta-Datum-Responses enthalten
+  - Müssen separat über AdminPerson API geholt werden (ein Call pro Role)
+  - API Service Layer liefert nur Role-Struktur (role_id, person_id, labels)
+  - App Service Layer orchestriert: Role-Daten → AdminPerson-Fetch → Filtering
 
 ### Die Grenze zwischen den Layern
 
@@ -53,7 +55,11 @@ Die Codebasis folgt einer klaren Trennung zwischen API Service Layer und App Ser
 
 **App Layer:** Welche zusätzlichen Daten brauche ich? Wie transformiere ich für den Use Case?
 
-**Wichtig:** Filterung findet primär im API Layer statt (People, Keywords). Nur Roles-Filtering muss im App Layer erfolgen, weil Person-Daten erst dort verfügbar sind.
+**Wichtig:** Filterung findet primär im API Layer statt (People, Keywords).
+Roles-Filtering muss im App Layer erfolgen, weil:
+- Person-Daten nicht im Meta-Datum-Response enthalten sind
+- Separate API-Calls erforderlich sind (Orchestrierung im App Layer)
+- Business-Logic (Name-Validität, Umgang mit gelöschten Personen) dort besser aufgehoben ist
 
 Diese Trennung sorgt für klare Verantwortlichkeiten, bessere Testbarkeit und minimiert redundanten Filter-Code.
 

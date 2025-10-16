@@ -13,7 +13,7 @@ import { createMadekApiClient } from '../utils/madek-api';
  * - Technical filtering: Data structure integrity (null-safety, referential integrity)
  *
  * App Service Layer handles business-logic filtering (e.g., filtering entries with empty display values)
- * See readme.development.md "Service Layer Architektur" for complete architecture documentation
+ * See readme.architecture.md for complete architecture documentation
  */
 
 /*

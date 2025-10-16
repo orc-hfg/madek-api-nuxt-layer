@@ -208,7 +208,11 @@ function createSetService(): SetService {
 		 * - Person has no valid name (both fields empty)
 		 *
 		 * Note: This filtering must happen in app layer because person data
-		 * is fetched separately via AdminPerson API (not available in API layer)
+		 * is not included in collection meta-datum responses and must be
+		 * fetched through separate AdminPerson API calls per role.
+		 * The server layer only provides role structure (role_id, person_id, labels).
+		 * See server/madek-api-services/collection-meta-datum.ts for server-side
+		 * technical filtering (null-safety, referential integrity).
 		 */
 		const validRoles = resolvedRoles
 			.filter((role): role is { roleName: string; person: AdminPerson } => role.person !== undefined && Boolean(role.person.first_name || role.person.last_name))
