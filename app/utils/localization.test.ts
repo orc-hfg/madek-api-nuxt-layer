@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setupDirectLoggerMock } from '../../tests/mocks/logger';
 import { getAlternativeLocale, getLocalizedLabel } from './localization';
 
@@ -20,6 +20,10 @@ describe('getLocalizedLabel()', () => {
 		const { mockLogger: logger, loggerWarnSpy: warnSpy } = setupDirectLoggerMock();
 		mockLogger = logger;
 		loggerWarnSpy = warnSpy;
+	});
+
+	afterEach(() => {
+		vi.restoreAllMocks();
 	});
 
 	describe('primary label exists', () => {

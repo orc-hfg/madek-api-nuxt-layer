@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3';
 import { mockData } from '../../../../../madek-api-mock/data';
-import { getCollectionMetaDatum } from '../../../../../madek-api-services/collection-meta-datum';
+import { getCollectionMetaDatum } from '../../../../../madek-api-services/collection-meta-datum/service';
 import { routeParameterSchemas } from '../../../../../schemas/madek-api-route';
 
 export default defineEventHandler(async (event: H3Event) => {

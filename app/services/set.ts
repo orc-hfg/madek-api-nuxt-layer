@@ -211,7 +211,7 @@ function createSetService(): SetService {
 		 * is not included in collection meta-datum responses and must be
 		 * fetched through separate AdminPerson API calls per role.
 		 * The server layer only provides role structure (role_id, person_id, labels).
-		 * See server/madek-api-services/collection-meta-datum.ts for server-side
+		 * See server/madek-api-services/collection-meta-datum/service.ts for server-side
 		 * technical filtering (null-safety, referential integrity).
 		 */
 		const validRoles = resolvedRoles

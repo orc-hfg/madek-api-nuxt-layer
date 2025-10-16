@@ -1,6 +1,5 @@
 import type { H3Event } from 'h3';
 import { twentyFourHoursCache } from '../constants/cache';
-import { isH3NotFoundError } from '../utils/error-handling';
 
 /*
  * Fetch admin person data from /admin/people/{id} endpoint
