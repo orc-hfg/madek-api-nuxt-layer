@@ -479,6 +479,7 @@ export default withNuxt(
 				'ts/explicit-function-return-type': 'off',
 				'ts/naming-convention': 'off',
 				'ts/no-magic-numbers': 'off',
+				'unicorn/no-null': 'off',
 				'unicorn/no-useless-undefined': 'off',
 			},
 		},
