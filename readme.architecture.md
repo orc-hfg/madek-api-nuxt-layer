@@ -103,6 +103,8 @@ export default defineEventHandler(async (event: H3Event) => {
 
 **Wichtig:** Repositories wissen nicht, ob sie Mock- oder echte Daten erhalten. Die Entscheidung wird zentral in den Endpoints getroffen.
 
+**Mock-API-Verhalten:** Im Mock-Modus wird der API Service Layer übersprungen. Mock-Daten müssen daher bereits normalisiert sein. Details siehe [readme.testing.md](./readme.testing.md) → Mock-API-System & Test-Coverage.
+
 ## Repository Pattern
 
 Repositories abstrahieren den Datenzugriff und bieten:

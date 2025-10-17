@@ -7,115 +7,127 @@ const FIXED_COLLECTION_IDS = [
 ] as const;
 
 export const mockData = {
-	getAdminPerson: (_id: MadekAdminPeopleGetPathParameters['id']): AdminPerson => {
+	getAdminPerson: (id: MadekAdminPeopleGetPathParameters['id']): AdminPerson => {
 		return {
-			first_name: 'Anja',
-			last_name: 'Casser',
+			first_name: `${id}_first_name`,
+			last_name: `${id}_last_name`,
 		};
 	},
 	getCollectionMediaEntryArcs: (collectionId: MadekCollectionMediaEntryArcsPathParameters['collection_id']): CollectionMediaEntryArcs => {
-		switch (collectionId) {
-			case 'collection-id-1': {
-				return [
-					{
-						media_entry_id: 'entry-id-1',
-						cover: true,
-						position: 1,
-					},
-					{
-						media_entry_id: 'entry-id-2',
-						cover: false,
-						position: 2,
-					},
-				];
-			}
-
-			case 'collection-id-2': {
-				return [];
-			}
-
-			case 'collection-id-3': {
-				return [
-					{
-						media_entry_id: 'entry-id-3',
-						cover: true,
-						position: 1,
-					},
-				];
-			}
-
-			default: {
-				return [];
-			}
-		}
-	},
-
-	getCollectionMetaDatum: (collectionId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']): CollectionMetaDatum => {
-		return {
-			string: `Test collectionId ${collectionId} / metaKeyId ${metaKeyId} Content`,
-			people: [
+		const mockArcs: Record<string, CollectionMediaEntryArcs> = {
+			'collection-id-1': [
 				{
-					first_name: 'Anja',
-					last_name: 'Casser',
+					media_entry_id: 'entry-id-1',
+					cover: true,
+					position: 1,
 				},
 				{
-					first_name: 'Hubert',
-					last_name: 'Distel',
+					media_entry_id: 'entry-id-2',
+					cover: false,
+					position: 2,
 				},
+			],
+			'collection-id-2': [],
+			'collection-id-3': [
 				{
-					first_name: 'Lizzy',
-					last_name: 'Ellbrück ',
-				},
-				{
-					first_name: 'Tiffany Justine ',
-					last_name: 'Erndwein',
-				},
-				{
-					first_name: 'Yvonne ',
-					last_name: 'Fomferra ',
-				},
-				{
-					first_name: 'Hanne',
-					last_name: 'König',
-				},
-				{
-					first_name: 'Malte',
-					last_name: 'Pawelczyk',
-				},
-				{
-					first_name: 'Christina',
-					last_name: 'Scheib',
-				},
-				{
-					first_name: 'Lisa-Kathrin',
-					last_name: 'Welzel',
-				},
-				{
-					first_name: 'Hanna',
-					last_name: 'Franke',
-				},
-				{
-					first_name: 'Hanne',
-					last_name: 'König',
-				},
-				{
-					first_name: 'Malte',
-					last_name: 'Pawelczyk',
-				},
-				{
-					first_name: 'Christina',
-					last_name: 'Scheib',
-				},
-				{
-					first_name: 'Lisa-Kathrin',
-					last_name: 'Welzel',
-				},
-				{
-					first_name: 'Hanna',
-					last_name: 'Franke',
+					media_entry_id: 'entry-id-3',
+					cover: true,
+					position: 1,
 				},
 			],
 		};
+
+		return mockArcs[collectionId] ?? [];
+	},
+
+	getCollectionMetaDatum: (collectionId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']): CollectionMetaDatum => {
+		const result = {
+			string: `Test collectionId ${collectionId} / metaKeyId ${metaKeyId} Content`,
+			...(metaKeyId === 'madek_core:authors' && {
+				people: [
+					{
+						first_name: 'author_1_first_name',
+						last_name: 'author_1_last_name',
+					},
+					{
+						first_name: 'author_2_first_name',
+						last_name: 'author_2_last_name',
+					},
+				],
+			}),
+			...(metaKeyId === 'institution:project_category' && {
+				keywords: [
+					{
+						term: 'project_category_1',
+					},
+					{
+						term: 'project_category_2',
+					},
+				],
+			}),
+			...(metaKeyId === 'madek_core:keywords' && {
+				keywords: [
+					{
+						term: 'keyword_1',
+					},
+					{
+						term: 'keyword_2',
+					},
+				],
+			}),
+			...(metaKeyId === 'institution:semester' && {
+				keywords: [
+					{
+						term: 'semester_1',
+					},
+					{
+						term: 'semester_2',
+					},
+				],
+			}),
+			...(metaKeyId === 'institution:program_of_study' && {
+				keywords: [
+					{
+						term: 'program_of_study_1',
+					},
+					{
+						term: 'program_of_study_2',
+					},
+				],
+			}),
+			...(metaKeyId === 'creative_work:other_creative_participants' && {
+				roles: [
+					{
+						person_id: 'person_id_1',
+						role_id: 'role_id_1',
+						labels: {
+							de: 'role_1_DE',
+							en: 'role_1_EN',
+						},
+					},
+					{
+						person_id: 'person_id_2',
+						role_id: 'role_id_2',
+						labels: {
+							de: 'role_2_DE',
+							en: 'role_2_EN',
+						},
+					},
+				],
+			}),
+			...(metaKeyId === 'creative_work:material' && {
+				keywords: [
+					{
+						term: 'material_1',
+					},
+					{
+						term: 'material_2',
+					},
+				],
+			}),
+		};
+
+		return result;
 	},
 
 	getMediaEntryPreviewThumbnails: (mediaEntryId: MadekMediaEntryPreviewPathParameters['media_entry_id'], _query: MediaEntryPreviewQuery): MediaEntryPreviewThumbnails => [
@@ -145,11 +157,116 @@ export const mockData = {
 		},
 	],
 
-	getMetaKeyLabels: (_id: MadekMetaKeysGetPathParameters['id']): MetaKeyLabels => {
-		return {
+	getMetaKeyLabels: (id: MadekMetaKeysGetPathParameters['id']): MetaKeyLabels => {
+		const mockLabels: Record<string, MetaKeyLabels> = {
+			'madek_core:authors': {
+				labels: {
+					de: 'Autor/in',
+					en: 'Author',
+				},
+			},
+			'madek_core:title': {
+				labels: {
+					de: 'Titel',
+					en: 'Title',
+				},
+			},
+			'madek_core:subtitle': {
+				labels: {
+					de: 'Untertitel',
+					en: 'Subtitle',
+				},
+			},
+			'madek_core:description': {
+				labels: {
+					de: 'Beschreibung',
+					en: 'Description',
+				},
+			},
+			'creative_work:title_en': {
+				labels: {
+					de: 'Titel (en)',
+					en: 'Title (en)',
+				},
+			},
+			'creative_work:subtitle_en': {
+				labels: {
+					de: 'Untertitel (en)',
+					en: 'Subtitle (en)',
+				},
+			},
+			'creative_work:description_en': {
+				labels: {
+					de: 'Beschreibung (en)',
+					en: 'Description (en)',
+				},
+			},
+			'madek_core:portrayed_object_date': {
+				labels: {
+					de: 'Datierung',
+					en: 'Date',
+				},
+			},
+			'institution:project_category': {
+				labels: {
+					de: 'Kategorie',
+					en: 'Category',
+				},
+			},
+			'madek_core:keywords': {
+				labels: {
+					de: 'Schlagworte',
+					en: 'Keywords',
+				},
+			},
+			'institution:semester': {
+				labels: {
+					de: 'Semester',
+					en: 'Semester',
+				},
+			},
+			'institution:program_of_study': {
+				labels: {
+					de: 'Studiengang',
+					en: 'Program of Study',
+				},
+			},
+			'creative_work:other_creative_participants': {
+				labels: {
+					de: 'Mitwirkende / weitere Personen',
+					en: 'Contributors / other persons',
+				},
+			},
+			'creative_work:material': {
+				labels: {
+					de: 'Material',
+					en: 'Material',
+				},
+			},
+			'creative_work:dimension': {
+				labels: {
+					de: 'Abmessungen',
+					en: 'Dimensions',
+				},
+			},
+			'creative_work:duration': {
+				labels: {
+					de: 'Dauer',
+					en: 'Duration',
+				},
+			},
+			'creative_work:format': {
+				labels: {
+					de: 'Technik/Verfahren/Formate',
+					en: 'Technology/production/formats',
+				},
+			},
+		};
+
+		return mockLabels[id] ?? {
 			labels: {
-				de: 'Meta Key DE',
-				en: 'Meta Key EN',
+				de: `Meta Key DE (${id})`,
+				en: `Meta Key EN (${id})`,
 			},
 		};
 	},
