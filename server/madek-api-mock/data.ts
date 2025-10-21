@@ -41,6 +41,16 @@ export const mockData = {
 	},
 
 	getCollectionMetaDatum: (collectionId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']): CollectionMetaDatum => {
+		/*
+		 * For collectionId 'collection-id-1', certain meta-data should not exist (for testing purposes)
+		 * Return empty but valid CollectionMetaDatum object
+		 */
+		if (collectionId === 'collection-id-1' && (metaKeyId === 'madek_core:subtitle' || metaKeyId === 'institution:project_category')) {
+			return {
+				string: '',
+				keywords: [],
+			};
+		}
 		const result = {
 			string: `Test collectionId ${collectionId} / metaKeyId ${metaKeyId} Content`,
 			...(metaKeyId === 'madek_core:authors' && {
