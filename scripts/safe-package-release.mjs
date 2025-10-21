@@ -15,7 +15,7 @@ function validateArguments() {
 
 	if (!releaseType || !RELEASE_TYPES.has(releaseType)) {
 		console.error('❌ Error: Invalid or missing release type.');
-		console.error('Usage: node safe-release.mjs <patch|minor|major> [--development]');
+		console.error('Usage: node safe-package-release.mjs <patch|minor|major> [--development]');
 		exit(1);
 	}
 
