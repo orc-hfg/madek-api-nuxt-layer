@@ -5,7 +5,7 @@ type PreviewId = MadekPreviewsDataStreamPathParameters['preview_id'];
 
 export async function getPreviewDataStream(event: H3Event, previewId: PreviewId): Promise<PreviewDataStream> {
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<PreviewDataStream>(event);
-	const serverLogger = createServerLogger(event, 'Service: getPreviewDataStream');
+	const serverLogger = createServerLogger(event, 'API Service: getPreviewDataStream');
 
 	serverLogger.info('Preview ID:', previewId);
 

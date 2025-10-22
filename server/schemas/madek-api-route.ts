@@ -3,20 +3,23 @@ import { z } from 'zod';
 const nonEmptyStringSchema = z.string().trim().min(1, 'Parameter cannot be empty.');
 
 export const routeParameterSchemas = {
-	previewId: z.object({
-		preview_id: nonEmptyStringSchema,
+	personId: z.object({
+		id: nonEmptyStringSchema,
 	}),
 	collectionId: z.object({
 		collection_id: nonEmptyStringSchema,
 	}),
-	mediaEntryId: z.object({
-		media_entry_id: nonEmptyStringSchema,
-	}),
 	metaKeyId: z.object({
 		meta_key_id: nonEmptyStringSchema,
 	}),
-	contextId: z.object({
+	mediaEntryId: z.object({
+		media_entry_id: nonEmptyStringSchema,
+	}),
+	metaKeysId: z.object({
 		id: nonEmptyStringSchema,
+	}),
+	previewId: z.object({
+		preview_id: nonEmptyStringSchema,
 	}),
 	collectionMetaDatum: z.object({
 		collection_id: nonEmptyStringSchema,

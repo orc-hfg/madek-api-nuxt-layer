@@ -162,11 +162,11 @@ export default defineNuxtConfig({
 
 ### Mock-Handler-Pattern
 
-Das Layer verwendet zwei zentrale Mock-Handler für einheitliche Mock-Behandlung:
+Das Layer verwendet einen zentralen Mock-Handler für einheitliche Mock-Behandlung:
 
-#### Einfache API-Endpoints (`getApiMockOrExecute`)
+#### API-Endpoints (`getApiMockOrExecute`)
 
-Für Standard-Endpoints ohne komplexe Fallback-Logik:
+Für Standard-Endpoints:
 
 ```typescript
 // server/api/collections.get.ts
@@ -183,39 +183,6 @@ export default defineEventHandler(async (event: H3Event) => {
   );
 });
 ```
-
-#### Komplexe API-Endpoints (`getApiMockOrUndefined`)
-
-Für Endpoints mit Fallback-Logik oder komplexer Verarbeitung:
-
-```typescript
-// server/api/collection/[id]/meta-datum/[key]/index.get.ts
-export default defineEventHandler(async (event: H3Event) => {
-  const parameters = await validateRouteParameters(event, routeParameterSchemas.collectionMetaDatum);
-
-  // Versuche zuerst Mock-Daten zu bekommen
-  const apiMockResult = await getApiMockOrUndefined(
-    event,
-    'API: collection meta-datum',
-    'Returning mock: collection meta-datum',
-    { collectionId: parameters.collection_id },
-    () => mockData.getCollectionMetaDatum(parameters.collection_id, parameters.meta_key_id),
-  );
-
-  if (apiMockResult !== undefined) {
-    return apiMockResult;
-  }
-
-  // Komplexe Fallback-Logik für echte API
-  try {
-    return await getCollectionMetaDatum(event, parameters.collection_id, parameters.meta_key_id);
-  } catch (error) {
-    // Fallback-Behandlung...
-  }
-});
-```
-
-**Wichtig:** Bei `getApiMockOrUndefined` immer `!== undefined` prüfen, nicht nur Truthiness, um auch falsy Mock-Daten korrekt zu behandeln.
 
 ### Mock-Daten-Struktur
 

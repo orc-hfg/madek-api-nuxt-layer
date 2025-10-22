@@ -1,0 +1,92 @@
+import type { H3Event } from 'h3';
+import { fiveMinutesCache } from '../../constants/cache';
+import { getFallbackMetaKey, mergeRoles, META_KEYS_SHOULD_TRIM, normalizeKeywords, normalizePeople, shouldReturnEmptyArrayOn404, shouldReturnEmptyStringOn404 } from './normalization';
+
+/*
+ * API Service Layer - Collection Meta Datum
+ *
+ * Responsibility: Data retrieval and normalization
+ * - Fetch data from external APIs
+ * - Normalize data (null conversion, whitespace trimming, line ending normalization)
+ * - Technical filtering: Data structure integrity (null-safety, referential integrity)
+ *
+ * App Service Layer handles business-logic filtering (e.g., filtering entries with empty display values)
+ * See readme.architecture.md for complete architecture documentation
+ */
+
+export async function getCollectionMetaDatum(event: H3Event, collectionId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']): Promise<CollectionMetaDatum> {
+	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
+	const serverLogger = createServerLogger(event, 'API Service: getCollectionMetaDatum');
+
+	serverLogger.info('Collection ID:', collectionId);
+	serverLogger.info('Meta Key ID:', metaKeyId);
+
+	try {
+		const response = await fetchFromApiWithPathParameters(
+			'collection/:collectionId/meta-datum/:metaKeyId',
+			{
+				collectionId,
+				metaKeyId,
+			},
+			{
+				apiOptions: {
+					isAuthenticationNeeded: false,
+				},
+				publicDataCache: fiveMinutesCache,
+			},
+		);
+
+		return {
+			string: normalizeTextContent(
+				response['meta-data'].string,
+				META_KEYS_SHOULD_TRIM.has(metaKeyId),
+			),
+
+			...(response.people && {
+				people: normalizePeople(response.people),
+			}),
+
+			...(response.keywords && {
+				keywords: normalizeKeywords(response.keywords),
+			}),
+
+			...(response.md_roles && response.roles && {
+				roles: mergeRoles(response.md_roles, response.roles),
+			}),
+		};
+	}
+	catch (error) {
+		if (isH3NotFoundError(error)) {
+			// Check if this meta key should return empty array on 404
+			if (shouldReturnEmptyArrayOn404(metaKeyId)) {
+				serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty array instead.`);
+
+				return {
+					string: '',
+					people: [],
+					keywords: [],
+					roles: [],
+				};
+			}
+
+			// Check if this meta key should return empty string on 404
+			if (shouldReturnEmptyStringOn404(metaKeyId)) {
+				serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty string instead.`);
+
+				return {
+					string: '',
+				};
+			}
+
+			// Check for fallback meta key
+			const fallbackMetaKeyId = getFallbackMetaKey(metaKeyId);
+			if (fallbackMetaKeyId !== undefined) {
+				serverLogger.warn(`Meta key ${metaKeyId} returned 404, trying fallback meta key ${fallbackMetaKeyId}.`);
+
+				return getCollectionMetaDatum(event, collectionId, fallbackMetaKeyId);
+			}
+		}
+
+		return handleServiceError(serverLogger, error, 'Failed to fetch collection meta datum.');
+	}
+}

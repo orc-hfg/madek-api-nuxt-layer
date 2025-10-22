@@ -3,7 +3,7 @@ import { fiveMinutesCache } from '../constants/cache';
 
 export async function getCollections(event: H3Event, query: CollectionsQuery): Promise<Collections> {
 	const { fetchFromApi } = createMadekApiClient<MadekCollectionsResponse>(event);
-	const serverLogger = createServerLogger(event, 'Service: getCollections');
+	const serverLogger = createServerLogger(event, 'API Service: getCollections');
 
 	serverLogger.info('Query params:', { responsible_user_id: query.responsible_user_id, filter_by: query.filter_by });
 

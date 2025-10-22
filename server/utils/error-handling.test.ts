@@ -96,7 +96,7 @@ describe('handleServiceError()', () => {
 	});
 
 	afterEach(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 
 	it('logs error and re-throws H3Error', () => {

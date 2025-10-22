@@ -1,7 +1,6 @@
 import type { H3Event } from 'h3';
 import { mockData } from '../madek-api-mock/data';
 import { getAuthInfo } from '../madek-api-services/auth-info';
-import { getApiMockOrExecute } from '../madek-api-services/mock-handler';
 
 export default defineEventHandler(async (event: H3Event) => getApiMockOrExecute(
 	event,

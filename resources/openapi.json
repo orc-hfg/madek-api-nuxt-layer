@@ -31522,6 +31522,14 @@
 						"schema": {
 							"type": "string"
 						}
+					},
+					{
+						"in": "query",
+						"name": "tk",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -36158,6 +36166,14 @@
 						"in": "path",
 						"name": "media_entry_id",
 						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "tk",
+						"required": false,
 						"schema": {
 							"type": "string"
 						}
@@ -42169,6 +42185,14 @@
 						"schema": {
 							"type": "string"
 						}
+					},
+					{
+						"in": "query",
+						"name": "tk",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
@@ -43109,6 +43133,14 @@
 						"schema": {
 							"type": "string",
 							"format": "uuid"
+						}
+					},
+					{
+						"in": "query",
+						"name": "tk",
+						"required": false,
+						"schema": {
+							"type": "string"
 						}
 					}
 				],

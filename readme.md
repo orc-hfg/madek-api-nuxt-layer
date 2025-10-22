@@ -19,6 +19,7 @@ Der Madek-API Nuxt Layer ist ein wiederverwendbares Nuxt-Layer-Package für die 
 
 Die Dokumentation ist in mehrere domänenspezifische README-Dateien aufgeteilt:
 
+- [Architektur](./readme.architecture.md) – Service Layer Architektur, Repository Pattern, Type Safety, Error Handling
 - [Entwicklung](./readme.development.md) – Lokales Linking, API-Typen-Generierung, Entwicklungsworkflow, API-Mocks
 - [Release Management](./readme.release.md) – Versioning, automatisierte Releases, GitHub Actions
 - [Wartung](./readme.maintenance.md) – Dependency Updates, Node-Aktualisierung, bekannte Issues
@@ -30,4 +31,3 @@ Die Dokumentation ist in mehrere domänenspezifische README-Dateien aufgeteilt:
 
 - [Architektur-Konzept / Teil 1](./documentation/architectural-concept-part-1.md)
 - [Architektur-Konzept / Teil 2](./documentation/architectural-concept-part-2.md)
-- [Architektur](./documentation/architecture.md)
