@@ -1,33 +1,42 @@
 # Wartung und Dependency Updates
 
-## Node-Version aktualisieren
+## 1. Node-Version aktualisieren
 
-Die Node-Version sollte regelmäßig auf die aktuelle LTS-Version aktualisiert werden:
+Die Node-Version sollte regelmäßig auf die aktuelle LTS-Version aktualisiert werden.
 
-### Node-LTS-Version herausfinden
+### Automatischer Update-Prozess
 
-Per Skript:
-- `npm run check:node`
+1. **Prüfen und Aktualisieren:**
+   ```bash
+   npm run check:node
+   ```
 
-Manuell:
-- `nvm ls-remote --lts | tail -n 1` ausführen
-- Falls der Node Version Manager (`nvm`) nicht verfügbar ist, hier nachschauen: https://github.com/nodejs/Release?tab=readme-ov-file#release-schedule
+   Das Skript:
+   - Ermittelt die aktuelle Node.js LTS-Version
+   - Aktualisiert automatisch `.nvmrc` und `package.json`
+   - Zeigt die nächsten Schritte an
 
-### Aktualisierungsprozess
+2. **Installation durchführen:**
+   ```bash
+   nvm install && nvm use && npm install
+   ```
 
-Folgende Dateien entsprechend anpassen:
-- `.nvmrc`
-- `package.json` im Abschnitt "engines"
-- `nvm use && npm install` ausführen, damit die definierte Node-Version (`.nvmrc`) in der aktuellen Shell aktiviert wird und die Abhängigkeiten für diese installiert werden (`package-lock.json`)
+   Dies installiert die neue Node-Version, aktiviert sie in der aktuellen Shell und aktualisiert die `package-lock.json` mit der neuen Node-Version.
 
-## Externe Abhängigkeiten aktualisieren
+### Manuelle Prüfung (optional)
 
+- `nvm ls-remote --lts | tail -n 1` - Aktuelle LTS-Version anzeigen
+- https://github.com/nodejs/Release#release-schedule - Offizielle Release-Informationen
+
+## 2. Externe Abhängigkeiten aktualisieren
+
+- **Bei Minor/Major Updates**: Change Logs der jeweiligen Packages prüfen (Breaking Changes, neue Features, Deprecations)
 - `npm run upgrade` ausführen, um Nuxt zu updaten.
 - `npm run check:updates` verwenden, Updates installieren und währenddessen immer wieder die Funktionalität testen.
 - Nuxt compatibility date in `nuxt.config.ts` aktualisieren (https://nuxt.com/docs/4.x/api/nuxt-config#compatibilitydate)
 - ggf. neue OpenAPI-Definitionen herunterladen (https://dev.madek.hfg-karlsruhe.de/api-v2/api-docs/openapi.json) und `npm run generate:api` ausführen, um die API-Definitionen zu aktualisieren
 - API-Änderungen überprüfen und ggf. die API-Services entsprechend anpassen
 
-### Überprüfen der offenen Wartungsaufgaben
+## 3. Überprüfen der offenen Wartungsaufgaben
 
 - [Wartungsaufgaben](./readme.maintenance-todo.md)
