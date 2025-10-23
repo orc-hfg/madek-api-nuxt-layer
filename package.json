@@ -47,7 +47,7 @@
 		"consola": "3.4.2",
 		"http-status-codes": "2.3.0",
 		"pinia": "3.0.3",
-		"zod": "4.1.11"
+		"zod": "4.1.12"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "5.4.1",
@@ -62,13 +62,13 @@
 		"happy-dom": "18.0.1",
 		"husky": "9.1.7",
 		"knip": "5.64.0",
-		"lint-staged": "16.2.0",
+		"lint-staged": "16.2.6",
 		"npm-check-updates": "18.3.0",
 		"nuxt": "4.1.3",
 		"openapi-typescript": "7.9.1",
-		"typescript": "5.9.2",
+		"typescript": "5.9.3",
 		"vitest": "3.2.4",
-		"vue": "3.5.21",
+		"vue": "3.5.22",
 		"vue-tsc": "3.0.7"
 	}
 }

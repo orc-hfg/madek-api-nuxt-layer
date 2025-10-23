@@ -8,7 +8,7 @@ function composeVersion(): string {
 const resolver = createResolver(import.meta.url);
 
 export default defineNuxtConfig({
-	compatibilityDate: '2025-07-31',
+	compatibilityDate: '2025-10-23',
 	devtools: {
 		enabled: true,
 	},
