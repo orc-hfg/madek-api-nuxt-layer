@@ -2,5 +2,5 @@ import type { FetchOptions } from 'ofetch';
 
 export type ApiFunction = <T = any>(
 	endpoint: string,
-	options?: FetchOptions
+	options?: FetchOptions,
 ) => Promise<T>;

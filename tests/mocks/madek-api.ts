@@ -22,7 +22,7 @@ interface ApiTestContext extends ServerLoggerMock {
 		fetchFromApiWithPathParameters: (
 			endpointTemplate: string,
 			pathParameters: PathParameters,
-			config?: MadekApiRequestConfig
+			config?: MadekApiRequestConfig,
 		) => Promise<unknown>;
 	};
 	fetchMock: ReturnType<typeof vi.fn>;
