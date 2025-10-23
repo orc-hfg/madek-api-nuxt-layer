@@ -9,6 +9,9 @@ dist
 # Typescript dev/build outputs
 tsconfig.tsbuildinfo
 
+# Tool caches
+.eslintcache
+
 # Node dependencies
 node_modules
 

@@ -1084,9 +1084,6 @@ export type paths = {
          *       "context_for_collection_summary": "string"
          *     }
          *     ```
-         *
-         *
-         *
          */
         readonly put: {
             readonly parameters: {
@@ -1951,7 +1948,6 @@ export type paths = {
          *       "deleted_at": null
          *     }
          *     ```
-         *
          */
         readonly put: {
             readonly parameters: {
@@ -2273,7 +2269,7 @@ export type paths = {
                     readonly me_edit_permission?: boolean;
                     readonly me_get_metadata_and_previews?: boolean;
                     readonly order?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     readonly public_get_metadata_and_previews?: boolean;
                     readonly responsible_delegation_id?: string;
@@ -2563,7 +2559,7 @@ export type paths = {
                     readonly id?: string;
                     readonly is_required?: boolean;
                     readonly meta_key_id?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     /** @description Number of items per page */
                     readonly size?: number;
@@ -5767,7 +5763,7 @@ export type paths = {
                     readonly full_data?: boolean;
                     readonly id?: string;
                     readonly media_entry_id?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     /** @description Number of items per page */
                     readonly size?: number;
@@ -7172,7 +7168,7 @@ export type paths = {
                     readonly institutional_id?: string;
                     readonly institutional_name?: string;
                     readonly name?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     readonly searchable?: string;
                     /** @description Number of items per page */
@@ -7491,7 +7487,7 @@ export type paths = {
         readonly get: {
             readonly parameters: {
                 readonly query?: {
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     /** @description Number of items per page */
                     readonly size?: number;
@@ -8176,7 +8172,6 @@ export type paths = {
          *       "created_by_user_id": "7b2787e0-54bd-4eb9-89f0-2eedf64b8cc3"
          *     }
          *     ```
-         *
          */
         readonly put: {
             readonly parameters: {
@@ -9516,7 +9511,7 @@ export type paths = {
                     readonly me_get_full_size?: boolean;
                     readonly me_get_metadata_and_previews?: boolean;
                     readonly order?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     readonly public_get_full_size?: boolean;
                     readonly public_get_metadata_and_previews?: boolean;
@@ -9771,7 +9766,7 @@ export type paths = {
                     readonly is_enabled_for_collections?: boolean;
                     readonly is_enabled_for_media_entries?: boolean;
                     readonly meta_datum_object_type?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     readonly scope?: string;
                     /** @description Number of items per page */
@@ -10071,7 +10066,6 @@ export type paths = {
          *       "allowed_people_subtypes": ["People"]
          *     }
          *     ```
-         *
          */
         readonly post: {
             readonly parameters: {
@@ -10550,7 +10544,6 @@ export type paths = {
          *       "allowed_people_subtypes": ["People"]
          *     }
          *     ```
-         *
          */
         readonly put: {
             readonly parameters: {
@@ -11111,7 +11104,7 @@ export type paths = {
             readonly parameters: {
                 readonly query?: {
                     readonly institution?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     readonly search_term?: string;
                     /** @description Number of items per page */
@@ -11808,7 +11801,7 @@ export type paths = {
         readonly get: {
             readonly parameters: {
                 readonly query?: {
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     /** @description Number of items per page */
                     readonly size?: number;
@@ -13821,7 +13814,6 @@ export type paths = {
          *       "notes": "string"
          *     }
          *     ```
-         *
          */
         readonly post: {
             readonly parameters: {
@@ -14305,7 +14297,6 @@ export type paths = {
          *      "last_name": "string"
          *     }
          *     ```
-         *
          */
         readonly patch: {
             readonly parameters: {
@@ -14631,7 +14622,6 @@ export type paths = {
          *       }
          *     }
          *     ```
-         *
          */
         readonly post: {
             readonly parameters: {
@@ -15005,7 +14995,6 @@ export type paths = {
          *       "admin_comment": "string"
          *     }
          *     ```
-         *
          */
         readonly put: {
             readonly parameters: {
@@ -17143,7 +17132,6 @@ export type paths = {
          *       //  "responsible_user_id": null
          *     }
          *     ```
-         *
          */
         readonly post: {
             readonly parameters: {
@@ -17365,7 +17353,7 @@ export type paths = {
             readonly parameters: {
                 readonly query?: {
                     readonly child_id?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     readonly parent_id?: string;
                     /** @description Number of items per page */
@@ -22671,7 +22659,7 @@ export type paths = {
                     readonly me_edit_permission?: boolean;
                     readonly me_get_metadata_and_previews?: boolean;
                     readonly order?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     readonly public_get_metadata_and_previews?: boolean;
                     readonly responsible_delegation_id?: string;
@@ -23849,7 +23837,7 @@ export type paths = {
                     readonly full_data?: boolean;
                     readonly id?: string;
                     readonly media_entry_id?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     /** @description Number of items per page */
                     readonly size?: number;
@@ -23988,7 +23976,7 @@ export type paths = {
                 readonly query?: {
                     readonly full_data?: boolean;
                     readonly media_resource_id?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     /** @description Number of items per page */
                     readonly size?: number;
@@ -24125,7 +24113,7 @@ export type paths = {
                     readonly institutional_id?: string;
                     readonly institutional_name?: string;
                     readonly name?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     readonly searchable?: string;
                     /** @description Number of items per page */
@@ -24404,7 +24392,7 @@ export type paths = {
         readonly get: {
             readonly parameters: {
                 readonly query?: {
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     /** @description Number of items per page */
                     readonly size?: number;
@@ -24687,7 +24675,7 @@ export type paths = {
                     readonly me_get_full_size?: boolean;
                     readonly me_get_metadata_and_previews?: boolean;
                     readonly order?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     readonly public_get_full_size?: boolean;
                     readonly public_get_metadata_and_previews?: boolean;
@@ -24743,7 +24731,7 @@ export type paths = {
                     readonly me_get_full_size?: boolean;
                     readonly me_get_metadata_and_previews?: boolean;
                     readonly order?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     readonly public_get_full_size?: boolean;
                     readonly public_get_metadata_and_previews?: boolean;
@@ -28798,8 +28786,8 @@ export type paths = {
             readonly cookie?: never;
         };
         /**
-         *  Get meta-data role for id
-         * @description  Get meta-datum-role for id. returns 404, if no such meta-data role exists.
+         * Get meta-data role for id
+         * @description Get meta-datum-role for id. returns 404, if no such meta-data role exists.
          */
         readonly get: {
             readonly parameters: {
@@ -29136,7 +29124,7 @@ export type paths = {
         readonly get: {
             readonly parameters: {
                 readonly query?: {
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     /** @description Number of items per page */
                     readonly size?: number;
@@ -29684,7 +29672,7 @@ export type paths = {
             readonly parameters: {
                 readonly query?: {
                     readonly institution?: string;
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     readonly search_term?: string;
                     /** @description Number of items per page */
@@ -30088,7 +30076,7 @@ export type paths = {
         readonly get: {
             readonly parameters: {
                 readonly query?: {
-                    /** @description Page number  */
+                    /** @description Page number */
                     readonly page?: number;
                     /** @description Number of items per page */
                     readonly size?: number;
