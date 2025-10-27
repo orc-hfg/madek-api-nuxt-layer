@@ -18,14 +18,14 @@ function checkApiMockEnabledAndLog(
 	return isApiMockEnabled;
 }
 
-export async function getApiMockOrExecute<T>(
+export async function getApiMockOrExecute<TResponse>(
 	event: H3Event,
 	loggerContext: string,
 	logMessage: string,
 	logData: Record<string, unknown> | undefined,
-	mockDataFunction: () => T | Promise<T>,
-	realApiFunction: () => T | Promise<T>,
-): Promise<T> {
+	mockDataFunction: () => TResponse | Promise<TResponse>,
+	realApiFunction: () => TResponse | Promise<TResponse>,
+): Promise<TResponse> {
 	const isApiMockEnabled = checkApiMockEnabledAndLog(event, loggerContext, logMessage, logData);
 
 	if (isApiMockEnabled) {

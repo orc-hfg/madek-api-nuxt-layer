@@ -98,19 +98,19 @@ export function buildRequestConfig(
 	return config;
 }
 
-export async function fetchData<T>(
+export async function fetchData<TResponse>(
 	event: H3Event,
 	url: string,
 	apiOptions: MadekApiOptions = {},
 	apiToken?: string,
 	fetchFunction = $fetch,
 	isDevelopmentEnvironment = defaultIsDevelopmentEnvironment,
-): Promise<T> {
+): Promise<TResponse> {
 	try {
 		const requestConfig = buildRequestConfig(event, apiOptions, apiToken, isDevelopmentEnvironment);
-		const response = await fetchFunction<T>(url, requestConfig);
+		const response = await fetchFunction<TResponse>(url, requestConfig);
 
-		return response as T;
+		return response as TResponse;
 	}
 	catch (error) {
 		if (isFetchError(error)) {
@@ -139,9 +139,9 @@ function replacePathParameters(template: string, parameters: PathParameters): st
 	return result;
 }
 
-export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetchData): {
-	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
-	fetchFromApiWithPathParameters: (endpointTemplate: string, endpointPathParameters: PathParameters, apiRequestConfig?: MadekApiRequestConfig) => Promise<T>;
+export function createMadekApiClient<TResponse>(event: H3Event, fetchDataFunction = fetchData): {
+	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<TResponse>;
+	fetchFromApiWithPathParameters: (endpointTemplate: string, endpointPathParameters: PathParameters, apiRequestConfig?: MadekApiRequestConfig) => Promise<TResponse>;
 } {
 	const serverLogger = createServerLogger(event, LOGGER_SOURCE);
 	const config = useRuntimeConfig(event);
@@ -149,7 +149,7 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 	const apiBaseURL = publicConfig.madekApi.baseURL;
 	const apiToken = config.madekApi.token;
 
-	async function fetchFromApi(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
+	async function fetchFromApi(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<TResponse> {
 		const url = `${apiBaseURL}${endpoint}`;
 		const isServerSideCachingEnabled = publicConfig.enableServerSideCaching;
 		const isAuthenticationNeeded = apiRequestConfig.apiOptions?.isAuthenticationNeeded === true;
@@ -163,7 +163,7 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 			serverLogger.info(`Using cache for request: ${endpoint}`, cacheOptions);
 
 			return defineCachedFunction(
-				async () => fetchDataFunction<T>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken),
+				async () => fetchDataFunction<TResponse>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken),
 				{
 					...cacheOptions,
 					name: 'madek-api',
@@ -172,10 +172,10 @@ export function createMadekApiClient<T>(event: H3Event, fetchDataFunction = fetc
 			)();
 		}
 
-		return fetchDataFunction<T>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken);
+		return fetchDataFunction<TResponse>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken);
 	}
 
-	async function fetchFromApiWithPathParameters(endpointTemplate: string, endpointPathParameters: PathParameters, apiRequestConfig: MadekApiRequestConfig = {}): Promise<T> {
+	async function fetchFromApiWithPathParameters(endpointTemplate: string, endpointPathParameters: PathParameters, apiRequestConfig: MadekApiRequestConfig = {}): Promise<TResponse> {
 		const endpoint = replacePathParameters(endpointTemplate, endpointPathParameters);
 
 		return fetchFromApi(endpoint, apiRequestConfig);
