@@ -37,6 +37,7 @@ export function getPreviewIdByThumbnailType(previews: MediaEntryPreviewThumbnail
 function createSetsService(): SetsService {
 	const config = useRuntimeConfig();
 	const { apiBaseName } = config.public;
+	const { baseURL } = config.app;
 
 	const appLogger = createAppLogger('Service: sets');
 	const setRepository = getSetRepository();
@@ -86,7 +87,7 @@ function createSetsService(): SetsService {
 
 				if (previewId !== undefined) {
 					(thumbnailSources as Record<ThumbnailTypes, ThumbnailSource>)[thumbnailType] = {
-						url: `/${apiBaseName}/previews/${previewId}/data-stream`,
+						url: `${baseURL}${apiBaseName}/previews/${previewId}/data-stream`,
 						width: getThumbnailPixelSize(thumbnailType),
 					};
 				}
