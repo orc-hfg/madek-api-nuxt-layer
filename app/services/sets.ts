@@ -1,4 +1,5 @@
 import type { AppLocale } from '../types/locale';
+import { buildApiUrl } from '../utils/api-url';
 import { getSetService } from './set';
 
 interface SetsService {
@@ -35,10 +36,6 @@ export function getPreviewIdByThumbnailType(previews: MediaEntryPreviewThumbnail
 }
 
 function createSetsService(): SetsService {
-	const config = useRuntimeConfig();
-	const { apiBaseName } = config.public;
-	const { baseURL } = config.app;
-
 	const appLogger = createAppLogger('Service: sets');
 	const setRepository = getSetRepository();
 	const setService = getSetService();
@@ -87,7 +84,7 @@ function createSetsService(): SetsService {
 
 				if (previewId !== undefined) {
 					(thumbnailSources as Record<ThumbnailTypes, ThumbnailSource>)[thumbnailType] = {
-						url: `${baseURL}${apiBaseName}/previews/${previewId}/data-stream`,
+						url: buildApiUrl(`/previews/${previewId}/data-stream`),
 						width: getThumbnailPixelSize(thumbnailType),
 					};
 				}
