@@ -1,5 +1,11 @@
 import { dataUrlToBlob } from './blob';
 
+/*
+ * Helper type for query parameters that include optional test scenarios
+ * Generic utility that can be used with any query type
+ */
+type QueryWithMockScenario<TQuery = Record<string, unknown>> = { mock_scenario?: string } & TQuery;
+
 const FIXED_COLLECTION_IDS = [
 	'collection-id-1',
 	'collection-id-2',
@@ -302,9 +308,22 @@ export const mockData = {
 		};
 	},
 
-	getCollections: (_query: CollectionsQuery): Collections => FIXED_COLLECTION_IDS.map((id) => {
-		return {
-			id,
-		};
-	}),
+	getCollections: (query: CollectionsQuery): Collections => {
+		/*
+		 * Support mock scenarios for E2E testing via query parameter
+		 * Usage: /api/collections?mock_scenario=empty
+		 */
+		const scenario = (query as QueryWithMockScenario<CollectionsQuery>).mock_scenario;
+
+		if (scenario === 'empty') {
+			return [];
+		}
+
+		// Default: return all collections
+		return FIXED_COLLECTION_IDS.map((id) => {
+			return {
+				id,
+			};
+		});
+	},
 };

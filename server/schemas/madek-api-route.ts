@@ -35,5 +35,11 @@ export const routeQuerySchemas = {
 	collections: z.object({
 		responsible_user_id: z.string().optional(),
 		filter_by: z.string().optional(),
+
+		/*
+		 * Optional test scenario parameter for E2E testing
+		 * Example: ?mock_scenario=empty
+		 */
+		mock_scenario: z.string().optional(),
 	}),
 } as const;

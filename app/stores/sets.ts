@@ -1,3 +1,4 @@
+import type { MockScenario } from '../composables/useMockScenario';
 import type { AppLocale } from '../types/locale';
 
 interface SetData {
@@ -10,7 +11,7 @@ export const useSetsStore = defineStore('sets', () => {
 	const sets = shallowRef<Collections>([]);
 	const setsData = shallowRef<SetData[]>([]);
 
-	async function refresh(appLocale: AppLocale): Promise<void> {
+	async function refresh(appLocale: AppLocale, mockScenario?: MockScenario): Promise<void> {
 		const userStore = useUserStore();
 		const setsRepository = getSetsRepository();
 		const setsService = getSetsService();
@@ -28,18 +29,25 @@ export const useSetsStore = defineStore('sets', () => {
 			return;
 		}
 
-		const userSets = await setsRepository.getSets(
-			{
-				responsible_user_id: userStore.id,
-				filter_by: JSON.stringify({
-					meta_data: [
-						{
-							key: 'settings:is_node',
-						},
-					],
-				}),
-			},
-		);
+		const baseQuery = {
+			responsible_user_id: userStore.id,
+			filter_by: JSON.stringify({
+				meta_data: [
+					{
+						key: 'settings:is_node',
+					},
+				],
+			}),
+		};
+
+		const query = mockScenario === undefined
+			? baseQuery
+			: {
+					...baseQuery,
+					mock_scenario: mockScenario,
+				};
+
+		const userSets = await setsRepository.getSets(query);
 
 		// Use local snapshot to avoid race conditions
 		const currentSets = userSets;
