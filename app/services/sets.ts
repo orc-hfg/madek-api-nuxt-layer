@@ -1,5 +1,4 @@
 import type { AppLocale } from '../types/locale';
-import { buildApiUrl } from '../utils/api-url';
 import { getSetService } from './set';
 
 interface SetsService {
@@ -39,6 +38,7 @@ function createSetsService(): SetsService {
 	const appLogger = createAppLogger('Service: sets');
 	const setRepository = getSetRepository();
 	const setService = getSetService();
+	const apiBaseUrl = useApiBaseUrl();
 
 	async function getCoverImagePreviews(setId: MadekMediaEntryPreviewPathParameters['media_entry_id']): Promise<MediaEntryPreviewThumbnails | undefined> {
 		const mediaEntries = await setRepository.getMediaEntries(setId);
@@ -84,7 +84,7 @@ function createSetsService(): SetsService {
 
 				if (previewId !== undefined) {
 					(thumbnailSources as Record<ThumbnailTypes, ThumbnailSource>)[thumbnailType] = {
-						url: buildApiUrl(`/previews/${previewId}/data-stream`),
+						url: `${apiBaseUrl}/previews/${previewId}/data-stream`,
 						width: getThumbnailPixelSize(thumbnailType),
 					};
 				}

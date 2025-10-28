@@ -12,7 +12,7 @@ export default defineNuxtPlugin({
 		 * https://nuxt.com/docs/guide/recipes/custom-usefetch#custom-fetch
 		 */
 		const madekApi = $fetch.create({
-			baseURL: buildApiBaseUrl(),
+			baseURL: useApiBaseUrl(),
 
 			onRequest(context) {
 				if (shouldForwardCookieHeader && cookieHeader !== undefined) {
