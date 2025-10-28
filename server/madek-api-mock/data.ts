@@ -293,12 +293,6 @@ export const mockData = {
 		return blob as PreviewDataStream;
 	},
 
-	getAppSettings: (): AppSettings => {
-		return {
-			default_locale: 'de_DE',
-		};
-	},
-
 	getAuthInfo: (): AuthInfo => {
 		return {
 			id: 'user-id-1',
