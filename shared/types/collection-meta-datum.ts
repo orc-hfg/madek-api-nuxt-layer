@@ -18,89 +18,89 @@ export type MadekCollectionMetaDatumPathParameters = MadekCollectionMetaDatumGet
  */
 
 interface MadekMetaDatumPerson {
-	meta_datum_id: string;
-	person_id: string;
-	created_by_id: string;
-	meta_data_updated_at: string;
-	id: string;
+	readonly meta_datum_id: string;
+	readonly person_id: string;
+	readonly created_by_id: string;
+	readonly meta_data_updated_at: string;
+	readonly id: string;
 }
 
 interface MadekPerson {
-	institution: string | null;
-	institutional_id: string | null;
-	description: string | null;
-	first_name: string | null;
-	external_uris: string[];
-	identification_info: string | null;
-	searchable: string;
-	updated_at: string;
-	id: string;
-	last_name: string | null;
-	admin_comment: string | null;
-	pseudonym: string | null;
-	created_at: string;
-	subtype: string | null;
+	readonly institution: string | null;
+	readonly institutional_id: string | null;
+	readonly description: string | null;
+	readonly first_name: string | null;
+	readonly external_uris: string[];
+	readonly identification_info: string | null;
+	readonly searchable: string;
+	readonly updated_at: string;
+	readonly id: string;
+	readonly last_name: string | null;
+	readonly admin_comment: string | null;
+	readonly pseudonym: string | null;
+	readonly created_at: string;
+	readonly subtype: string | null;
 }
 
 interface MadekMetaDatumKeyword {
-	id: string;
-	created_by_id: string;
-	meta_datum_id: string;
-	keyword_id: string;
-	created_at: string;
-	updated_at: string;
-	meta_data_updated_at: string;
+	readonly id: string;
+	readonly created_by_id: string;
+	readonly meta_datum_id: string;
+	readonly keyword_id: string;
+	readonly created_at: string;
+	readonly updated_at: string;
+	readonly meta_data_updated_at: string;
 }
 
 interface MadekKeyword {
-	description: string | null;
-	external_uris: string[];
-	meta_key_id: string;
-	creator_id: string;
-	term: string | null;
-	updated_at: string;
-	rdf_class: string;
-	id: string;
-	position: number;
-	created_at: string;
+	readonly description: string | null;
+	readonly external_uris: string[];
+	readonly meta_key_id: string;
+	readonly creator_id: string;
+	readonly term: string | null;
+	readonly updated_at: string;
+	readonly rdf_class: string;
+	readonly id: string;
+	readonly position: number;
+	readonly created_at: string;
 }
 
 interface MadekMetaDatumRole {
-	id: string;
-	meta_datum_id: string;
-	person_id: string | null;
-	role_id: string | null;
-	position: number;
+	readonly id: string;
+	readonly meta_datum_id: string;
+	readonly person_id: string | null;
+	readonly role_id: string | null;
+	readonly position: number;
 }
 
 export interface MadekRole {
-	id: string;
-	labels: LocalizedLabel;
-	meta_key_id: string;
-	creator_id: string;
-	created_at: string;
-	updated_at: string;
+	readonly id: string;
+	readonly labels: LocalizedLabel;
+	readonly meta_key_id: string;
+	readonly creator_id: string;
+	readonly created_at: string;
+	readonly updated_at: string;
 }
 
 export interface MadekCollectionMetaDatumResponse {
-	'meta-data': {
-		created_by_id: string;
-		media_entry_id: string | null;
-		collection_id: string;
-		type: string;
-		meta_key_id: string;
-		string: string | null;
-		id: string;
-		meta_data_updated_at: string;
-		json: Record<string, any> | null;
-		other_media_entry_id: string | null;
+	readonly 'meta-data': {
+		readonly created_by_id: string;
+		readonly media_entry_id: string | null;
+		readonly collection_id: string;
+		readonly type: string;
+		readonly meta_key_id: string;
+		readonly string: string | null;
+		readonly id: string;
+		readonly meta_data_updated_at: string;
+		readonly json: Record<string, any> | null;
+		readonly other_media_entry_id: string | null;
 	};
-	'md_people'?: MadekMetaDatumPerson[];
-	'people'?: (MadekPerson | null)[];
-	'md_keywords'?: MadekMetaDatumKeyword[];
-	'keywords'?: (MadekKeyword | null)[];
-	'md_roles'?: MadekMetaDatumRole[];
-	'roles'?: (MadekRole | null)[];
+	readonly 'md_people'?: MadekMetaDatumPerson[];
+	readonly 'people'?: (MadekPerson | null)[];
+	readonly 'md_keywords'?: MadekMetaDatumKeyword[];
+	readonly 'keywords'?: (MadekKeyword | null)[];
+	readonly 'md_roles'?: MadekMetaDatumRole[];
+	readonly 'roles'?: (MadekRole | null)[];
 }
 
 /*
@@ -113,8 +113,8 @@ export interface MadekCollectionMetaDatumResponse {
  * - Individual fields may still be empty strings if only one name is present
  */
 export interface PersonInfo {
-	first_name: string;
-	last_name: string;
+	readonly first_name: string;
+	readonly last_name: string;
 }
 
 /*
@@ -126,7 +126,7 @@ export interface PersonInfo {
  * - Term is always non-empty
  */
 export interface KeywordInfo {
-	term: string;
+	readonly term: string;
 }
 
 /*
@@ -143,9 +143,9 @@ export interface KeywordInfo {
  * See app/services/set.ts getRolesBasedFieldData() for filtering logic.
  */
 export interface RoleInfo {
-	person_id: string;
-	role_id: string;
-	labels: LocalizedLabel;
+	readonly person_id: string;
+	readonly role_id: string;
+	readonly labels: LocalizedLabel;
 }
 
 /*
@@ -159,10 +159,10 @@ export interface RoleInfo {
  * - roles: Valid structure, but person name validation happens in app layer (see RoleInfo)
  */
 export interface CollectionMetaDatum {
-	string: string;
-	people?: PersonInfo[];
-	keywords?: KeywordInfo[];
-	roles?: RoleInfo[];
+	readonly string: string;
+	readonly people?: PersonInfo[];
+	readonly keywords?: KeywordInfo[];
+	readonly roles?: RoleInfo[];
 }
 
 export type CollectionMetaData = CollectionMetaDatum[];

@@ -62,28 +62,33 @@ const SET_META_KEYS = {
 type SetMetaKeyField = keyof typeof SET_META_KEYS;
 
 export interface StringMetaKeyFieldData {
-	readonly label: string;
-	readonly value: string;
+	label: string;
+	value: string;
 }
 
 export interface PeopleMetaKeyFieldData {
-	readonly label: string;
-	readonly value: PersonInfo[];
+	label: string;
+	value: PersonInfo[];
 }
 
 export interface KeywordsMetaKeyFieldData {
-	readonly label: string;
-	readonly value: KeywordInfo[];
+	label: string;
+	value: KeywordInfo[];
 }
 
 interface ResolvedRoleInfo {
-	readonly roleName: string;
-	readonly person: PersonInfo;
+	roleName: string;
+	person: PersonInfo;
 }
 
 export interface RolesMetaKeyFieldData {
-	readonly label: string;
-	readonly value: ResolvedRoleInfo[];
+	label: string;
+	value: ResolvedRoleInfo[];
+}
+
+export interface MediaEntryThumbnailSources {
+	mediaEntryId: string;
+	thumbnailSources: ThumbnailSources;
 }
 
 interface SetService {

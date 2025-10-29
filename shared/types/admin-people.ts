@@ -20,6 +20,6 @@ export type MadekAdminPeopleGetResponse = MadekAdminPeopleGet['responses']['200'
  * where the person may have been deleted but references still exist.
  */
 export interface AdminPerson {
-	first_name: string;
-	last_name: string;
+	readonly first_name: string;
+	readonly last_name: string;
 }
