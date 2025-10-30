@@ -1,7 +1,7 @@
 import type { AppLocale } from '../types/locale';
 import { getSetService } from './set';
 
-export interface SetListItemData {
+export interface SetListDisplayData {
 	id: Collection['id'];
 	title: CollectionMetaDatum['string'];
 	coverImageSources: ThumbnailSources;
@@ -11,7 +11,7 @@ interface SetsService {
 	getTitleBatch: (setIds: MadekCollectionMetaDatumPathParameters['collection_id'][], appLocale: AppLocale) => Promise<CollectionMetaData>;
 	getCoverImageThumbnailSources: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources>;
 	getCoverImageThumbnailSourcesBatch: (setIds: MadekCollectionMediaEntryArcsPathParameters['collection_id'][], thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources[]>;
-	getSetsDisplayData: (sets: Collections, appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]) => Promise<SetListItemData[]>;
+	getSetsDisplayData: (sets: Collections, appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]) => Promise<SetListDisplayData[]>;
 }
 
 export function findCoverImageMediaEntryId(mediaEntries: CollectionMediaEntryArcs): CollectionMediaEntryArc['media_entry_id'] {
@@ -41,7 +41,11 @@ export function getPreviewIdByThumbnailType(previews: MediaEntryPreviewThumbnail
 	return matchingPreview.id;
 }
 
-export function mapSetsToDisplayData(sets: Collections, titles: CollectionMetaData, coverImageSources: ThumbnailSources[]): SetListItemData[] {
+export function mapSetsToDisplayData(
+	sets: Collections,
+	titles: CollectionMetaData,
+	coverImageSources: ThumbnailSources[],
+): SetListDisplayData[] {
 	return sets.map((set, index) => {
 		return {
 			id: set.id,
@@ -117,7 +121,7 @@ function createSetsService(): SetsService {
 			return thumbnailSources;
 		},
 
-		async getSetsDisplayData(sets: Collections, appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]): Promise<SetListItemData[]> {
+		async getSetsDisplayData(sets: Collections, appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]): Promise<SetListDisplayData[]> {
 			if (sets.length === 0) {
 				return [];
 			}

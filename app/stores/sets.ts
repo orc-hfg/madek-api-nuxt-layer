@@ -1,10 +1,10 @@
 import type { MockScenario } from '../composables/useMockScenario';
-import type { SetListItemData } from '../services/sets';
+import type { SetListDisplayData } from '../services/sets';
 import type { AppLocale } from '../types/locale';
 
 export const useSetsStore = defineStore('sets', () => {
 	const sets = shallowRef<Collections>([]);
-	const setsData = shallowRef<SetListItemData[]>([]);
+	const setsDisplayData = shallowRef<SetListDisplayData[]>([]);
 
 	async function refresh(appLocale: AppLocale, mockScenario?: MockScenario): Promise<void> {
 		const userStore = useUserStore();
@@ -19,7 +19,7 @@ export const useSetsStore = defineStore('sets', () => {
 		// If still no user after refresh, clear data and exit
 		if (userStore.id === undefined) {
 			sets.value = [];
-			setsData.value = [];
+			setsDisplayData.value = [];
 
 			return;
 		}
@@ -44,15 +44,13 @@ export const useSetsStore = defineStore('sets', () => {
 
 		const userSets = await setsRepository.getSets(query);
 
-		const setsDisplayData = await setsService.getSetsDisplayData(userSets, appLocale, ['small', 'medium', 'large', 'x_large']);
-
 		sets.value = userSets;
-		setsData.value = setsDisplayData;
+		setsDisplayData.value = await setsService.getSetsDisplayData(userSets, appLocale, ['small', 'medium', 'large', 'x_large']);
 	}
 
 	return {
 		sets,
-		setsData,
+		setsDisplayData,
 		refresh,
 	};
 });

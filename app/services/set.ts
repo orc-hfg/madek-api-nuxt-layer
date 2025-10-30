@@ -68,17 +68,17 @@ const MEDIA_ENTRY_META_KEYS = {
 	},
 } as const satisfies Record<string, Record<AppLocale, MadekMediaEntryMetaDatumPathParameters['meta_key_id']>>;
 
-export interface StringMetaKeyFieldData {
+interface StringMetaKeyFieldData {
 	label: string;
 	value: string;
 }
 
-export interface PeopleMetaKeyFieldData {
+interface PeopleMetaKeyFieldData {
 	label: string;
 	value: PersonInfo[];
 }
 
-export interface KeywordsMetaKeyFieldData {
+interface KeywordsMetaKeyFieldData {
 	label: string;
 	value: KeywordInfo[];
 }
@@ -88,15 +88,36 @@ interface ResolvedRoleInfo {
 	person: PersonInfo;
 }
 
-export interface RolesMetaKeyFieldData {
+interface RolesMetaKeyFieldData {
 	label: string;
 	value: ResolvedRoleInfo[];
 }
 
-export interface MediaEntryWithTitleAndThumbnails {
+interface MediaEntryWithTitleAndThumbnails {
 	mediaEntryId: string;
 	title: string;
 	thumbnailSources: ThumbnailSources;
+}
+
+export interface SetDetailDisplayData {
+	authors: PeopleMetaKeyFieldData;
+	title: StringMetaKeyFieldData;
+	subtitle: StringMetaKeyFieldData;
+	description: StringMetaKeyFieldData;
+	titleAlternativeLocale: StringMetaKeyFieldData;
+	subtitleAlternativeLocale: StringMetaKeyFieldData;
+	descriptionAlternativeLocale: StringMetaKeyFieldData;
+	portrayedObjectDate: StringMetaKeyFieldData;
+	projectCategory: KeywordsMetaKeyFieldData;
+	keywords: KeywordsMetaKeyFieldData;
+	semester: KeywordsMetaKeyFieldData;
+	programOfStudy: KeywordsMetaKeyFieldData;
+	otherCreativeParticipants: RolesMetaKeyFieldData;
+	material: KeywordsMetaKeyFieldData;
+	dimension: StringMetaKeyFieldData;
+	duration: StringMetaKeyFieldData;
+	format: StringMetaKeyFieldData;
+	mediaEntries: MediaEntryWithTitleAndThumbnails[];
 }
 
 interface SetService {
@@ -118,6 +139,7 @@ interface SetService {
 	getMediaEntryTitle: (mediaEntryId: string, appLocale: AppLocale) => Promise<string>;
 	getMediaEntryThumbnailSources: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], mediaEntryId: string, thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources>;
 	getMediaEntriesWithTitlesAndThumbnails: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]) => Promise<MediaEntryWithTitleAndThumbnails[]>;
+	getSetDisplayData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]) => Promise<SetDetailDisplayData>;
 }
 
 function createSetService(): SetService {
@@ -408,6 +430,75 @@ function createSetService(): SetService {
 			});
 
 			return Promise.all(mediaEntriesPromises);
+		},
+
+		async getSetDisplayData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]): Promise<SetDetailDisplayData> {
+			const alternativeLocale = getAlternativeLocale(appLocale);
+
+			/*
+			 * Execute all service calls in parallel to minimize latency
+			 * Each service call internally fetches label + value in parallel (2 HTTP requests)
+			 */
+			const [
+				authors,
+				title,
+				subtitle,
+				description,
+				titleAlternativeLocale,
+				subtitleAlternativeLocale,
+				descriptionAlternativeLocale,
+				portrayedObjectDate,
+				projectCategory,
+				keywords,
+				semester,
+				programOfStudy,
+				otherCreativeParticipants,
+				material,
+				dimension,
+				duration,
+				format,
+				mediaEntries,
+			] = await Promise.all([
+				this.getAuthorsFieldData(setId, appLocale),
+				this.getTitleFieldData(setId, appLocale),
+				this.getSubtitleFieldData(setId, appLocale),
+				this.getDescriptionFieldData(setId, appLocale),
+				this.getTitleFieldData(setId, appLocale, alternativeLocale),
+				this.getSubtitleFieldData(setId, appLocale, alternativeLocale),
+				this.getDescriptionFieldData(setId, appLocale, alternativeLocale),
+				this.getPortrayedObjectDateFieldData(setId, appLocale),
+				this.getProjectCategoryFieldData(setId, appLocale),
+				this.getKeywordsFieldData(setId, appLocale),
+				this.getSemesterFieldData(setId, appLocale),
+				this.getProgramOfStudyFieldData(setId, appLocale),
+				this.getOtherCreativeParticipantsFieldData(setId, appLocale),
+				this.getMaterialFieldData(setId, appLocale),
+				this.getDimensionFieldData(setId, appLocale),
+				this.getDurationFieldData(setId, appLocale),
+				this.getFormatFieldData(setId, appLocale),
+				this.getMediaEntriesWithTitlesAndThumbnails(setId, appLocale, thumbnailTypes),
+			]);
+
+			return {
+				authors,
+				title,
+				subtitle,
+				description,
+				titleAlternativeLocale,
+				subtitleAlternativeLocale,
+				descriptionAlternativeLocale,
+				portrayedObjectDate,
+				projectCategory,
+				keywords,
+				semester,
+				programOfStudy,
+				otherCreativeParticipants,
+				material,
+				dimension,
+				duration,
+				format,
+				mediaEntries,
+			};
 		},
 	};
 }
