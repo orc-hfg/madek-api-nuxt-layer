@@ -4,7 +4,7 @@ interface SetRepository {
 	getAdminPerson: (id: MadekAdminPeopleGetPathParameters['id']) => Promise<AdminPerson>;
 	getCollectionMetaDatum: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']) => Promise<CollectionMetaDatum>;
 	getMediaEntries: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id']) => Promise<CollectionMediaEntryArcs>;
-	getMediaEntryMetaDatum: (mediaEntryId: MadekMediaEntryMetaDatumPathParameters['media_entry_id'], metaKeyId: MadekMediaEntryMetaDatumPathParameters['meta_key_id']) => Promise<MediaEntryMetaDatum>;
+	getMediaEntryMetaDatum: (mediaEntryId: MadekMediaEntryMetaDatumPathParameters['media_entry_id'], metaKeyId: MadekMediaEntryMetaDatumPathParameters['meta_key_id']) => Promise<MediaEntryMetaDatum | undefined>;
 	getMediaEntryImagePreviews: (mediaEntryId: MadekMediaEntryPreviewPathParameters['media_entry_id']) => Promise<MediaEntryPreviewThumbnails>;
 	getPreviewDataStream: (previewId: MadekPreviewsDataStreamPathParameters['preview_id']) => Promise<PreviewDataStream>;
 	getMetaKeyLabels: (metaKeyId: MadekMetaKeysGetPathParameters['id']) => Promise<MetaKeyLabels>;
@@ -24,7 +24,7 @@ function createSetRepository($madekApi: ApiFunction): SetRepository {
 			return $madekApi(`/collection/${setId}/media-entry-arcs`);
 		},
 
-		async getMediaEntryMetaDatum(mediaEntryId: MadekMediaEntryMetaDatumPathParameters['media_entry_id'], metaKeyId: MadekMediaEntryMetaDatumPathParameters['meta_key_id']): Promise<MediaEntryMetaDatum> {
+		async getMediaEntryMetaDatum(mediaEntryId: MadekMediaEntryMetaDatumPathParameters['media_entry_id'], metaKeyId: MadekMediaEntryMetaDatumPathParameters['meta_key_id']): Promise<MediaEntryMetaDatum | undefined> {
 			return $madekApi(`/media-entry/${mediaEntryId}/meta-datum/${metaKeyId}`);
 		},
 

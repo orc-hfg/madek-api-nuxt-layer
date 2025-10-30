@@ -37,7 +37,15 @@ export function isFetchError(error: unknown): error is FetchError {
 
 export function isH3NotFoundError(error: unknown): boolean {
 	if (error instanceof H3Error) {
-		return error.statusCode === StatusCodes.NOT_FOUND as number;
+		return error.statusCode === (StatusCodes.NOT_FOUND as number);
+	}
+
+	return false;
+}
+
+export function isH3UnauthorizedError(error: unknown): boolean {
+	if (error instanceof H3Error) {
+		return error.statusCode === (StatusCodes.UNAUTHORIZED as number);
 	}
 
 	return false;

@@ -14,6 +14,36 @@ import { getFallbackMetaKey, mergeRoles, META_KEYS_SHOULD_TRIM, normalizeKeyword
  * See readme.architecture.md for complete architecture documentation
  */
 
+function handleNotFoundError(event: H3Event, collectionId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id'], serverLogger: Logger): Promise<CollectionMetaDatum> | CollectionMetaDatum | undefined {
+	const fallbackMetaKeyId = getFallbackMetaKey(metaKeyId);
+	if (fallbackMetaKeyId !== undefined) {
+		serverLogger.warn(`Meta key ${metaKeyId} returned 404, trying fallback meta key ${fallbackMetaKeyId}.`);
+
+		return getCollectionMetaDatum(event, collectionId, fallbackMetaKeyId);
+	}
+
+	if (shouldReturnEmptyString(metaKeyId)) {
+		serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty string instead.`);
+
+		return {
+			string: '',
+		};
+	}
+
+	if (shouldReturnEmptyArray(metaKeyId)) {
+		serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty data instead.`);
+
+		return {
+			string: '',
+			people: [],
+			keywords: [],
+			roles: [],
+		};
+	}
+
+	return undefined;
+}
+
 export async function getCollectionMetaDatum(event: H3Event, collectionId: MadekCollectionMetaDatumPathParameters['collection_id'], metaKeyId: MadekCollectionMetaDatumPathParameters['meta_key_id']): Promise<CollectionMetaDatum> {
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMetaDatumResponse>(event);
 	const serverLogger = createServerLogger(event, 'API Service: getCollectionMetaDatum');
@@ -57,30 +87,10 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 	}
 	catch (error) {
 		if (isH3NotFoundError(error)) {
-			const fallbackMetaKeyId = getFallbackMetaKey(metaKeyId);
-			if (fallbackMetaKeyId !== undefined) {
-				serverLogger.warn(`Meta key ${metaKeyId} returned 404, trying fallback meta key ${fallbackMetaKeyId}.`);
+			const result = handleNotFoundError(event, collectionId, metaKeyId, serverLogger);
 
-				return getCollectionMetaDatum(event, collectionId, fallbackMetaKeyId);
-			}
-
-			if (shouldReturnEmptyString(metaKeyId)) {
-				serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty string instead.`);
-
-				return {
-					string: '',
-				};
-			}
-
-			if (shouldReturnEmptyArray(metaKeyId)) {
-				serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty array instead.`);
-
-				return {
-					string: '',
-					people: [],
-					keywords: [],
-					roles: [],
-				};
+			if (result !== undefined) {
+				return result;
 			}
 		}
 

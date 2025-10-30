@@ -93,6 +93,12 @@ interface RolesMetaKeyFieldData {
 	value: ResolvedRoleInfo[];
 }
 
+interface MediaEntryWithOptionalTitle {
+	mediaEntryId: string;
+	title: string | undefined;
+	thumbnailSources: ThumbnailSources;
+}
+
 interface MediaEntryWithTitleAndThumbnails {
 	mediaEntryId: string;
 	title: string;
@@ -136,7 +142,7 @@ interface SetService {
 	getDimensionFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getDurationFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getFormatFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
-	getMediaEntryTitle: (mediaEntryId: string, appLocale: AppLocale) => Promise<string>;
+	getMediaEntryTitle: (mediaEntryId: string, appLocale: AppLocale) => Promise<string | undefined>;
 	getMediaEntryThumbnailSources: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], mediaEntryId: string, thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources>;
 	getMediaEntriesWithTitlesAndThumbnails: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]) => Promise<MediaEntryWithTitleAndThumbnails[]>;
 	getSetDisplayData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]) => Promise<SetDetailDisplayData>;
@@ -271,7 +277,7 @@ function createSetService(): SetService {
 		};
 	}
 
-	async function getMediaEntryMetaDatum(mediaEntryId: MadekMediaEntryMetaDatumPathParameters['media_entry_id'], metaKeyId: MadekMediaEntryMetaDatumPathParameters['meta_key_id']): Promise<MediaEntryMetaDatum> {
+	async function getMediaEntryMetaDatum(mediaEntryId: MadekMediaEntryMetaDatumPathParameters['media_entry_id'], metaKeyId: MadekMediaEntryMetaDatumPathParameters['meta_key_id']): Promise<MediaEntryMetaDatum | undefined> {
 		return setRepository.getMediaEntryMetaDatum(mediaEntryId, metaKeyId);
 	}
 
@@ -372,9 +378,17 @@ function createSetService(): SetService {
 			return getMetaDatumFieldData('format', setId, appLocale);
 		},
 
-		async getMediaEntryTitle(mediaEntryId: string, appLocale: AppLocale): Promise<string> {
+		async getMediaEntryTitle(mediaEntryId: string, appLocale: AppLocale): Promise<string | undefined> {
 			const metaKeyId = MEDIA_ENTRY_META_KEYS.title[appLocale];
 			const metaDatum = await getMediaEntryMetaDatum(mediaEntryId, metaKeyId);
+
+			/*
+			 * If metaDatum is undefined, the user doesn't have access to this media entry.
+			 * Return undefined to signal that this entry should be filtered out.
+			 */
+			if (metaDatum === undefined) {
+				return undefined;
+			}
 
 			return metaDatum.string;
 		},
@@ -416,7 +430,7 @@ function createSetService(): SetService {
 				return [];
 			}
 
-			const mediaEntriesPromises = mediaEntriesWithImagePreviews.map(async (mediaEntry) => {
+			const mediaEntriesPromises = mediaEntriesWithImagePreviews.map(async (mediaEntry): Promise<MediaEntryWithOptionalTitle> => {
 				const [title, thumbnailSources] = await Promise.all([
 					this.getMediaEntryTitle(mediaEntry.mediaEntryId, appLocale),
 					this.getMediaEntryThumbnailSources(setId, mediaEntry.mediaEntryId, thumbnailTypes),
@@ -429,7 +443,17 @@ function createSetService(): SetService {
 				};
 			});
 
-			return Promise.all(mediaEntriesPromises);
+			const allMediaEntries = await Promise.all(mediaEntriesPromises);
+
+			/*
+			 * Filter out media entries with undefined title (user doesn't have access).
+			 * This happens when a media entry returns 401 Unauthorized.
+			 */
+			const accessibleMediaEntries = allMediaEntries.filter(
+				(entry): entry is MediaEntryWithTitleAndThumbnails => entry.title !== undefined,
+			);
+
+			return accessibleMediaEntries;
 		},
 
 		async getSetDisplayData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]): Promise<SetDetailDisplayData> {
