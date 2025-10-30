@@ -12,12 +12,12 @@ export const useSetsStore = defineStore('sets', () => {
 		const setsService = getSetsService();
 
 		// Ensure user is loaded
-		if (userStore.id === undefined) {
+		if (userStore.userDisplayData?.id === undefined) {
 			await userStore.refresh();
 		}
 
 		// If still no user after refresh, clear data and exit
-		if (userStore.id === undefined) {
+		if (userStore.userDisplayData?.id === undefined) {
 			sets.value = [];
 			setsDisplayData.value = [];
 
@@ -25,7 +25,7 @@ export const useSetsStore = defineStore('sets', () => {
 		}
 
 		const baseQuery = {
-			responsible_user_id: userStore.id,
+			responsible_user_id: userStore.userDisplayData.id,
 			filter_by: JSON.stringify({
 				meta_data: [
 					{
