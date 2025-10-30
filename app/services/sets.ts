@@ -1,10 +1,17 @@
 import type { AppLocale } from '../types/locale';
 import { getSetService } from './set';
 
+export interface SetListItemData {
+	id: Collection['id'];
+	title: CollectionMetaDatum['string'];
+	coverImageSources: ThumbnailSources;
+}
+
 interface SetsService {
 	getTitleBatch: (setIds: MadekCollectionMetaDatumPathParameters['collection_id'][], appLocale: AppLocale) => Promise<CollectionMetaData>;
 	getCoverImageThumbnailSources: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources>;
 	getCoverImageThumbnailSourcesBatch: (setIds: MadekCollectionMediaEntryArcsPathParameters['collection_id'][], thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources[]>;
+	getSetsDisplayData: (sets: Collections, appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]) => Promise<SetListItemData[]>;
 }
 
 export function findCoverImageMediaEntryId(mediaEntries: CollectionMediaEntryArcs): CollectionMediaEntryArc['media_entry_id'] {
@@ -32,6 +39,16 @@ export function getPreviewIdByThumbnailType(previews: MediaEntryPreviewThumbnail
 	}
 
 	return matchingPreview.id;
+}
+
+export function mapSetsToDisplayData(sets: Collections, titles: CollectionMetaData, coverImageSources: ThumbnailSources[]): SetListItemData[] {
+	return sets.map((set, index) => {
+		return {
+			id: set.id,
+			title: titles[index]?.string ?? '',
+			coverImageSources: coverImageSources[index] ?? {},
+		};
+	});
 }
 
 function createSetsService(): SetsService {
@@ -98,6 +115,21 @@ function createSetsService(): SetsService {
 			const thumbnailSources = await Promise.all(thumbnailSourcesPromises);
 
 			return thumbnailSources;
+		},
+
+		async getSetsDisplayData(sets: Collections, appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]): Promise<SetListItemData[]> {
+			if (sets.length === 0) {
+				return [];
+			}
+
+			const setIds = sets.map(set => set.id);
+
+			const [titles, coverImageSources] = await Promise.all([
+				this.getTitleBatch(setIds, appLocale),
+				this.getCoverImageThumbnailSourcesBatch(setIds, thumbnailTypes),
+			]);
+
+			return mapSetsToDisplayData(sets, titles, coverImageSources);
 		},
 	};
 }

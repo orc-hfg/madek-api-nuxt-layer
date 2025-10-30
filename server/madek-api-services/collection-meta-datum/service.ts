@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3';
 import { fiveMinutesCache } from '../../constants/cache';
-import { getFallbackMetaKey, mergeRoles, META_KEYS_SHOULD_TRIM, normalizeKeywords, normalizePeople, shouldReturnEmptyArrayOn404, shouldReturnEmptyStringOn404 } from './normalization';
+import { getFallbackMetaKey, mergeRoles, META_KEYS_SHOULD_TRIM, normalizeKeywords, normalizePeople, shouldReturnEmptyArray, shouldReturnEmptyString } from './normalization';
 
 /*
  * API Service Layer - Collection Meta Datum
@@ -57,8 +57,22 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 	}
 	catch (error) {
 		if (isH3NotFoundError(error)) {
-			// Check if this meta key should return empty array on 404
-			if (shouldReturnEmptyArrayOn404(metaKeyId)) {
+			const fallbackMetaKeyId = getFallbackMetaKey(metaKeyId);
+			if (fallbackMetaKeyId !== undefined) {
+				serverLogger.warn(`Meta key ${metaKeyId} returned 404, trying fallback meta key ${fallbackMetaKeyId}.`);
+
+				return getCollectionMetaDatum(event, collectionId, fallbackMetaKeyId);
+			}
+
+			if (shouldReturnEmptyString(metaKeyId)) {
+				serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty string instead.`);
+
+				return {
+					string: '',
+				};
+			}
+
+			if (shouldReturnEmptyArray(metaKeyId)) {
 				serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty array instead.`);
 
 				return {
@@ -67,23 +81,6 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 					keywords: [],
 					roles: [],
 				};
-			}
-
-			// Check if this meta key should return empty string on 404
-			if (shouldReturnEmptyStringOn404(metaKeyId)) {
-				serverLogger.warn(`Meta key ${metaKeyId} returned 404, returning empty string instead.`);
-
-				return {
-					string: '',
-				};
-			}
-
-			// Check for fallback meta key
-			const fallbackMetaKeyId = getFallbackMetaKey(metaKeyId);
-			if (fallbackMetaKeyId !== undefined) {
-				serverLogger.warn(`Meta key ${metaKeyId} returned 404, trying fallback meta key ${fallbackMetaKeyId}.`);
-
-				return getCollectionMetaDatum(event, collectionId, fallbackMetaKeyId);
 			}
 		}
 

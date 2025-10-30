@@ -146,6 +146,12 @@ export const mockData = {
 		return result;
 	},
 
+	getMediaEntryMetaDatum: (mediaEntryId: MadekMediaEntryMetaDatumPathParameters['media_entry_id'], metaKeyId: MadekMediaEntryMetaDatumPathParameters['meta_key_id']): MediaEntryMetaDatum => {
+		return {
+			string: `Test mediaEntryId ${mediaEntryId} / metaKeyId ${metaKeyId} Content`,
+		};
+	},
+
 	getMediaEntryPreviewThumbnails: (mediaEntryId: MadekMediaEntryPreviewPathParameters['media_entry_id'], _query: MediaEntryPreviewQuery): MediaEntryPreviewThumbnails => [
 		{
 			id: `preview-small-${mediaEntryId}`,

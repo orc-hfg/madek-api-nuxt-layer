@@ -1,15 +1,10 @@
 import type { MockScenario } from '../composables/useMockScenario';
+import type { SetListItemData } from '../services/sets';
 import type { AppLocale } from '../types/locale';
-
-interface SetData {
-	id: Collection['id'];
-	title: CollectionMetaDatum['string'];
-	coverImageSources: ThumbnailSources;
-}
 
 export const useSetsStore = defineStore('sets', () => {
 	const sets = shallowRef<Collections>([]);
-	const setsData = shallowRef<SetData[]>([]);
+	const setsData = shallowRef<SetListItemData[]>([]);
 
 	async function refresh(appLocale: AppLocale, mockScenario?: MockScenario): Promise<void> {
 		const userStore = useUserStore();
@@ -49,30 +44,10 @@ export const useSetsStore = defineStore('sets', () => {
 
 		const userSets = await setsRepository.getSets(query);
 
-		// Use local snapshot to avoid race conditions
-		const currentSets = userSets;
-		const setIds = currentSets.map(set => set.id);
+		const setsDisplayData = await setsService.getSetsDisplayData(userSets, appLocale, ['small', 'medium', 'large', 'x_large']);
 
-		const [titles, coverImageSources] = await Promise.all([
-			setsService.getTitleBatch(setIds, appLocale),
-			setsService.getCoverImageThumbnailSourcesBatch(
-				setIds,
-				['small', 'medium', 'large', 'x_large'],
-			),
-		]);
-
-		// Only update reactive state after all data is fetched and mapped
-		const mappedData = currentSets.map((set, index) => {
-			return {
-				id: set.id,
-				title: titles[index]?.string ?? '',
-				coverImageSources: coverImageSources[index] ?? {},
-			};
-		});
-
-		// Atomic update: both refs updated together with consistent data
-		sets.value = currentSets;
-		setsData.value = mappedData;
+		sets.value = userSets;
+		setsData.value = setsDisplayData;
 	}
 
 	return {

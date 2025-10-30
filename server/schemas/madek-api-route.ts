@@ -25,6 +25,10 @@ export const routeParameterSchemas = {
 		collection_id: nonEmptyStringSchema,
 		meta_key_id: nonEmptyStringSchema,
 	}),
+	mediaEntryMetaDatum: z.object({
+		media_entry_id: nonEmptyStringSchema,
+		meta_key_id: nonEmptyStringSchema,
+	}),
 } as const;
 
 export const routeQuerySchemas = {

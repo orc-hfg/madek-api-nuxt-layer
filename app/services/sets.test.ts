@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { findCoverImageMediaEntryId, getPreviewIdByThumbnailType } from './sets';
+import { findCoverImageMediaEntryId, getPreviewIdByThumbnailType, mapSetsToDisplayData } from './sets';
 
 describe('getSetsService()', () => {
 	describe('findCoverImageMediaEntryId()', () => {
@@ -71,6 +71,128 @@ describe('getSetsService()', () => {
 			const result = getPreviewIdByThumbnailType(previews, 'x_large');
 
 			expect(result).toBeUndefined();
+		});
+	});
+
+	describe('mapSetsToDisplayData()', () => {
+		it('should map sets with titles and cover images to display data', () => {
+			const sets: Collections = [
+				{ id: 'set-1' },
+				{ id: 'set-2' },
+			];
+
+			const titles: CollectionMetaData = [
+				{ string: 'Project A' },
+				{ string: 'Project B' },
+			];
+
+			const coverImageSources: ThumbnailSources[] = [
+				{ small: { url: 'https://example.com/img1.jpg', width: 100 } },
+				{ medium: { url: 'https://example.com/img2.jpg', width: 200 } },
+			];
+
+			const result = mapSetsToDisplayData(sets, titles, coverImageSources);
+
+			expect(result).toStrictEqual([
+				{
+					id: 'set-1',
+					title: 'Project A',
+					coverImageSources: { small: { url: 'https://example.com/img1.jpg', width: 100 } },
+				},
+				{
+					id: 'set-2',
+					title: 'Project B',
+					coverImageSources: { medium: { url: 'https://example.com/img2.jpg', width: 200 } },
+				},
+			]);
+		});
+
+		it('should handle missing title with empty string fallback', () => {
+			const sets: Collections = [{ id: 'set-1' }];
+			const titles: CollectionMetaData = [null as unknown as CollectionMetaDatum];
+			const coverImageSources: ThumbnailSources[] = [{}];
+
+			const result = mapSetsToDisplayData(sets, titles, coverImageSources);
+
+			expect(result).toStrictEqual([
+				{
+					id: 'set-1',
+					title: '',
+					coverImageSources: {},
+				},
+			]);
+		});
+
+		it('should handle empty title string', () => {
+			const sets: Collections = [{ id: 'set-1' }];
+			const titles: CollectionMetaData = [{ string: '' }];
+			const coverImageSources: ThumbnailSources[] = [{}];
+
+			const result = mapSetsToDisplayData(sets, titles, coverImageSources);
+
+			expect(result).toStrictEqual([
+				{
+					id: 'set-1',
+					title: '',
+					coverImageSources: {},
+				},
+			]);
+		});
+
+		it('should handle missing cover images with empty object fallback', () => {
+			const sets: Collections = [{ id: 'set-1' }];
+			const titles: CollectionMetaData = [{ string: 'Project A' }];
+			const coverImageSources: ThumbnailSources[] = [null as unknown as ThumbnailSources];
+
+			const result = mapSetsToDisplayData(sets, titles, coverImageSources);
+
+			expect(result).toStrictEqual([
+				{
+					id: 'set-1',
+					title: 'Project A',
+					coverImageSources: {},
+				},
+			]);
+		});
+
+		it('should handle multiple sets with mixed data availability', () => {
+			const sets: Collections = [
+				{ id: 'set-1' },
+				{ id: 'set-2' },
+				{ id: 'set-3' },
+			];
+
+			const titles: CollectionMetaData = [
+				{ string: 'Project A' },
+				null as unknown as CollectionMetaDatum,
+				{ string: 'Project C' },
+			];
+
+			const coverImageSources: ThumbnailSources[] = [
+				{ small: { url: 'https://example.com/img1.jpg', width: 100 } },
+				{},
+				null as unknown as ThumbnailSources,
+			];
+
+			const result = mapSetsToDisplayData(sets, titles, coverImageSources);
+
+			expect(result).toStrictEqual([
+				{
+					id: 'set-1',
+					title: 'Project A',
+					coverImageSources: { small: { url: 'https://example.com/img1.jpg', width: 100 } },
+				},
+				{
+					id: 'set-2',
+					title: '',
+					coverImageSources: {},
+				},
+				{
+					id: 'set-3',
+					title: 'Project C',
+					coverImageSources: {},
+				},
+			]);
 		});
 	});
 });

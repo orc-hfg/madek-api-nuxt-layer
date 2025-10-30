@@ -61,6 +61,13 @@ const SET_META_KEYS = {
 
 type SetMetaKeyField = keyof typeof SET_META_KEYS;
 
+const MEDIA_ENTRY_META_KEYS = {
+	title: {
+		de: 'madek_core:title',
+		en: 'creative_work:title_en',
+	},
+} as const satisfies Record<string, Record<AppLocale, MadekMediaEntryMetaDatumPathParameters['meta_key_id']>>;
+
 export interface StringMetaKeyFieldData {
 	label: string;
 	value: string;
@@ -86,8 +93,9 @@ export interface RolesMetaKeyFieldData {
 	value: ResolvedRoleInfo[];
 }
 
-export interface MediaEntryThumbnailSources {
+export interface MediaEntryWithTitleAndThumbnails {
 	mediaEntryId: string;
+	title: string;
 	thumbnailSources: ThumbnailSources;
 }
 
@@ -107,11 +115,15 @@ interface SetService {
 	getDimensionFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getDurationFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
 	getFormatFieldData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale) => Promise<StringMetaKeyFieldData>;
+	getMediaEntryTitle: (mediaEntryId: string, appLocale: AppLocale) => Promise<string>;
+	getMediaEntryThumbnailSources: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], mediaEntryId: string, thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources>;
+	getMediaEntriesWithTitlesAndThumbnails: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]) => Promise<MediaEntryWithTitleAndThumbnails[]>;
 }
 
 function createSetService(): SetService {
 	const appLogger = createAppLogger('Service: Set');
 	const setRepository = getSetRepository();
+	const apiBaseUrl = useApiBaseUrl();
 
 	async function getMetaKeyLabel(metaKeyId: MadekMetaKeysGetPathParameters['id'], appLocale: AppLocale): Promise<string> {
 		const metaKeyLabels = await setRepository.getMetaKeyLabels(metaKeyId);
@@ -237,6 +249,46 @@ function createSetService(): SetService {
 		};
 	}
 
+	async function getMediaEntryMetaDatum(mediaEntryId: MadekMediaEntryMetaDatumPathParameters['media_entry_id'], metaKeyId: MadekMediaEntryMetaDatumPathParameters['meta_key_id']): Promise<MediaEntryMetaDatum> {
+		return setRepository.getMediaEntryMetaDatum(mediaEntryId, metaKeyId);
+	}
+
+	interface MediaEntryWithPreviews {
+		mediaEntryId: string;
+		imagePreviews: MediaEntryPreviewThumbnails;
+	}
+
+	async function getMediaEntryImagePreviews(mediaEntryId: MadekMediaEntryPreviewPathParameters['media_entry_id']): Promise<MediaEntryPreviewThumbnails | undefined> {
+		const imagePreviews = await setRepository.getMediaEntryImagePreviews(mediaEntryId);
+
+		if (imagePreviews.length === 0) {
+			return undefined;
+		}
+
+		return imagePreviews;
+	}
+
+	async function getMediaEntriesWithImagePreviews(setId: MadekMediaEntryPreviewPathParameters['media_entry_id']): Promise<MediaEntryWithPreviews[]> {
+		const mediaEntries = await setRepository.getMediaEntries(setId);
+
+		if (mediaEntries.length === 0) {
+			return [];
+		}
+
+		const imagePreviewPromises = mediaEntries.map(async (mediaEntry) => {
+			const imagePreviews = await getMediaEntryImagePreviews(mediaEntry.media_entry_id);
+
+			return {
+				mediaEntryId: mediaEntry.media_entry_id,
+				imagePreviews,
+			};
+		});
+
+		const allImagePreviews = await Promise.all(imagePreviewPromises);
+
+		return allImagePreviews.filter((entry): entry is MediaEntryWithPreviews => entry.imagePreviews !== undefined);
+	}
+
 	return {
 		async getAuthorsFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<PeopleMetaKeyFieldData> {
 			return getPeopleBasedFieldData('authors', setId, appLocale);
@@ -296,6 +348,66 @@ function createSetService(): SetService {
 
 		async getFormatFieldData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale): Promise<StringMetaKeyFieldData> {
 			return getMetaDatumFieldData('format', setId, appLocale);
+		},
+
+		async getMediaEntryTitle(mediaEntryId: string, appLocale: AppLocale): Promise<string> {
+			const metaKeyId = MEDIA_ENTRY_META_KEYS.title[appLocale];
+			const metaDatum = await getMediaEntryMetaDatum(mediaEntryId, metaKeyId);
+
+			return metaDatum.string;
+		},
+
+		async getMediaEntryThumbnailSources(setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], mediaEntryId: string, thumbnailTypes: ThumbnailTypes[]): Promise<ThumbnailSources> {
+			const imagePreviews = await getMediaEntryImagePreviews(mediaEntryId);
+
+			if (!imagePreviews) {
+				appLogger.warn('getMediaEntryThumbnailSources: No image previews found.', { setId, mediaEntryId });
+
+				return {};
+			}
+
+			const thumbnailSources: ThumbnailSources = {};
+			for (const thumbnailType of thumbnailTypes) {
+				const previewId = getPreviewIdByThumbnailType(imagePreviews, thumbnailType);
+
+				if (previewId === undefined) {
+					appLogger.warn('getMediaEntryThumbnailSources: No preview found for thumbnail type.', { thumbnailType, mediaEntryId });
+				}
+
+				if (previewId !== undefined) {
+					(thumbnailSources as Record<ThumbnailTypes, ThumbnailSource>)[thumbnailType] = {
+						url: `${apiBaseUrl}/previews/${previewId}/data-stream`,
+						width: getThumbnailPixelSize(thumbnailType),
+					};
+				}
+			}
+
+			return thumbnailSources;
+		},
+
+		async getMediaEntriesWithTitlesAndThumbnails(setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]): Promise<MediaEntryWithTitleAndThumbnails[]> {
+			const mediaEntriesWithImagePreviews = await getMediaEntriesWithImagePreviews(setId);
+
+			if (mediaEntriesWithImagePreviews.length === 0) {
+				appLogger.warn('getMediaEntriesWithTitlesAndThumbnails: No media entries with image previews found.', setId);
+
+				return [];
+			}
+
+			const mediaEntriesPromises = mediaEntriesWithImagePreviews.map(async (mediaEntry) => {
+				const [title, thumbnailSources] = await Promise.all([
+					this.getMediaEntryTitle(mediaEntry.mediaEntryId, appLocale),
+					this.getMediaEntryThumbnailSources(setId, mediaEntry.mediaEntryId, thumbnailTypes),
+				]);
+
+				return {
+					mediaEntryId: mediaEntry.mediaEntryId,
+					title,
+					thumbnailSources,
+				};
+			});
+
+			return Promise.all(mediaEntriesPromises);
 		},
 	};
 }

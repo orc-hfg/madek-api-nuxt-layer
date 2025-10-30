@@ -1,4 +1,4 @@
-import type { KeywordsMetaKeyFieldData, PeopleMetaKeyFieldData, RolesMetaKeyFieldData, StringMetaKeyFieldData } from '../services/set';
+import type { KeywordsMetaKeyFieldData, MediaEntryWithTitleAndThumbnails, PeopleMetaKeyFieldData, RolesMetaKeyFieldData, StringMetaKeyFieldData } from '../services/set';
 import type { AppLocale } from '../types/locale';
 
 interface SetData {
@@ -19,6 +19,7 @@ interface SetData {
 	dimension: StringMetaKeyFieldData;
 	duration: StringMetaKeyFieldData;
 	format: StringMetaKeyFieldData;
+	mediaEntries: MediaEntryWithTitleAndThumbnails[];
 }
 
 export const useSetStore = defineStore('set', () => {
@@ -50,6 +51,7 @@ export const useSetStore = defineStore('set', () => {
 			dimensionFieldData,
 			durationFieldData,
 			formatFieldData,
+			mediaEntriesData,
 		] = await Promise.all([
 			setService.getAuthorsFieldData(setId, appLocale),
 			setService.getTitleFieldData(setId, appLocale),
@@ -68,6 +70,7 @@ export const useSetStore = defineStore('set', () => {
 			setService.getDimensionFieldData(setId, appLocale),
 			setService.getDurationFieldData(setId, appLocale),
 			setService.getFormatFieldData(setId, appLocale),
+			setService.getMediaEntriesWithTitlesAndThumbnails(setId, appLocale, ['small_125', 'medium']),
 		]);
 
 		setData.value = {
@@ -88,6 +91,7 @@ export const useSetStore = defineStore('set', () => {
 			dimension: dimensionFieldData,
 			duration: durationFieldData,
 			format: formatFieldData,
+			mediaEntries: mediaEntriesData,
 		};
 	}
 
