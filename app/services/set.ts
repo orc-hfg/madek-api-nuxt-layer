@@ -148,6 +148,12 @@ interface SetService {
 	getSetDisplayData: (setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]) => Promise<SetDetailDisplayData>;
 }
 
+export function filterMediaEntriesWithAccess(mediaEntries: MediaEntryWithOptionalTitle[]): MediaEntryWithTitleAndThumbnails[] {
+	return mediaEntries.filter(
+		(entry): entry is MediaEntryWithTitleAndThumbnails => entry.title !== undefined,
+	);
+}
+
 function createSetService(): SetService {
 	const appLogger = createAppLogger('Service: Set');
 	const setRepository = getSetRepository();
@@ -445,15 +451,7 @@ function createSetService(): SetService {
 
 			const allMediaEntries = await Promise.all(mediaEntriesPromises);
 
-			/*
-			 * Filter out media entries with undefined title (user doesn't have access).
-			 * This happens when a media entry returns 401 Unauthorized.
-			 */
-			const accessibleMediaEntries = allMediaEntries.filter(
-				(entry): entry is MediaEntryWithTitleAndThumbnails => entry.title !== undefined,
-			);
-
-			return accessibleMediaEntries;
+			return filterMediaEntriesWithAccess(allMediaEntries);
 		},
 
 		async getSetDisplayData(setId: MadekCollectionMetaDatumPathParameters['collection_id'], appLocale: AppLocale, thumbnailTypes: ThumbnailTypes[]): Promise<SetDetailDisplayData> {

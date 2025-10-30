@@ -41,11 +41,7 @@ export function getPreviewIdByThumbnailType(previews: MediaEntryPreviewThumbnail
 	return matchingPreview.id;
 }
 
-export function mapSetsToDisplayData(
-	sets: Collections,
-	titles: CollectionMetaData,
-	coverImageSources: ThumbnailSources[],
-): SetListDisplayData[] {
+export function mapSetsToDisplayData(sets: Collections, titles: CollectionMetaData, coverImageSources: ThumbnailSources[]): SetListDisplayData[] {
 	return sets.map((set, index) => {
 		return {
 			id: set.id,
