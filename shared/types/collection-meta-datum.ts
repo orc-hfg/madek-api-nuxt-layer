@@ -87,12 +87,13 @@ export interface MadekCollectionMetaDatumResponse {
 		readonly created_by_id: string;
 		readonly media_entry_id: string | null;
 		readonly collection_id: string;
+
 		readonly type: string;
 		readonly meta_key_id: string;
 		readonly string: string | null;
 		readonly id: string;
 		readonly meta_data_updated_at: string;
-		readonly json: Record<string, any> | null;
+		readonly json: Record<string, unknown> | null;
 		readonly other_media_entry_id: string | null;
 	};
 	readonly 'md_people'?: MadekMetaDatumPerson[];

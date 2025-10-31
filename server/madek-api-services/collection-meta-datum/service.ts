@@ -67,10 +67,7 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 		);
 
 		return {
-			string: normalizeTextContent(
-				response['meta-data'].string,
-				META_KEYS_SHOULD_TRIM.has(metaKeyId),
-			),
+			string: normalizeTextContent(response['meta-data'].string, META_KEYS_SHOULD_TRIM.has(metaKeyId)),
 
 			...(response.people && {
 				people: normalizePeople(response.people),

@@ -51,11 +51,7 @@ export function isH3UnauthorizedError(error: unknown): boolean {
 	return false;
 }
 
-export function handleServiceError(
-	serverLogger: Logger,
-	error: unknown,
-	message = 'Failed to complete operation.',
-): never {
+export function handleServiceError(serverLogger: Logger, error: unknown, message = 'Failed to complete operation.'): never {
 	serverLogger.error(message, error);
 
 	throw error;

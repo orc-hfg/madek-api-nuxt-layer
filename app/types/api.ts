@@ -1,6 +1,3 @@
 import type { FetchOptions } from 'ofetch';
 
-export type ApiFunction = <TResponse = any>(
-	endpoint: string,
-	options?: FetchOptions,
-) => Promise<TResponse>;
+export type ApiFunction = <TResponse = unknown>(endpoint: string, options?: FetchOptions) => Promise<TResponse>;

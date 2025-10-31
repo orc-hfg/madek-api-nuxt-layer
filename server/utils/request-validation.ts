@@ -2,10 +2,7 @@ import type { H3Event } from 'h3';
 import { StatusCodes } from 'http-status-codes';
 import { z } from 'zod';
 
-export async function validateRouteParameters<TSchema extends z.ZodType>(
-	event: H3Event,
-	schema: TSchema,
-): Promise<z.infer<TSchema>> {
+export async function validateRouteParameters<TSchema extends z.ZodType>(event: H3Event, schema: TSchema): Promise<z.infer<TSchema>> {
 	const parameters = await getValidatedRouterParams(event, data => schema.safeParse(data));
 	if (!parameters.success) {
 		throw createError({
@@ -17,10 +14,7 @@ export async function validateRouteParameters<TSchema extends z.ZodType>(
 	return parameters.data;
 }
 
-export async function validateQueryParameters<TSchema extends z.ZodType>(
-	event: H3Event,
-	schema: TSchema,
-): Promise<z.infer<TSchema>> {
+export async function validateQueryParameters<TSchema extends z.ZodType>(event: H3Event, schema: TSchema): Promise<z.infer<TSchema>> {
 	const query = await getValidatedQuery(event, data => schema.safeParse(data));
 	if (!query.success) {
 		throw createError({

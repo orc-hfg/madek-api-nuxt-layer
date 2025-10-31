@@ -8,6 +8,11 @@ interface RequestHeadersMock {
 	cookie: string;
 }
 
+interface FetchMock {
+	(...parameters: unknown[]): Promise<unknown>;
+	create: () => FetchMock;
+}
+
 function getRequestHeadersMock(): RequestHeadersMock {
 	return {
 		cookie: TEST_COOKIE,
@@ -18,9 +23,8 @@ function getRequestHeadersMock(): RequestHeadersMock {
 mockNuxtImport('definePayloadReviver', () => vi.fn());
 
 // Mock $fetch with create method
-const fetchMock = vi.fn().mockResolvedValue({});
-// eslint-disable-next-line ts/no-unsafe-member-access
-(fetchMock as any).create = vi.fn().mockReturnValue(fetchMock);
+const fetchMock = vi.fn().mockResolvedValue({}) as unknown as FetchMock;
+fetchMock.create = vi.fn().mockReturnValue(fetchMock);
 
 // Prevent 'Error fetching app manifest' error
 vi.mock('#app/composables/manifest', () => {

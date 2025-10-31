@@ -121,11 +121,7 @@ export async function fetchData<TResponse>(
 	}
 }
 
-export function shouldUseCaching(
-	isServerSideCachingEnabled: boolean,
-	isAuthenticationNeeded: boolean,
-	cacheOptions?: CacheOptions,
-): boolean {
+export function shouldUseCaching(isServerSideCachingEnabled: boolean, isAuthenticationNeeded: boolean, cacheOptions?: CacheOptions): boolean {
 	return isServerSideCachingEnabled && !isAuthenticationNeeded && cacheOptions !== undefined;
 }
 

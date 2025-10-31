@@ -39,10 +39,7 @@ describe('fetchData()', () => {
 				query: { param: 'value' },
 			};
 
-			expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
-				'https://api.example.com/test',
-				expectedConfig,
-			);
+			expect(apiTestContext.fetchMock).toHaveBeenCalledWith('https://api.example.com/test', expectedConfig);
 		});
 
 		it('builds request configuration without headers when authentication is not needed', async () => {
@@ -59,10 +56,7 @@ describe('fetchData()', () => {
 				query: { param: 'value' },
 			};
 
-			expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
-				'https://api.example.com/test',
-				expectedConfig,
-			);
+			expect(apiTestContext.fetchMock).toHaveBeenCalledWith('https://api.example.com/test', expectedConfig);
 		});
 	});
 
@@ -82,10 +76,7 @@ describe('fetchData()', () => {
 				query: { param: 'value' },
 			};
 
-			expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
-				'https://api.example.com/test',
-				expectedConfig,
-			);
+			expect(apiTestContext.fetchMock).toHaveBeenCalledWith('https://api.example.com/test', expectedConfig);
 		});
 
 		it('builds request configuration without headers when authentication is not needed', async () => {
@@ -102,10 +93,7 @@ describe('fetchData()', () => {
 				query: { param: 'value' },
 			};
 
-			expect(apiTestContext.fetchMock).toHaveBeenCalledWith(
-				'https://api.example.com/test',
-				expectedConfig,
-			);
+			expect(apiTestContext.fetchMock).toHaveBeenCalledWith('https://api.example.com/test', expectedConfig);
 		});
 	});
 });

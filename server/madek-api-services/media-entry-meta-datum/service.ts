@@ -44,10 +44,7 @@ export async function getMediaEntryMetaDatum(event: H3Event, mediaEntryId: Madek
 		);
 
 		return {
-			string: normalizeTextContent(
-				response['meta-data'].string,
-				META_KEYS_SHOULD_TRIM.has(metaKeyId),
-			),
+			string: normalizeTextContent(response['meta-data'].string, META_KEYS_SHOULD_TRIM.has(metaKeyId)),
 		};
 	}
 	catch (error) {

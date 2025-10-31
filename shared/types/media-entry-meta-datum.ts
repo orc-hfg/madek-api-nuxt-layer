@@ -25,7 +25,7 @@ export interface MadekMediaEntryMetaDatumResponse {
 		readonly string: string | null;
 		readonly id: string;
 		readonly meta_data_updated_at: string;
-		readonly json: Record<string, any> | null;
+		readonly json: Record<string, unknown> | null;
 		readonly other_media_entry_id: string | null;
 	};
 	readonly 'defaultmetadata'?: string;

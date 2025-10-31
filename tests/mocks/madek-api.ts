@@ -36,9 +36,7 @@ interface ApiTestContext extends ServerLoggerMock {
 export function setupApiTestContext(): ApiTestContext {
 	const fetchMock = vi.fn();
 	const fetchDataFunctionMock = vi.fn();
-	const defineCachedFunctionMock = vi.fn().mockImplementation(
-		(cacheableFunction: () => unknown): (() => unknown) => (): unknown => cacheableFunction(),
-	);
+	const defineCachedFunctionMock = vi.fn().mockImplementation((cacheableFunction: () => unknown): (() => unknown) => (): unknown => cacheableFunction());
 
 	const loggerMock = setupServerLoggerMock();
 
