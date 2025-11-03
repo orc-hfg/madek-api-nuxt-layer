@@ -38,9 +38,10 @@ Die Codebasis folgt einer klaren Trennung zwischen API Service Layer und App Ser
 
 ### App Service Layer (app/services/)
 
-**Verantwortung:** Business-Logic und Domain-spezifische Transformationen
+**Verantwortung:** Business-Logic, Datenzusammenstellung und Domain-spezifische Transformationen
 
 - Normalisierte Daten für Anwendungsbedürfnisse transformieren
+- **Datenzusammenstellung:** Mehrere Datenquellen zu UI-freundlichen Objekten kombinieren
 - Mehrere Datenquellen koordinieren
 - Locale-spezifische Logik anwenden
 - **Roles-spezifisches Filtering:**
@@ -65,15 +66,36 @@ Diese Trennung sorgt für klare Verantwortlichkeiten, bessere Testbarkeit und mi
 
 ## Store Layer (Pinia)
 
-**Verantwortung:** State Management und Koordination zwischen UI und Services
+**Verantwortung:** State Management und Service-Orchestrierung
 
 Stores fungieren als zentrale State-Management-Schicht zwischen UI-Components und Services:
 
 - **State verwalten:** Reaktive Daten für die UI bereitstellen
-- **Services koordinieren:** Mehrere Service-Aufrufe orchestrieren
-- **Business-Logic:** UI-spezifische Transformationen und Berechnungen
+- **Services orchestrieren:** Mehrere Service-Aufrufe koordinieren und deren Ergebnisse in reaktiven State übernehmen
 
-**Faustregel:** Components rufen Stores auf, Stores rufen Services auf, Services rufen Repositories auf.
+**Wichtig:** Stores führen KEINE Datentransformation oder Mapping-Logik durch. Diese Verantwortung liegt bei Services. Stores erhalten von Services bereits fertig zusammengestellte, UI-freundliche Datenobjekte.
+
+**Beispiel - Verantwortungsteilung:**
+
+```typescript
+// ❌ FALSCH: Store macht Mapping
+async refresh() {
+  const [titles, images] = await Promise.all([...]);
+  this.data = sets.map((set, i) => ({  // ← Mapping im Store
+    id: set.id,
+    title: titles[i]?.string ?? '',
+    image: images[i] ?? {}
+  }));
+}
+
+// ✅ RICHTIG: Service macht Mapping, Store orchestriert
+async refresh() {
+  const sets = await repository.getSets();
+  this.data = await service.getSetsDisplayData(sets, locale, sizes);  // ← Service liefert fertige Objekte
+}
+```
+
+**Faustregel:** Components rufen Stores auf, Stores rufen Services auf, Services komponieren Daten und rufen Repositories auf.
 
 ## API Endpoint Layer (server/api/)
 
@@ -158,13 +180,15 @@ API Service Layer
 Repository Layer
   ↓ Type-safe API Response
 App Service Layer
-  ↓ Business-Logic
-  ↓ Domain-Typen
+  ↓ Business-Logic, Datenzusammenstellung, Mapping
+  ↓ UI-freundliche Domain-Objekte
 Store Layer
-  ↓ UI-freundliche Struktur (reaktiv)
+  ↓ Reaktiver State (unveränderte Übernahme der Service-Objekte)
 UI Components
   ↓ Direkter Zugriff auf reaktive Daten
 ```
+
+**Wichtig:** Die Transformation von Roh-Daten zu UI-freundlichen Objekten findet im App Service Layer statt. Der Store übernimmt diese fertigen Objekte nur in reaktiven State.
 
 ## Caching
 
@@ -255,7 +279,8 @@ runtimeConfig: {
 
 - ✅ API Endpoints validieren Parameter und handhaben Mock-Logik
 - ✅ API Service Layer normalisiert und filtert technisch ungültige Daten
-- ✅ App Service Layer wendet Business-Logic an
+- ✅ App Service Layer wendet Business-Logic an und komponiert UI-freundliche Datenobjekte
+- ✅ Stores orchestrieren Services, führen aber KEINE Datentransformation durch
 - ✅ Repositories abstrahieren Datenzugriff
 - ✅ Type Guards für Null-Filtering verwenden
 - ✅ Kontextspezifische Logger verwenden

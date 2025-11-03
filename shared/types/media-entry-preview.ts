@@ -10,22 +10,22 @@ export type MediaEntryPreviewQuery = Pick<MadekMediaEntryPreviewQuery, 'media_ty
 export type ThumbnailTypes = 'maximum' | 'x_large' | 'large' | 'medium' | 'small_125' | 'small';
 
 export interface MadekMediaEntryPreview {
-	media_type: string;
-	width: number | null;
-	content_type: string;
-	updated_at: string;
-	filename: string;
-	conversion_profile: string | null;
-	media_file_id: string;
-	thumbnail: ThumbnailTypes;
-	id: string;
-	created_at: string;
-	height: number | null;
+	readonly media_type: string;
+	readonly width: number | null;
+	readonly content_type: string;
+	readonly updated_at: string;
+	readonly filename: string;
+	readonly conversion_profile: string | null;
+	readonly media_file_id: string;
+	readonly thumbnail: ThumbnailTypes;
+	readonly id: string;
+	readonly created_at: string;
+	readonly height: number | null;
 }
 
 export interface ThumbnailSource {
-	url: string;
-	width: number | undefined;
+	readonly url: string;
+	readonly width: number | undefined;
 }
 
 export type ThumbnailSources = Partial<Record<ThumbnailTypes, ThumbnailSource>>;

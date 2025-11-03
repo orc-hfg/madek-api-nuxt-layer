@@ -2,7 +2,7 @@ import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { catchH3Error, createFetchError } from '../../tests/helpers/error';
 import { setupDirectLoggerMock } from '../../tests/mocks/logger';
-import { convertFetchToH3Error, handleServiceError, isFetchError, isH3NotFoundError } from './error-handling';
+import { convertFetchToH3Error, handleServiceError, isFetchError, isH3NotFoundError, isH3UnauthorizedError } from './error-handling';
 
 describe('convertFetchToH3Error()', () => {
 	it('passes FetchError status message correctly', () => {
@@ -224,6 +224,7 @@ describe('isH3NotFoundError()', () => {
 			statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
 			statusMessage: 'Internal Server Error',
 		});
+
 		const h3Error400 = createError({
 			statusCode: StatusCodes.BAD_REQUEST,
 			statusMessage: 'Bad Request',
@@ -253,5 +254,53 @@ describe('isH3NotFoundError()', () => {
 		const genericError = new Error('Generic error');
 
 		expect(isH3NotFoundError(genericError)).toBe(false);
+	});
+});
+
+describe('isH3UnauthorizedError()', () => {
+	it('correctly identifies H3Error with 401 status code', () => {
+		const h3Error = createError({
+			statusCode: StatusCodes.UNAUTHORIZED,
+			statusMessage: 'Unauthorized',
+		});
+
+		expect(isH3UnauthorizedError(h3Error)).toBe(true);
+	});
+
+	it('returns false for H3Error with non-401 status codes', () => {
+		const h3Error404 = createError({
+			statusCode: StatusCodes.NOT_FOUND,
+			statusMessage: 'Not Found',
+		});
+
+		const h3Error403 = createError({
+			statusCode: StatusCodes.FORBIDDEN,
+			statusMessage: 'Forbidden',
+		});
+
+		expect(isH3UnauthorizedError(h3Error404)).toBe(false);
+		expect(isH3UnauthorizedError(h3Error403)).toBe(false);
+	});
+
+	it('returns false for FetchError objects', () => {
+		const fetchError = createFetchError({
+			statusCode: StatusCodes.UNAUTHORIZED,
+			statusMessage: 'Unauthorized',
+		});
+
+		expect(isH3UnauthorizedError(fetchError)).toBe(false);
+	});
+
+	it('returns false for non-error objects', () => {
+		expect(isH3UnauthorizedError(undefined)).toBe(false);
+		expect(isH3UnauthorizedError({})).toBe(false);
+		expect(isH3UnauthorizedError('error')).toBe(false);
+		expect(isH3UnauthorizedError(401)).toBe(false);
+	});
+
+	it('returns false for generic Error objects', () => {
+		const genericError = new Error('Generic error');
+
+		expect(isH3UnauthorizedError(genericError)).toBe(false);
 	});
 });

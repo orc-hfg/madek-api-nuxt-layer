@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getFallbackMetaKey, mergeRoles, normalizeKeywords, normalizePeople, shouldReturnEmptyArrayOn404, shouldReturnEmptyStringOn404 } from './normalization';
+import { getFallbackMetaKey, mergeRoles, normalizeKeywords, normalizePeople, shouldReturnEmptyArray, shouldReturnEmptyString } from './normalization';
 
 describe('normalizePeople()', () => {
 	it('should return empty array when people is undefined', () => {
@@ -249,31 +249,31 @@ describe('mergeRoles()', () => {
 	});
 });
 
-describe('shouldReturnEmptyStringOn404()', () => {
+describe('shouldReturnEmptyString()', () => {
 	it('should return true for meta keys configured to return empty string', () => {
-		expect(shouldReturnEmptyStringOn404('creative_work:description_en')).toBe(true);
-		expect(shouldReturnEmptyStringOn404('madek_core:description')).toBe(true);
-		expect(shouldReturnEmptyStringOn404('creative_work:dimension')).toBe(true);
+		expect(shouldReturnEmptyString('creative_work:description_en')).toBe(true);
+		expect(shouldReturnEmptyString('madek_core:description')).toBe(true);
+		expect(shouldReturnEmptyString('creative_work:dimension')).toBe(true);
 	});
 
 	it('should return false for meta keys not configured', () => {
-		expect(shouldReturnEmptyStringOn404('madek_core:title')).toBe(false);
-		expect(shouldReturnEmptyStringOn404('madek_core:authors')).toBe(false);
-		expect(shouldReturnEmptyStringOn404('unknown:meta_key')).toBe(false);
+		expect(shouldReturnEmptyString('madek_core:title')).toBe(false);
+		expect(shouldReturnEmptyString('madek_core:authors')).toBe(false);
+		expect(shouldReturnEmptyString('unknown:meta_key')).toBe(false);
 	});
 });
 
-describe('shouldReturnEmptyArrayOn404()', () => {
+describe('shouldReturnEmptyArray()', () => {
 	it('should return true for meta keys configured to return empty array', () => {
-		expect(shouldReturnEmptyArrayOn404('madek_core:authors')).toBe(true);
-		expect(shouldReturnEmptyArrayOn404('madek_core:keywords')).toBe(true);
-		expect(shouldReturnEmptyArrayOn404('creative_work:material')).toBe(true);
+		expect(shouldReturnEmptyArray('madek_core:authors')).toBe(true);
+		expect(shouldReturnEmptyArray('madek_core:keywords')).toBe(true);
+		expect(shouldReturnEmptyArray('creative_work:material')).toBe(true);
 	});
 
 	it('should return false for meta keys not configured', () => {
-		expect(shouldReturnEmptyArrayOn404('madek_core:title')).toBe(false);
-		expect(shouldReturnEmptyArrayOn404('madek_core:description')).toBe(false);
-		expect(shouldReturnEmptyArrayOn404('unknown:meta_key')).toBe(false);
+		expect(shouldReturnEmptyArray('madek_core:title')).toBe(false);
+		expect(shouldReturnEmptyArray('madek_core:description')).toBe(false);
+		expect(shouldReturnEmptyArray('unknown:meta_key')).toBe(false);
 	});
 });
 

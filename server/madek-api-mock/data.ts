@@ -1,10 +1,17 @@
 import { dataUrlToBlob } from './blob';
 
 /*
+ * Available mock scenarios for E2E testing
+ */
+type MockScenario = 'empty';
+
+/*
  * Helper type for query parameters that include optional test scenarios
  * Generic utility that can be used with any query type
  */
-type QueryWithMockScenario<TQuery = Record<string, unknown>> = { mock_scenario?: string } & TQuery;
+type QueryWithMockScenario<TQuery> = {
+	mock_scenario?: MockScenario;
+} & TQuery;
 
 const FIXED_COLLECTION_IDS = [
 	'collection-id-1',
@@ -36,7 +43,7 @@ export const mockData = {
 			'collection-id-2': [],
 			'collection-id-3': [
 				{
-					media_entry_id: 'entry-id-3',
+					media_entry_id: 'entry-id-empty',
 					cover: true,
 					position: 1,
 				},
@@ -144,6 +151,21 @@ export const mockData = {
 		};
 
 		return result;
+	},
+
+	getMediaEntryMetaDatum: (mediaEntryId: MadekMediaEntryMetaDatumPathParameters['media_entry_id'], metaKeyId: MadekMediaEntryMetaDatumPathParameters['meta_key_id']): MediaEntryMetaDatum => {
+		/*
+		 * Return empty string for specific media entry ID to test edge cases with empty metadata
+		 */
+		if (mediaEntryId === 'entry-id-empty') {
+			return {
+				string: '',
+			};
+		}
+
+		return {
+			string: `Test mediaEntryId ${mediaEntryId} / metaKeyId ${metaKeyId} Content`,
+		};
 	},
 
 	getMediaEntryPreviewThumbnails: (mediaEntryId: MadekMediaEntryPreviewPathParameters['media_entry_id'], _query: MediaEntryPreviewQuery): MediaEntryPreviewThumbnails => [

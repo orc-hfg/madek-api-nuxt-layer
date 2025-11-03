@@ -5,11 +5,7 @@
 
 import type { AsyncDataOptions } from '#app';
 
-export function useCachedAsyncData<TData = any>(
-	key: string,
-	handler: () => Promise<TData>,
-	options?: AsyncDataOptions<TData>,
-): ReturnType<typeof useAsyncData<TData>> {
+export function useCachedAsyncData<TData = unknown>(key: string, handler: () => Promise<TData>, options?: AsyncDataOptions<TData>): ReturnType<typeof useAsyncData<TData>> {
 	const asyncOptions: AsyncDataOptions<TData> = { ...options };
 
 	// Using the same key name intentionally as it's semantically the same key
@@ -31,9 +27,5 @@ export function useCachedAsyncData<TData = any>(
 		return undefined;
 	};
 
-	return useAsyncData<TData>(
-		key,
-		handler,
-		asyncOptions,
-	) as ReturnType<typeof useAsyncData<TData>>;
+	return useAsyncData<TData>(key, handler, asyncOptions) as ReturnType<typeof useAsyncData<TData>>;
 }

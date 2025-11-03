@@ -25,7 +25,7 @@ export type CollectionsQuery = Pick<MadekCollectionsQuery, 'responsible_user_id'
 
 type MadekCollectionsArray = MadekCollectionsGet['responses']['200']['content']['application/json']['groups'];
 export interface MadekCollectionsResponse {
-	collections: MadekCollectionsArray;
+	readonly collections: MadekCollectionsArray;
 }
 
 type MadekCollection = MadekCollectionsArray[number];

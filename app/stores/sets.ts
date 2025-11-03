@@ -1,15 +1,10 @@
 import type { MockScenario } from '../composables/useMockScenario';
+import type { SetListDisplayData } from '../services/sets';
 import type { AppLocale } from '../types/locale';
-
-interface SetData {
-	id: Collection['id'];
-	title: CollectionMetaDatum['string'];
-	coverImageSources: ThumbnailSources;
-}
 
 export const useSetsStore = defineStore('sets', () => {
 	const sets = shallowRef<Collections>([]);
-	const setsData = shallowRef<SetData[]>([]);
+	const setsDisplayData = shallowRef<SetListDisplayData[]>([]);
 
 	async function refresh(appLocale: AppLocale, mockScenario?: MockScenario): Promise<void> {
 		const userStore = useUserStore();
@@ -17,20 +12,20 @@ export const useSetsStore = defineStore('sets', () => {
 		const setsService = getSetsService();
 
 		// Ensure user is loaded
-		if (userStore.id === undefined) {
+		if (userStore.userDisplayData?.id === undefined) {
 			await userStore.refresh();
 		}
 
 		// If still no user after refresh, clear data and exit
-		if (userStore.id === undefined) {
+		if (userStore.userDisplayData?.id === undefined) {
 			sets.value = [];
-			setsData.value = [];
+			setsDisplayData.value = [];
 
 			return;
 		}
 
 		const baseQuery = {
-			responsible_user_id: userStore.id,
+			responsible_user_id: userStore.userDisplayData.id,
 			filter_by: JSON.stringify({
 				meta_data: [
 					{
@@ -49,35 +44,13 @@ export const useSetsStore = defineStore('sets', () => {
 
 		const userSets = await setsRepository.getSets(query);
 
-		// Use local snapshot to avoid race conditions
-		const currentSets = userSets;
-		const setIds = currentSets.map(set => set.id);
-
-		const [titles, coverImageSources] = await Promise.all([
-			setsService.getTitleBatch(setIds, appLocale),
-			setsService.getCoverImageThumbnailSourcesBatch(
-				setIds,
-				['small', 'medium', 'large', 'x_large'],
-			),
-		]);
-
-		// Only update reactive state after all data is fetched and mapped
-		const mappedData = currentSets.map((set, index) => {
-			return {
-				id: set.id,
-				title: titles[index]?.string ?? '',
-				coverImageSources: coverImageSources[index] ?? {},
-			};
-		});
-
-		// Atomic update: both refs updated together with consistent data
-		sets.value = currentSets;
-		setsData.value = mappedData;
+		sets.value = userSets;
+		setsDisplayData.value = await setsService.getSetsDisplayData(userSets, appLocale, ['small', 'medium', 'large', 'x_large']);
 	}
 
 	return {
 		sets,
-		setsData,
+		setsDisplayData,
 		refresh,
 	};
 });

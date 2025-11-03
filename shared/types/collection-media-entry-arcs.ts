@@ -6,7 +6,7 @@ export type MadekCollectionMediaEntryArcsPathParameters = MadekCollectionMediaEn
 
 type MadekCollectionMediaEntryArcsArray = MadekCollectionMediaEntryArcsGet['responses']['200']['content']['application/json']['collection-media-entry-arcs'];
 export interface MadekCollectionMediaEntryArcsResponse {
-	'collection-media-entry-arcs': MadekCollectionMediaEntryArcsArray;
+	readonly 'collection-media-entry-arcs': MadekCollectionMediaEntryArcsArray;
 }
 
 type MadekCollectionMediaEntryArc = MadekCollectionMediaEntryArcsArray[number];

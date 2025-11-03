@@ -12,16 +12,16 @@ import { normalizeTextContent } from '../../utils/text';
  */
 
 /*
- * Fallback rules for set title meta keys
- * When a requested meta key returns 404, try the fallback meta key instead
+ * Fallback rules for collection meta keys
+ * When a requested meta key throws an error, try the fallback meta key instead
  * Example: 'creative_work:title_en' (English) → 'madek_core:title' (German fallback)
  */
-const SET_TITLE_META_KEY_FALLBACKS: Record<string, string> = {
+const COLLECTION_META_KEYS_RETURN_FALLBACK: Record<string, string> = {
 	'creative_work:title_en': 'madek_core:title',
 };
 
-// Meta keys that should return empty string instead of throwing 404 error
-const META_KEYS_RETURN_EMPTY_STRING_ON_404 = new Set<string>([
+// Meta keys that should return empty string instead of throwing error
+const META_KEYS_RETURN_EMPTY_STRING = new Set<string>([
 	'creative_work:description_en',
 	'creative_work:dimension',
 	'creative_work:duration',
@@ -32,8 +32,8 @@ const META_KEYS_RETURN_EMPTY_STRING_ON_404 = new Set<string>([
 	'madek_core:subtitle',
 ]);
 
-// Meta keys that should return empty array instead of throwing 404 error
-const META_KEYS_RETURN_EMPTY_ARRAY_ON_404 = new Set<string>([
+// Meta keys that should return empty array instead of throwing error
+const META_KEYS_RETURN_EMPTY_ARRAY = new Set<string>([
 	'creative_work:material',
 	'creative_work:other_creative_participants',
 	'institution:program_of_study',
@@ -187,17 +187,17 @@ export function mergeRoles(
 		});
 }
 
-// Checks if a meta key should return empty string on 404 error
-export function shouldReturnEmptyStringOn404(metaKeyId: string): boolean {
-	return META_KEYS_RETURN_EMPTY_STRING_ON_404.has(metaKeyId);
-}
-
-// Checks if a meta key should return empty array on 404 error
-export function shouldReturnEmptyArrayOn404(metaKeyId: string): boolean {
-	return META_KEYS_RETURN_EMPTY_ARRAY_ON_404.has(metaKeyId);
-}
-
 // Gets the fallback meta key for a given meta key (if exists)
 export function getFallbackMetaKey(metaKeyId: string): string | undefined {
-	return SET_TITLE_META_KEY_FALLBACKS[metaKeyId];
+	return COLLECTION_META_KEYS_RETURN_FALLBACK[metaKeyId];
+}
+
+// Checks if a meta key should return empty string for a given meta key
+export function shouldReturnEmptyString(metaKeyId: string): boolean {
+	return META_KEYS_RETURN_EMPTY_STRING.has(metaKeyId);
+}
+
+// Checks if a meta key should return empty array for a given meta key
+export function shouldReturnEmptyArray(metaKeyId: string): boolean {
+	return META_KEYS_RETURN_EMPTY_ARRAY.has(metaKeyId);
 }
