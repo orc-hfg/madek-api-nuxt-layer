@@ -60,5 +60,6 @@
 	"vue.inlayHints.inlineHandlerLeading": true,
 	"vue.inlayHints.missingProps": true,
 	"vue.inlayHints.optionsWrapper": true,
-	"vue.inlayHints.vBindShorthand": true
+	"vue.inlayHints.vBindShorthand": true,
+	"typescript.tsdk": "node_modules/typescript/lib"
 }

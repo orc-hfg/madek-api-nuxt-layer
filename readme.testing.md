@@ -255,6 +255,66 @@ npm run test
 npm run test:watch
 ```
 
+### Explicit Resource Management (`using` Keyword)
+
+Die Tests verwenden das **`using` Keyword** für automatisches Resource Management (Node 24+, TypeScript 5.2+):
+
+```typescript
+it('should do something', async () => {
+  using apiTestContext = setupApiTestContext();
+  
+  // Test-Code hier
+  // apiTestContext wird AUTOMATISCH aufgeräumt, auch bei Fehlern!
+});
+```
+
+**Was macht `using`?**
+- Ruft automatisch `[Symbol.dispose]()` am Ende des Scopes auf
+- Funktioniert auch bei Exceptions (wie `try...finally`)
+- Macht manuelle `afterEach` Hooks überflüssig
+
+**Vorher (mit `beforeEach`/`afterEach`):**
+```typescript
+describe('myTest()', () => {
+  let apiTestContext;
+
+  beforeEach(() => {
+    apiTestContext = setupApiTestContext();
+  });
+
+  afterEach(() => {
+    apiTestContext.dispose(); // Manuelles Cleanup
+  });
+
+  it('should do something', async () => {
+    // Test-Code
+  });
+});
+```
+
+**Nachher (mit `using`):**
+```typescript
+describe('myTest()', () => {
+  it('should do something', async () => {
+    using apiTestContext = setupApiTestContext(); // Automatisches Cleanup!
+    
+    // Test-Code
+  });
+});
+```
+
+**Vorteile:**
+- ✅ Kein vergessenes Cleanup mehr
+- ✅ Weniger Boilerplate-Code
+- ✅ Cleanup funktioniert auch bei Assertion-Fehlern
+- ✅ Jeder Test hat isolierten Context
+
+**Wichtig:** Erfordert Node.js 24+ (V8 13.6 mit Explicit Resource Management Support).
+
+> **Mehr Details:**
+> - [Better Test Setup with Disposable Objects](https://www.epicweb.dev/better-test-setup-with-disposable-objects) - Praktischer Artikel über `using` in Tests
+> - [JavaScript's New Superpower: Explicit Resource Management](https://v8.dev/features/explicit-resource-management) - Technische Details zum Feature
+
 ### Test-Coverage
 
 **Wichtigste Test-Bereiche:**

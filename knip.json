@@ -30,9 +30,5 @@
 		"nitropack",
 		"ofetch",
 		"vue"
-	],
-	"ignoreUnresolved": [
-		"#app"
-	],
-	"vitest": false
+	]
 }

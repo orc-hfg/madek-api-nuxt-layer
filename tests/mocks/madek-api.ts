@@ -8,14 +8,18 @@ import { setupServerLoggerMock } from './logger';
 export const mockEvent = {} as H3Event;
 
 /*
- * TODO: @upgrade-node24
- * When we bump the project to Node ≥ 24 LTS:
- *  1. Remove every beforeEach / afterEach that only calls setupApiTestContext/ctx.dispose
- *  2. Inside each test block add: `using apiTestContext = setupApiTestContext();`
- *  3. Drop the `dispose` property from the context (remove dispose: cleanup)
- *  See: https://www.epicweb.dev/better-test-setup-with-disposable-objects
+ * API Test Context with Explicit Resource Management
+ *
+ * This context implements the Disposable pattern (Node 24+, TypeScript 5.2+) via [Symbol.dispose].
+ * When used with the `using` keyword, cleanup is automatically triggered at the end of the scope.
+ *
+ * Example:
+ *   using apiTestContext = setupApiTestContext();
+ *   // Test code here...
+ *   // Cleanup (vi.restoreAllMocks, vi.unstubAllGlobals) happens automatically!
+ *
+ * See readme.testing.md → Explicit Resource Management for details.
  */
-
 interface ApiTestContext extends ServerLoggerMock {
 	client: {
 		fetchFromApi: (endpoint: string, config?: MadekApiRequestConfig) => Promise<unknown>;
@@ -30,7 +34,6 @@ interface ApiTestContext extends ServerLoggerMock {
 	defineCachedFunctionMock: ReturnType<typeof vi.fn>;
 	mockEvent: H3Event;
 	[Symbol.dispose]: () => void;
-	dispose: () => void;
 }
 
 export function setupApiTestContext(): ApiTestContext {
@@ -58,6 +61,5 @@ export function setupApiTestContext(): ApiTestContext {
 		mockEvent,
 		...loggerMock,
 		[Symbol.dispose]: cleanup,
-		dispose: cleanup,
 	};
 }

@@ -1,16 +1,13 @@
 import type { RuntimeConfigStructure } from '../../../tests/mocks/runtime-config';
 import { mockNuxtImport } from '@nuxt/test-utils/runtime';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { setupApiTestContext } from '../../../tests/mocks/madek-api';
 import { createRuntimeConfigMock } from '../../../tests/mocks/runtime-config';
 
 /*
- * TODO: @upgrade-node24
- * When we bump the project to Node ≥ 24 LTS:
- *  1. Remove every beforeEach / afterEach that only calls setupApiTestContext/ctx.dispose
- *  2. Inside each test block add: `using apiTestContext = setupApiTestContext();`
- *  3. Drop the `dispose` property from the context (remove dispose: cleanup)
- *  See: https://www.epicweb.dev/better-test-setup-with-disposable-objects
+ * Note: Tests use the `using` keyword (Node 24+, TypeScript 5.2+) for automatic resource cleanup.
+ * The test context is automatically disposed at the end of each test, even if assertions fail.
+ * See readme.testing.md → Explicit Resource Management for details.
  */
 
 let runtimeConfigReturnValue: RuntimeConfigStructure;
@@ -22,18 +19,13 @@ function useRuntimeConfigMock() {
 mockNuxtImport('useRuntimeConfig', () => useRuntimeConfigMock);
 
 describe('createMadekApiClient()', () => {
-	let apiTestContext: ReturnType<typeof setupApiTestContext>;
-
 	beforeEach(() => {
 		runtimeConfigReturnValue = createRuntimeConfigMock();
-		apiTestContext = setupApiTestContext();
-	});
-
-	afterEach(() => {
-		apiTestContext.dispose();
 	});
 
 	it('returns an object with fetchFromApi method that calls fetchData with correct parameters', async () => {
+		using apiTestContext = setupApiTestContext();
+
 		const endpoint = 'resources/123';
 		const apiOptions = { isAuthenticationNeeded: true, query: { param: 'value' } };
 
@@ -49,6 +41,8 @@ describe('createMadekApiClient()', () => {
 	});
 
 	it('correctly replaces path parameters in endpoint template', async () => {
+		using apiTestContext = setupApiTestContext();
+
 		await apiTestContext.client.fetchFromApiWithPathParameters(
 			'collection/:collectionId/meta-datum/:metaKeyId',
 			{ collectionId: 'abc-123', metaKeyId: 'meta_key.456' },
@@ -63,6 +57,8 @@ describe('createMadekApiClient()', () => {
 	});
 
 	it('handles multiple path parameters and preserves non-parameter parts of the URL', async () => {
+		using apiTestContext = setupApiTestContext();
+
 		await apiTestContext.client.fetchFromApiWithPathParameters(
 			'api/:version/collection/:collectionId/meta-datum/:metaKeyId',
 			{ version: 'v2', collectionId: 'abc-123', metaKeyId: 'meta_key.456' },
@@ -79,14 +75,11 @@ describe('createMadekApiClient()', () => {
 	describe('caching mechanism', () => {
 		beforeEach(() => {
 			runtimeConfigReturnValue = createRuntimeConfigMock({ enableServerSideCaching: true });
-			apiTestContext = setupApiTestContext();
-		});
-
-		afterEach(() => {
-			apiTestContext.dispose();
 		});
 
 		it('uses cachedFunction with correct parameters when caching is enabled', async () => {
+			using apiTestContext = setupApiTestContext();
+
 			await apiTestContext.client.fetchFromApi('test-endpoint', {
 				apiOptions: { query: { param: 'value' } },
 				publicDataCache: { maxAge: 3600 },
@@ -103,6 +96,8 @@ describe('createMadekApiClient()', () => {
 		});
 
 		it('skips caching and directly calls fetchData when authentication is needed', async () => {
+			using apiTestContext = setupApiTestContext();
+
 			await apiTestContext.client.fetchFromApi('authenticated-endpoint', {
 				apiOptions: { isAuthenticationNeeded: true },
 				publicDataCache: { maxAge: 3600 },
@@ -119,6 +114,8 @@ describe('createMadekApiClient()', () => {
 		});
 
 		it('logs cache usage when caching is enabled', async () => {
+			using apiTestContext = setupApiTestContext();
+
 			const cacheOptions = { maxAge: 3600, swr: true };
 
 			await apiTestContext.client.fetchFromApi('cached-endpoint', {
@@ -134,18 +131,13 @@ describe('createMadekApiClient()', () => {
 });
 
 describe('createMadekApiClient() without server-side caching', () => {
-	let apiTestContext: ReturnType<typeof setupApiTestContext>;
-
 	beforeEach(() => {
 		runtimeConfigReturnValue = createRuntimeConfigMock({ enableServerSideCaching: false });
-		apiTestContext = setupApiTestContext();
-	});
-
-	afterEach(() => {
-		apiTestContext.dispose();
 	});
 
 	it('calls fetchData directly when caching is globally disabled', async () => {
+		using apiTestContext = setupApiTestContext();
+
 		await apiTestContext.client.fetchFromApi('test-endpoint', {
 			publicDataCache: { maxAge: 3600 },
 		});

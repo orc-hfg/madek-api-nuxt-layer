@@ -61,11 +61,13 @@ export const META_KEYS_SHOULD_TRIM = new Set<string>([
  */
 
 interface PersonResponse {
+	id: string;
 	first_name: string | null;
 	last_name: string | null;
 }
 
 interface KeywordResponse {
+	id: string;
 	term: string | null;
 }
 
@@ -98,6 +100,7 @@ export function normalizePeople(people: (PersonResponse | null)[] | undefined): 
 		.filter((person): person is NonNullable<typeof person> => person !== null)
 		.map((person) => {
 			return {
+				id: toPersonId(person.id),
 				first_name: normalizeTextContent(person.first_name, true),
 				last_name: normalizeTextContent(person.last_name, true),
 			};
@@ -124,6 +127,7 @@ export function normalizeKeywords(keywords: (KeywordResponse | null)[] | undefin
 		.filter((keyword): keyword is NonNullable<typeof keyword> => keyword !== null)
 		.map((keyword) => {
 			return {
+				id: toKeywordId(keyword.id),
 				term: normalizeTextContent(keyword.term, true),
 			};
 		})
@@ -179,8 +183,8 @@ export function mergeRoles(
 
 			return [
 				{
-					role_id: mdRole.role_id,
-					person_id: mdRole.person_id,
+					role_id: toRoleId(mdRole.role_id),
+					person_id: toPersonId(mdRole.person_id),
 					labels: normalizedLabels,
 				},
 			];

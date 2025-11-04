@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { findCoverImageMediaEntryId, getPreviewIdByThumbnailType, mapSetsToDisplayData } from './sets';
+import { findCoverImageMediaEntryId, getPreviewIdByThumbnailType } from './sets';
 
 describe('getSetsService()', () => {
 	describe('findCoverImageMediaEntryId()', () => {
@@ -8,7 +8,7 @@ describe('getSetsService()', () => {
 				{ media_entry_id: 'entry-1', cover: false, position: 0 },
 				{ media_entry_id: 'entry-2', cover: true, position: 1 },
 				{ media_entry_id: 'entry-3', cover: false, position: 2 },
-			];
+			] as CollectionMediaEntryArcs;
 
 			const result = findCoverImageMediaEntryId(mediaEntries);
 
@@ -19,7 +19,7 @@ describe('getSetsService()', () => {
 			const mediaEntries = [
 				{ media_entry_id: 'entry-1', cover: false, position: 0 },
 				{ media_entry_id: 'entry-2', cover: false, position: 1 },
-			];
+			] as CollectionMediaEntryArcs;
 
 			const result = findCoverImageMediaEntryId(mediaEntries);
 
@@ -30,7 +30,7 @@ describe('getSetsService()', () => {
 			const mediaEntries = [
 				{ media_entry_id: 'entry-1', cover: false, position: 5 },
 				{ media_entry_id: 'entry-2', cover: false, position: 3 },
-			];
+			] as CollectionMediaEntryArcs;
 
 			const result = findCoverImageMediaEntryId(mediaEntries);
 
@@ -41,7 +41,7 @@ describe('getSetsService()', () => {
 			const mediaEntries = [
 				{ media_entry_id: 'entry-1', cover: false, position: 0 },
 				{ media_entry_id: 'entry-2', cover: true, position: 5 },
-			];
+			] as CollectionMediaEntryArcs;
 
 			const result = findCoverImageMediaEntryId(mediaEntries);
 
@@ -51,11 +51,11 @@ describe('getSetsService()', () => {
 
 	describe('getPreviewIdByThumbnailType()', () => {
 		it('should return preview id for matching thumbnail type', () => {
-			const previews: MediaEntryPreviewThumbnails = [
+			const previews = [
 				{ id: 'preview-1', thumbnail: 'small', width: 100, height: 100 },
 				{ id: 'preview-2', thumbnail: 'medium', width: 200, height: 200 },
 				{ id: 'preview-3', thumbnail: 'large', width: 300, height: 300 },
-			];
+			] as MediaEntryPreviewThumbnails;
 
 			const result = getPreviewIdByThumbnailType(previews, 'medium');
 
@@ -63,10 +63,10 @@ describe('getSetsService()', () => {
 		});
 
 		it('should return undefined for non-matching thumbnail type', () => {
-			const previews: MediaEntryPreviewThumbnails = [
+			const previews = [
 				{ id: 'preview-1', thumbnail: 'small', width: 100, height: 100 },
 				{ id: 'preview-2', thumbnail: 'medium', width: 200, height: 200 },
-			];
+			] as MediaEntryPreviewThumbnails;
 
 			const result = getPreviewIdByThumbnailType(previews, 'x_large');
 
@@ -76,10 +76,10 @@ describe('getSetsService()', () => {
 
 	describe('mapSetsToDisplayData()', () => {
 		it('should map sets with titles and cover images to display data', () => {
-			const sets: Collections = [
+			const sets = [
 				{ id: 'set-1' },
 				{ id: 'set-2' },
-			];
+			] as Collections;
 
 			const titles: CollectionMetaData = [
 				{ string: 'Project A' },
@@ -108,7 +108,7 @@ describe('getSetsService()', () => {
 		});
 
 		it('should handle missing title with empty string fallback', () => {
-			const sets: Collections = [{ id: 'set-1' }];
+			const sets = [{ id: 'set-1' }] as Collections;
 			const titles: CollectionMetaData = [null as unknown as CollectionMetaDatum];
 			const coverImageSources: ThumbnailSources[] = [{}];
 
@@ -124,7 +124,7 @@ describe('getSetsService()', () => {
 		});
 
 		it('should handle empty title string', () => {
-			const sets: Collections = [{ id: 'set-1' }];
+			const sets = [{ id: 'set-1' }] as Collections;
 			const titles: CollectionMetaData = [{ string: '' }];
 			const coverImageSources: ThumbnailSources[] = [{}];
 
@@ -140,7 +140,7 @@ describe('getSetsService()', () => {
 		});
 
 		it('should handle missing cover images with empty object fallback', () => {
-			const sets: Collections = [{ id: 'set-1' }];
+			const sets = [{ id: 'set-1' }] as Collections;
 			const titles: CollectionMetaData = [{ string: 'Project A' }];
 			const coverImageSources: ThumbnailSources[] = [null as unknown as ThumbnailSources];
 
@@ -156,11 +156,11 @@ describe('getSetsService()', () => {
 		});
 
 		it('should handle multiple sets with mixed data availability', () => {
-			const sets: Collections = [
+			const sets = [
 				{ id: 'set-1' },
 				{ id: 'set-2' },
 				{ id: 'set-3' },
-			];
+			] as Collections;
 
 			const titles: CollectionMetaData = [
 				{ string: 'Project A' },

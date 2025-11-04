@@ -1,4 +1,5 @@
 import type { paths } from '../../generated/api/madek-api';
+import type { PersonId } from './branded';
 
 type MadekAdminPeopleGet = paths['/api-v2/admin/people/{id}']['get'];
 
@@ -20,6 +21,7 @@ export type MadekAdminPeopleGetResponse = MadekAdminPeopleGet['responses']['200'
  * where the person may have been deleted but references still exist.
  */
 export interface AdminPerson {
+	readonly id: PersonId;
 	readonly first_name: string;
 	readonly last_name: string;
 }

@@ -21,9 +21,11 @@ export async function getCollectionMediaEntryArcs(event: H3Event, collectionId: 
 			},
 		);
 
-		return response['collection-media-entry-arcs'].map((item) => {
+		const collectionMediaEntryArcs = response['collection-media-entry-arcs'];
+
+		return collectionMediaEntryArcs.map((item: MadekCollectionMediaEntryArcsResponse['collection-media-entry-arcs'][number]): CollectionMediaEntryArc => {
 			return {
-				media_entry_id: item.media_entry_id,
+				media_entry_id: toMediaEntryId(item.media_entry_id),
 				cover: item.cover,
 				position: item.position,
 			};

@@ -14,14 +14,15 @@ type QueryWithMockScenario<TQuery> = {
 } & TQuery;
 
 const FIXED_COLLECTION_IDS = [
-	'collection-id-1',
-	'collection-id-2',
-	'collection-id-3',
+	toCollectionId('collection-id-1'),
+	toCollectionId('collection-id-2'),
+	toCollectionId('collection-id-3'),
 ] as const;
 
 export const mockData = {
 	getAdminPerson: (id: MadekAdminPeopleGetPathParameters['id']): AdminPerson => {
 		return {
+			id: toPersonId(id),
 			first_name: `${id}_first_name`,
 			last_name: `${id}_last_name`,
 		};
@@ -30,12 +31,12 @@ export const mockData = {
 		const mockArcs: Record<string, CollectionMediaEntryArcs> = {
 			'collection-id-1': [
 				{
-					media_entry_id: 'entry-id-1',
+					media_entry_id: toMediaEntryId('entry-id-1'),
 					cover: true,
 					position: 1,
 				},
 				{
-					media_entry_id: 'entry-id-2',
+					media_entry_id: toMediaEntryId('entry-id-2'),
 					cover: false,
 					position: 2,
 				},
@@ -43,7 +44,7 @@ export const mockData = {
 			'collection-id-2': [],
 			'collection-id-3': [
 				{
-					media_entry_id: 'entry-id-empty',
+					media_entry_id: toMediaEntryId('entry-id-empty'),
 					cover: true,
 					position: 1,
 				},
@@ -69,10 +70,12 @@ export const mockData = {
 			...(metaKeyId === 'madek_core:authors' && {
 				people: [
 					{
+						id: toPersonId('person_id_author_1'),
 						first_name: 'author_1_first_name',
 						last_name: 'author_1_last_name',
 					},
 					{
+						id: toPersonId('person_id_author_2'),
 						first_name: 'author_2_first_name',
 						last_name: 'author_2_last_name',
 					},
@@ -81,9 +84,11 @@ export const mockData = {
 			...(metaKeyId === 'institution:project_category' && {
 				keywords: [
 					{
+						id: toKeywordId('keyword_id_project_category_1'),
 						term: 'project_category_1',
 					},
 					{
+						id: toKeywordId('keyword_id_project_category_2'),
 						term: 'project_category_2',
 					},
 				],
@@ -91,9 +96,11 @@ export const mockData = {
 			...(metaKeyId === 'madek_core:keywords' && {
 				keywords: [
 					{
+						id: toKeywordId('keyword_id_keyword_1'),
 						term: 'keyword_1',
 					},
 					{
+						id: toKeywordId('keyword_id_keyword_2'),
 						term: 'keyword_2',
 					},
 				],
@@ -101,9 +108,11 @@ export const mockData = {
 			...(metaKeyId === 'institution:semester' && {
 				keywords: [
 					{
+						id: toKeywordId('keyword_id_semester_1'),
 						term: 'semester_1',
 					},
 					{
+						id: toKeywordId('keyword_id_semester_2'),
 						term: 'semester_2',
 					},
 				],
@@ -111,9 +120,11 @@ export const mockData = {
 			...(metaKeyId === 'institution:program_of_study' && {
 				keywords: [
 					{
+						id: toKeywordId('keyword_id_program_of_study_1'),
 						term: 'program_of_study_1',
 					},
 					{
+						id: toKeywordId('keyword_id_program_of_study_2'),
 						term: 'program_of_study_2',
 					},
 				],
@@ -121,16 +132,16 @@ export const mockData = {
 			...(metaKeyId === 'creative_work:other_creative_participants' && {
 				roles: [
 					{
-						person_id: 'person_id_1',
-						role_id: 'role_id_1',
+						person_id: toPersonId('person_id_1'),
+						role_id: toRoleId('role_id_1'),
 						labels: {
 							de: 'role_1_DE',
 							en: 'role_1_EN',
 						},
 					},
 					{
-						person_id: 'person_id_2',
-						role_id: 'role_id_2',
+						person_id: toPersonId('person_id_2'),
+						role_id: toRoleId('role_id_2'),
 						labels: {
 							de: 'role_2_DE',
 							en: 'role_2_EN',
@@ -141,9 +152,11 @@ export const mockData = {
 			...(metaKeyId === 'creative_work:material' && {
 				keywords: [
 					{
+						id: toKeywordId('keyword_id_material_1'),
 						term: 'material_1',
 					},
 					{
+						id: toKeywordId('keyword_id_material_2'),
 						term: 'material_2',
 					},
 				],
@@ -170,25 +183,25 @@ export const mockData = {
 
 	getMediaEntryPreviewThumbnails: (mediaEntryId: MadekMediaEntryPreviewPathParameters['media_entry_id'], _query: MediaEntryPreviewQuery): MediaEntryPreviewThumbnails => [
 		{
-			id: `preview-small-${mediaEntryId}`,
+			id: toPreviewId(`preview-small-${mediaEntryId}`),
 			thumbnail: 'small',
 			width: 100,
 			height: 67,
 		},
 		{
-			id: `preview-medium-${mediaEntryId}`,
+			id: toPreviewId(`preview-medium-${mediaEntryId}`),
 			thumbnail: 'medium',
 			width: 300,
 			height: 200,
 		},
 		{
-			id: `preview-large-${mediaEntryId}`,
+			id: toPreviewId(`preview-large-${mediaEntryId}`),
 			thumbnail: 'large',
 			width: 620,
 			height: 413,
 		},
 		{
-			id: `preview-xlarge-${mediaEntryId}`,
+			id: toPreviewId(`preview-xlarge-${mediaEntryId}`),
 			thumbnail: 'x_large',
 			width: 1024,
 			height: 683,
@@ -317,7 +330,7 @@ export const mockData = {
 
 	getAuthInfo: (): AuthInfo => {
 		return {
-			id: 'user-id-1',
+			id: toUserId('user-id-1'),
 			login: 'login',
 			first_name: 'first_name',
 			last_name: 'last_name',
