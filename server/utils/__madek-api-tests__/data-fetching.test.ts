@@ -1,30 +1,20 @@
 import type { $Fetch } from 'nitropack';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { setupApiTestContext } from '../../../tests/mocks/madek-api';
 import { fetchData } from '../madek-api';
 
 /*
- * TODO: @upgrade-node24
- * When we bump the project to Node ≥ 24 LTS:
- *  1. Remove every beforeEach / afterEach that only calls setupApiTestContext/ctx.dispose
- *  2. Inside each test block add: `using apiTestContext = setupApiTestContext();`
- *  3. Drop the `dispose` property from the context (remove dispose: cleanup)
- *  See: https://www.epicweb.dev/better-test-setup-with-disposable-objects
+ * Note: Tests use the `using` keyword (Node 24+, TypeScript 5.2+) for automatic resource cleanup.
+ * The test context is automatically disposed at the end of each test, even if assertions fail.
+ * See readme.testing.md → Explicit Resource Management for details.
  */
 
 describe('fetchData()', () => {
-	let apiTestContext: ReturnType<typeof setupApiTestContext>;
-
-	beforeEach(() => {
-		apiTestContext = setupApiTestContext();
-	});
-
-	afterEach(() => {
-		apiTestContext.dispose();
-	});
-
 	describe('in development mode', () => {
 		it('builds correct request configuration with authentication headers and calls $fetch', async () => {
+			/* Setup test context with automatic cleanup via `using` keyword */
+			using apiTestContext = setupApiTestContext();
+
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',
@@ -43,6 +33,8 @@ describe('fetchData()', () => {
 		});
 
 		it('builds request configuration without headers when authentication is not needed', async () => {
+			using apiTestContext = setupApiTestContext();
+
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',
@@ -62,6 +54,8 @@ describe('fetchData()', () => {
 
 	describe('in production mode', () => {
 		it('builds correct request configuration with cookie headers when authentication is needed', async () => {
+			using apiTestContext = setupApiTestContext();
+
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',
@@ -80,6 +74,8 @@ describe('fetchData()', () => {
 		});
 
 		it('builds request configuration without headers when authentication is not needed', async () => {
+			using apiTestContext = setupApiTestContext();
+
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',

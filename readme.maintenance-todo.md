@@ -8,4 +8,3 @@
     - `@nuxt/test-utils@3.20.1` benötigt `vitest@^3.2.0`
     - Aktuell blockiert bei `vitest@3.2.4`
     - Warten auf Update von `@nuxt/test-utils` mit Vitest 4-Unterstützung
-- Wenn die Node LTS Version >= 24 ist, die Tests entsprechend anpassen (nach TODO-Kommentar `@upgrade-node24` suchen)
