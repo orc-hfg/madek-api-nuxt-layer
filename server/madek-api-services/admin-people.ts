@@ -27,6 +27,7 @@ export async function getAdminPerson(event: H3Event, id: MadekAdminPeopleGetPath
 		});
 
 		return {
+			id: toPersonId(id),
 			first_name: normalizeTextContent(response.first_name, true),
 			last_name: normalizeTextContent(response.last_name, true),
 		};

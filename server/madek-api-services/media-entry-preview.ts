@@ -9,7 +9,7 @@ import { fiveMinutesCache } from '../constants/cache';
  * - Returns: Array of thumbnail objects (plural)
  */
 export async function getMediaEntryPreviewThumbnails(event: H3Event, mediaEntryId: MadekMediaEntryPreviewPathParameters['media_entry_id'], query: MediaEntryPreviewQuery): Promise<MediaEntryPreviewThumbnails> {
-	const { fetchFromApiWithPathParameters } = createMadekApiClient<MediaEntryPreviewThumbnails>(event);
+	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekMediaEntryPreview[]>(event);
 	const serverLogger = createServerLogger(event, 'API Service: getMediaEntryPreviewThumbnails');
 
 	serverLogger.info('Media Entry ID:', mediaEntryId);
@@ -32,7 +32,7 @@ export async function getMediaEntryPreviewThumbnails(event: H3Event, mediaEntryI
 
 		return response.map((item) => {
 			return {
-				id: item.id,
+				id: toPreviewId(item.id),
 				width: item.width,
 				height: item.height,
 				thumbnail: item.thumbnail,

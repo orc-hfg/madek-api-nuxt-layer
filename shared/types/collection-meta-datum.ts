@@ -1,4 +1,5 @@
 import type { paths } from '../../generated/api/madek-api';
+import type { KeywordId, PersonId, RoleId } from './branded';
 import type { LocalizedLabel } from './meta-keys';
 
 type MadekCollectionMetaDatumGet = paths['/api-v2/collection/{collection_id}/meta-datum/{meta_key_id}']['get'];
@@ -114,6 +115,7 @@ export interface MadekCollectionMetaDatumResponse {
  * - Individual fields may still be empty strings if only one name is present
  */
 export interface PersonInfo {
+	readonly id: PersonId;
 	readonly first_name: string;
 	readonly last_name: string;
 }
@@ -127,6 +129,7 @@ export interface PersonInfo {
  * - Term is always non-empty
  */
 export interface KeywordInfo {
+	readonly id: KeywordId;
 	readonly term: string;
 }
 
@@ -144,8 +147,8 @@ export interface KeywordInfo {
  * See app/services/set.ts getRolesBasedFieldData() for filtering logic.
  */
 export interface RoleInfo {
-	readonly person_id: string;
-	readonly role_id: string;
+	readonly person_id: PersonId;
+	readonly role_id: RoleId;
 	readonly labels: LocalizedLabel;
 }
 

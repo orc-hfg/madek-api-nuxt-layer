@@ -1,9 +1,7 @@
 import type { H3Event } from 'h3';
 import { fiveMinutesCache } from '../constants/cache';
 
-type PreviewId = MadekPreviewsDataStreamPathParameters['preview_id'];
-
-export async function getPreviewDataStream(event: H3Event, previewId: PreviewId): Promise<PreviewDataStream> {
+export async function getPreviewDataStream(event: H3Event, previewId: MadekPreviewsDataStreamPathParameters['preview_id']): Promise<PreviewDataStream> {
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<PreviewDataStream>(event);
 	const serverLogger = createServerLogger(event, 'API Service: getPreviewDataStream');
 

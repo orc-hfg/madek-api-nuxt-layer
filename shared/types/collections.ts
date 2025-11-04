@@ -1,4 +1,5 @@
 import type { paths } from '../../generated/api/madek-api';
+import type { CollectionId, UserId } from './branded';
 
 /*
  * Collections API Type Definitions
@@ -21,14 +22,28 @@ import type { paths } from '../../generated/api/madek-api';
 type MadekCollectionsGet = paths['/api-v2/collections']['get'];
 
 type MadekCollectionsQuery = NonNullable<MadekCollectionsGet['parameters']['query']>;
-export type CollectionsQuery = Pick<MadekCollectionsQuery, 'responsible_user_id' | 'filter_by'>;
+
+type MadekCollectionsQueryBase = Pick<MadekCollectionsQuery, 'responsible_user_id' | 'filter_by'>;
+
+/*
+ * Query parameters for collections endpoint.
+ *
+ * Note: responsible_user_id uses UserId (Branded Type) because the
+ * route schema transforms the raw string parameter to branded type
+ * via Zod schema. See server/schemas/madek-api-route.ts
+ */
+export interface CollectionsQuery {
+	readonly responsible_user_id?: UserId;
+	readonly filter_by?: MadekCollectionsQueryBase['filter_by'];
+}
 
 type MadekCollectionsArray = MadekCollectionsGet['responses']['200']['content']['application/json']['groups'];
 export interface MadekCollectionsResponse {
 	readonly collections: MadekCollectionsArray;
 }
 
-type MadekCollection = MadekCollectionsArray[number];
+export interface Collection {
+	readonly id: CollectionId;
+}
 
-export type Collection = Pick<MadekCollection, 'id'>;
 export type Collections = Collection[];

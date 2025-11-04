@@ -1,4 +1,5 @@
 import type { paths } from '../../generated/api/madek-api';
+import type { PreviewId } from './branded';
 
 type MadekMediaEntryPreviewGet = paths['/api-v2/media-entry/{media_entry_id}/preview']['get'];
 
@@ -30,5 +31,11 @@ export interface ThumbnailSource {
 
 export type ThumbnailSources = Partial<Record<ThumbnailTypes, ThumbnailSource>>;
 
-export type MediaEntryPreview = Pick<MadekMediaEntryPreview, 'id' | 'width' | 'height' | 'thumbnail'>;
+export interface MediaEntryPreview {
+	readonly id: PreviewId;
+	readonly width: number | null;
+	readonly height: number | null;
+	readonly thumbnail: ThumbnailTypes;
+}
+
 export type MediaEntryPreviewThumbnails = MediaEntryPreview[];

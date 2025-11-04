@@ -18,7 +18,7 @@ export async function getCollections(event: H3Event, query: CollectionsQuery): P
 
 		return response.collections.map((item) => {
 			return {
-				id: item.id,
+				id: toCollectionId(item.id),
 			};
 		});
 	}

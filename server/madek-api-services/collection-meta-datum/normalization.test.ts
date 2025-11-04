@@ -8,51 +8,51 @@ describe('normalizePeople()', () => {
 
 	it('should filter out null entries', () => {
 		const people = [
-			{ first_name: 'John', last_name: 'Doe' },
+			{ id: 'person-test', first_name: 'John', last_name: 'Doe' },
 			null,
-			{ first_name: 'Jane', last_name: 'Smith' },
+			{ id: 'person-test', first_name: 'Jane', last_name: 'Smith' },
 		];
 
 		const result = normalizePeople(people);
 
 		expect(result).toHaveLength(2);
-		expect(result[0]).toStrictEqual({ first_name: 'John', last_name: 'Doe' });
-		expect(result[1]).toStrictEqual({ first_name: 'Jane', last_name: 'Smith' });
+		expect(result[0]).toStrictEqual({ id: 'person-test', first_name: 'John', last_name: 'Doe' });
+		expect(result[1]).toStrictEqual({ id: 'person-test', first_name: 'Jane', last_name: 'Smith' });
 	});
 
 	it('should normalize null names to empty strings', () => {
 		const people = [
-			{ first_name: null, last_name: 'Doe' },
-			{ first_name: 'Jane', last_name: null },
+			{ id: 'person-test', first_name: null, last_name: 'Doe' },
+			{ id: 'person-test', first_name: 'Jane', last_name: null },
 		];
 
 		const result = normalizePeople(people);
 
 		expect(result).toStrictEqual([
-			{ first_name: '', last_name: 'Doe' },
-			{ first_name: 'Jane', last_name: '' },
+			{ id: 'person-test', first_name: '', last_name: 'Doe' },
+			{ id: 'person-test', first_name: 'Jane', last_name: '' },
 		]);
 	});
 
 	it('should trim whitespace from names', () => {
 		const people = [
-			{ first_name: '  John  ', last_name: '  Doe  ' },
-			{ first_name: '\tJane\t', last_name: '\nSmith\n' },
+			{ id: 'person-test', first_name: '  John  ', last_name: '  Doe  ' },
+			{ id: 'person-test', first_name: '\tJane\t', last_name: '\nSmith\n' },
 		];
 
 		const result = normalizePeople(people);
 
 		expect(result).toStrictEqual([
-			{ first_name: 'John', last_name: 'Doe' },
-			{ first_name: 'Jane', last_name: 'Smith' },
+			{ id: 'person-test', first_name: 'John', last_name: 'Doe' },
+			{ id: 'person-test', first_name: 'Jane', last_name: 'Smith' },
 		]);
 	});
 
 	it('should filter out people with both names empty', () => {
 		const people = [
-			{ first_name: '', last_name: '' },
-			{ first_name: '   ', last_name: '   ' },
-			{ first_name: null, last_name: null },
+			{ id: 'person-test', first_name: '', last_name: '' },
+			{ id: 'person-test', first_name: '   ', last_name: '   ' },
+			{ id: 'person-test', first_name: null, last_name: null },
 		];
 
 		const result = normalizePeople(people);
@@ -62,16 +62,16 @@ describe('normalizePeople()', () => {
 
 	it('should keep people with at least one non-empty name', () => {
 		const people = [
-			{ first_name: 'John', last_name: '' },
-			{ first_name: '', last_name: 'Doe' },
-			{ first_name: '', last_name: '' },
+			{ id: 'person-test', first_name: 'John', last_name: '' },
+			{ id: 'person-test', first_name: '', last_name: 'Doe' },
+			{ id: 'person-test', first_name: '', last_name: '' },
 		];
 
 		const result = normalizePeople(people);
 
 		expect(result).toStrictEqual([
-			{ first_name: 'John', last_name: '' },
-			{ first_name: '', last_name: 'Doe' },
+			{ id: 'person-test', first_name: 'John', last_name: '' },
+			{ id: 'person-test', first_name: '', last_name: 'Doe' },
 		]);
 	});
 });
@@ -83,53 +83,53 @@ describe('normalizeKeywords()', () => {
 
 	it('should filter out null entries', () => {
 		const keywords = [
-			{ term: 'Art' },
+			{ id: 'keyword-test', term: 'Art' },
 			null,
-			{ term: 'Design' },
+			{ id: 'keyword-test', term: 'Design' },
 		];
 
 		const result = normalizeKeywords(keywords);
 
 		expect(result).toHaveLength(2);
-		expect(result[0]).toStrictEqual({ term: 'Art' });
-		expect(result[1]).toStrictEqual({ term: 'Design' });
+		expect(result[0]).toStrictEqual({ id: 'keyword-test', term: 'Art' });
+		expect(result[1]).toStrictEqual({ id: 'keyword-test', term: 'Design' });
 	});
 
 	it('should normalize null terms to empty strings and filter them', () => {
 		const keywords = [
-			{ term: null },
-			{ term: 'Art' },
+			{ id: 'keyword-test', term: null },
+			{ id: 'keyword-test', term: 'Art' },
 		];
 
 		const result = normalizeKeywords(keywords);
 
-		expect(result).toStrictEqual([{ term: 'Art' }]);
+		expect(result).toStrictEqual([{ id: 'keyword-test', term: 'Art' }]);
 	});
 
 	it('should trim whitespace from terms', () => {
 		const keywords = [
-			{ term: '  Art  ' },
-			{ term: '\tDesign\t' },
+			{ id: 'keyword-test', term: '  Art  ' },
+			{ id: 'keyword-test', term: '\tDesign\t' },
 		];
 
 		const result = normalizeKeywords(keywords);
 
 		expect(result).toStrictEqual([
-			{ term: 'Art' },
-			{ term: 'Design' },
+			{ id: 'keyword-test', term: 'Art' },
+			{ id: 'keyword-test', term: 'Design' },
 		]);
 	});
 
 	it('should filter out keywords with empty terms', () => {
 		const keywords = [
-			{ term: '' },
-			{ term: '   ' },
-			{ term: 'Art' },
+			{ id: 'keyword-test', term: '' },
+			{ id: 'keyword-test', term: '   ' },
+			{ id: 'keyword-test', term: 'Art' },
 		];
 
 		const result = normalizeKeywords(keywords);
 
-		expect(result).toStrictEqual([{ term: 'Art' }]);
+		expect(result).toStrictEqual([{ id: 'keyword-test', term: 'Art' }]);
 	});
 });
 

@@ -105,6 +105,11 @@ interface MediaEntryWithTitleAndThumbnails {
 	thumbnailSources: ThumbnailSources;
 }
 
+interface MediaEntryWithPreviews {
+	mediaEntryId: MediaEntryId;
+	imagePreviews: MediaEntryPreviewThumbnails;
+}
+
 export interface SetDetailDisplayData {
 	authors: PeopleMetaKeyFieldData;
 	title: StringMetaKeyFieldData;
@@ -271,6 +276,7 @@ function createSetService(): SetService {
 				return {
 					roleName: role.roleName,
 					person: {
+						id: role.person.id,
 						first_name: role.person.first_name,
 						last_name: role.person.last_name,
 					},
@@ -285,11 +291,6 @@ function createSetService(): SetService {
 
 	async function getMediaEntryMetaDatum(mediaEntryId: MadekMediaEntryMetaDatumPathParameters['media_entry_id'], metaKeyId: MadekMediaEntryMetaDatumPathParameters['meta_key_id']): Promise<MediaEntryMetaDatum | undefined> {
 		return setRepository.getMediaEntryMetaDatum(mediaEntryId, metaKeyId);
-	}
-
-	interface MediaEntryWithPreviews {
-		mediaEntryId: string;
-		imagePreviews: MediaEntryPreviewThumbnails;
 	}
 
 	async function getMediaEntryImagePreviews(mediaEntryId: MadekMediaEntryPreviewPathParameters['media_entry_id']): Promise<MediaEntryPreviewThumbnails | undefined> {
