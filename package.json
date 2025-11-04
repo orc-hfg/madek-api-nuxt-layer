@@ -63,12 +63,12 @@
 		"husky": "9.1.7",
 		"knip": "5.66.2",
 		"lint-staged": "16.2.6",
-		"npm-check-updates": "19.1.1",
+		"npm-check-updates": "19.1.2",
 		"nuxt": "4.2.0",
 		"openapi-typescript": "7.10.1",
 		"typescript": "5.9.3",
 		"vitest": "3.2.4",
 		"vue": "3.5.22",
-		"vue-tsc": "3.1.1"
+		"vue-tsc": "3.1.3"
 	}
 }
