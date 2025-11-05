@@ -8,6 +8,7 @@ export interface SetListDisplayData {
 }
 
 interface SetsService {
+	getSets: (query?: CollectionsQuery) => Promise<Collections>;
 	getTitleBatch: (setIds: MadekCollectionMetaDatumPathParameters['collection_id'][], appLocale: AppLocale) => Promise<CollectionMetaData>;
 	getCoverImageThumbnailSources: (setId: MadekCollectionMediaEntryArcsPathParameters['collection_id'], thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources>;
 	getCoverImageThumbnailSourcesBatch: (setIds: MadekCollectionMediaEntryArcsPathParameters['collection_id'][], thumbnailTypes: ThumbnailTypes[]) => Promise<ThumbnailSources[]>;
@@ -53,6 +54,7 @@ export function mapSetsToDisplayData(sets: Collections, titles: CollectionMetaDa
 
 function createSetsService(): SetsService {
 	const appLogger = createAppLogger('Service: sets');
+	const setsRepository = getSetsRepository();
 	const setRepository = getSetRepository();
 	const setService = getSetService();
 	const apiBaseUrl = useApiBaseUrl();
@@ -76,6 +78,10 @@ function createSetsService(): SetsService {
 	}
 
 	return {
+		async getSets(query?: CollectionsQuery): Promise<Collections> {
+			return setsRepository.getSets(query);
+		},
+
 		async getTitleBatch(setIds: MadekCollectionMetaDatumPathParameters['collection_id'][], appLocale: AppLocale): Promise<CollectionMetaData> {
 			const titlePromises = setIds.map(async setId => setService.getTitle(setId, appLocale));
 

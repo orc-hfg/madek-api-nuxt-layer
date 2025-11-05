@@ -151,10 +151,7 @@ export function normalizeKeywords(keywords: (KeywordResponse | null)[] | undefin
  * Note: Business-logic filtering (e.g., person name validity) happens in the
  * app service layer (see app/services/set.ts getRolesBasedFieldData).
  */
-export function mergeRoles(
-	mdRoles: MdRoleResponse[] | undefined,
-	roles: (RoleResponse | null)[] | undefined,
-): RoleInfo[] {
+export function mergeRoles(mdRoles: MdRoleResponse[] | undefined, roles: (RoleResponse | null)[] | undefined): RoleInfo[] {
 	if (!mdRoles || !roles) {
 		return [];
 	}

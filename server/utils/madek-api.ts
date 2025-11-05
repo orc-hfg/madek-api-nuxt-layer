@@ -49,11 +49,7 @@ export function generateCacheKey(endpoint: string, query?: QueryParameters): str
 	return safeKey;
 }
 
-export function getAuthenticationHeaders(
-	event: H3Event,
-	apiToken?: string,
-	isDevelopmentEnvironment = defaultIsDevelopmentEnvironment,
-): HttpHeaders {
+export function getAuthenticationHeaders(event: H3Event, apiToken?: string, isDevelopmentEnvironment = defaultIsDevelopmentEnvironment): HttpHeaders {
 	const serverLogger = createServerLogger(event, LOGGER_SOURCE);
 	const headers: HttpHeaders = {};
 

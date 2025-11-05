@@ -8,7 +8,6 @@ export const useSetsStore = defineStore('sets', () => {
 
 	async function refresh(appLocale: AppLocale, mockScenario?: MockScenario): Promise<void> {
 		const userStore = useUserStore();
-		const setsRepository = getSetsRepository();
 		const setsService = getSetsService();
 
 		// Ensure user is loaded
@@ -42,7 +41,7 @@ export const useSetsStore = defineStore('sets', () => {
 					mock_scenario: mockScenario,
 				};
 
-		const userSets = await setsRepository.getSets(query);
+		const userSets = await setsService.getSets(query);
 
 		sets.value = userSets;
 		setsDisplayData.value = await setsService.getSetsDisplayData(userSets, appLocale, ['small', 'medium', 'large', 'x_large']);

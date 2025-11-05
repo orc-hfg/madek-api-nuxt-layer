@@ -1,12 +1,7 @@
 import type { H3Event } from 'h3';
 import { createServerLogger } from './server-logger';
 
-function checkApiMockEnabledAndLog(
-	event: H3Event,
-	loggerContext: string,
-	logMessage: string,
-	logData: Record<string, unknown> | undefined,
-): boolean {
+function checkApiMockEnabledAndLog(event: H3Event,	loggerContext: string,	logMessage: string,	logData: Record<string, unknown> | undefined): boolean {
 	const config = useRuntimeConfig(event);
 	const isApiMockEnabled = config.public.enableApiMock;
 
