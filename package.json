@@ -36,7 +36,7 @@
 		"release:dev:minor": "node ./scripts/safe-package-release.mjs minor --development",
 		"release:dev:major": "node ./scripts/safe-package-release.mjs major --development",
 		"prepare": "husky && nuxt prepare && npm run generate:api",
-		"reinstall": "rm -rf node_modules package-lock.json && npm install"
+		"reinstall": "rm -rf .nuxt node_modules package-lock.json && npm install"
 	},
 	"peerDependencies": {
 		"nuxt": ">=4 <5",
