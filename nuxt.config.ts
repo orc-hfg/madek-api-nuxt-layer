@@ -8,6 +8,9 @@ function composeVersion(): string {
 const resolver = createResolver(import.meta.url);
 
 export default defineNuxtConfig({
+	experimental: {
+		typescriptPlugin: true,
+	},
 	compatibilityDate: '2025-11-04',
 	devtools: {
 		enabled: true,
