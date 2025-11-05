@@ -9,9 +9,6 @@ const resolver = createResolver(import.meta.url);
 
 export default defineNuxtConfig({
 	compatibilityDate: '2025-11-04',
-	experimental: {
-		typescriptPlugin: true,
-	},
 	devtools: {
 		enabled: true,
 	},
