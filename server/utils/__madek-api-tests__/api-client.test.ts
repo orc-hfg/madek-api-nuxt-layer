@@ -3,6 +3,7 @@ import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { setupApiTestContext } from '../../../tests/mocks/madek-api';
 import { createRuntimeConfigMock } from '../../../tests/mocks/runtime-config';
+import { noCache, oneHourCache } from '../../constants/cache';
 
 /*
  * Note: Tests use the `using` keyword (Node 24+, TypeScript 5.2+) for automatic resource cleanup.
@@ -27,9 +28,17 @@ describe('createMadekApiClient()', () => {
 		using apiTestContext = setupApiTestContext();
 
 		const endpoint = 'resources/123';
-		const apiOptions = { isAuthenticationNeeded: true, query: { param: 'value' } };
+		const apiOptions = {
+			isAuthenticationNeeded: true,
+			query: {
+				param: 'value',
+			},
+		};
 
-		await apiTestContext.client.fetchFromApi(endpoint, { apiOptions });
+		await apiTestContext.client.fetchFromApi(endpoint, {
+			apiOptions,
+			publicDataCache: oneHourCache,
+		});
 
 		expect(apiTestContext.loggerWarnSpy).toHaveBeenCalledTimes(1);
 		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
@@ -46,12 +55,20 @@ describe('createMadekApiClient()', () => {
 		await apiTestContext.client.fetchFromApiWithPathParameters(
 			'collection/:collectionId/meta-datum/:metaKeyId',
 			{ collectionId: 'abc-123', metaKeyId: 'meta_key.456' },
+			{
+				apiOptions: {
+					isAuthenticationNeeded: false,
+				},
+				publicDataCache: oneHourCache,
+			},
 		);
 
 		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 			apiTestContext.mockEvent,
 			'https://api.example.com/collection/abc-123/meta-datum/meta_key.456',
-			{},
+			{
+				isAuthenticationNeeded: false,
+			},
 			'test-api-token',
 		);
 	});
@@ -62,12 +79,20 @@ describe('createMadekApiClient()', () => {
 		await apiTestContext.client.fetchFromApiWithPathParameters(
 			'api/:version/collection/:collectionId/meta-datum/:metaKeyId',
 			{ version: 'v2', collectionId: 'abc-123', metaKeyId: 'meta_key.456' },
+			{
+				apiOptions: {
+					isAuthenticationNeeded: false,
+				},
+				publicDataCache: oneHourCache,
+			},
 		);
 
 		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 			apiTestContext.mockEvent,
 			'https://api.example.com/api/v2/collection/abc-123/meta-datum/meta_key.456',
-			{},
+			{
+				isAuthenticationNeeded: false,
+			},
 			'test-api-token',
 		);
 	});
@@ -81,8 +106,13 @@ describe('createMadekApiClient()', () => {
 			using apiTestContext = setupApiTestContext();
 
 			await apiTestContext.client.fetchFromApi('test-endpoint', {
-				apiOptions: { query: { param: 'value' } },
-				publicDataCache: { maxAge: 3600 },
+				apiOptions: {
+					isAuthenticationNeeded: false,
+					query: {
+						param: 'value',
+					},
+				},
+				publicDataCache: oneHourCache,
 			});
 
 			expect(apiTestContext.defineCachedFunctionMock).toHaveBeenCalledWith(
@@ -99,49 +129,62 @@ describe('createMadekApiClient()', () => {
 			using apiTestContext = setupApiTestContext();
 
 			await apiTestContext.client.fetchFromApi('authenticated-endpoint', {
-				apiOptions: { isAuthenticationNeeded: true },
-				publicDataCache: { maxAge: 3600 },
+				apiOptions: {
+					isAuthenticationNeeded: true,
+				},
+				publicDataCache: oneHourCache,
 			});
 
 			expect(apiTestContext.loggerWarnSpy).toHaveBeenCalledTimes(1);
 			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 				apiTestContext.mockEvent,
 				'https://api.example.com/authenticated-endpoint',
-				{ isAuthenticationNeeded: true },
+				{
+					isAuthenticationNeeded: true,
+				},
 				'test-api-token',
 			);
 			expect(apiTestContext.defineCachedFunctionMock).not.toHaveBeenCalled();
 		});
 
-		it('does not log warning when authenticated request uses null for publicDataCache', async () => {
+		it('does not log warning when authenticated request uses noCache for publicDataCache', async () => {
 			using apiTestContext = setupApiTestContext();
 
 			await apiTestContext.client.fetchFromApi('authenticated-endpoint', {
-				apiOptions: { isAuthenticationNeeded: true },
-				publicDataCache: null,
+				apiOptions: {
+					isAuthenticationNeeded: true,
+				},
+				publicDataCache: noCache,
 			});
 
 			expect(apiTestContext.loggerWarnSpy).not.toHaveBeenCalled();
 			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 				apiTestContext.mockEvent,
 				'https://api.example.com/authenticated-endpoint',
-				{ isAuthenticationNeeded: true },
+				{
+					isAuthenticationNeeded: true,
+				},
 				'test-api-token',
 			);
 			expect(apiTestContext.defineCachedFunctionMock).not.toHaveBeenCalled();
 		});
 
-		it('skips caching when publicDataCache is null (explicit no-cache)', async () => {
+		it('skips caching when publicDataCache is noCache (explicit no-cache)', async () => {
 			using apiTestContext = setupApiTestContext();
 
 			await apiTestContext.client.fetchFromApi('test-endpoint', {
-				publicDataCache: null,
+				apiOptions: {
+					isAuthenticationNeeded: false,
+				},
+				publicDataCache: noCache,
 			});
 
 			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test-endpoint',
-				{},
+				{
+					isAuthenticationNeeded: false,
+				},
 				'test-api-token',
 			);
 			expect(apiTestContext.defineCachedFunctionMock).not.toHaveBeenCalled();
@@ -153,6 +196,9 @@ describe('createMadekApiClient()', () => {
 			const cacheOptions = { maxAge: 3600, swr: true };
 
 			await apiTestContext.client.fetchFromApi('cached-endpoint', {
+				apiOptions: {
+					isAuthenticationNeeded: false,
+				},
 				publicDataCache: cacheOptions,
 			});
 
@@ -173,14 +219,19 @@ describe('createMadekApiClient() without server-side caching', () => {
 		using apiTestContext = setupApiTestContext();
 
 		await apiTestContext.client.fetchFromApi('test-endpoint', {
-			publicDataCache: { maxAge: 3600 },
+			apiOptions: {
+				isAuthenticationNeeded: false,
+			},
+			publicDataCache: oneHourCache,
 		});
 
 		// Should call fetchData directly, not through caching
 		expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
 			apiTestContext.mockEvent,
 			'https://api.example.com/test-endpoint',
-			{},
+			{
+				isAuthenticationNeeded: false,
+			},
 			'test-api-token',
 		);
 

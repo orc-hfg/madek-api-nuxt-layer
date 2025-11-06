@@ -1,7 +1,9 @@
 import type { H3Event } from 'h3';
-import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
+import type { NitroFetchOptions, NitroFetchRequest } from 'nitropack';
+import type { AllowedCacheOptions } from '../constants/cache';
 import { getRequestHeaders } from 'h3';
 import { isDevelopmentEnvironment as defaultIsDevelopmentEnvironment } from '../../shared/utils/environment';
+import { noCache } from '../constants/cache';
 import { isFetchError } from './error-handling';
 import { createServerLogger } from './server-logger';
 
@@ -14,13 +16,13 @@ type HttpHeaders = Record<string, string>;
 export type PathParameters = Record<string, string>;
 
 export interface MadekApiOptions {
-	isAuthenticationNeeded?: boolean;
+	isAuthenticationNeeded: boolean;
 	query?: NitroFetchOptions<NitroFetchRequest>['query'];
 }
 
 export interface MadekApiRequestConfig {
-	apiOptions?: MadekApiOptions;
-	publicDataCache?: CacheOptions | null;
+	apiOptions: MadekApiOptions;
+	publicDataCache: AllowedCacheOptions;
 }
 
 export function generateCacheKey(endpoint: string, query?: QueryParameters): string {
@@ -72,7 +74,7 @@ export function getAuthenticationHeaders(event: H3Event, apiToken?: string, isDe
 
 export function buildRequestConfig(
 	event: H3Event,
-	apiOptions: MadekApiOptions = {},
+	apiOptions: MadekApiOptions,
 	apiToken?: string,
 	isDevelopmentEnvironment = defaultIsDevelopmentEnvironment,
 ): NitroFetchOptions<NitroFetchRequest> {
@@ -96,7 +98,7 @@ export function buildRequestConfig(
 export async function fetchData<TResponse>(
 	event: H3Event,
 	url: string,
-	apiOptions: MadekApiOptions = {},
+	apiOptions: MadekApiOptions,
 	apiToken?: string,
 	fetchFunction = $fetch,
 	isDevelopmentEnvironment = defaultIsDevelopmentEnvironment,
@@ -116,12 +118,11 @@ export async function fetchData<TResponse>(
 	}
 }
 
-export function shouldUseCaching(isServerSideCachingEnabled: boolean, isAuthenticationNeeded: boolean, cacheOptions?: CacheOptions | null): boolean {
+export function shouldUseCaching(isServerSideCachingEnabled: boolean, isAuthenticationNeeded: boolean, cacheOptions: AllowedCacheOptions): boolean {
 	return isServerSideCachingEnabled
 		&& !isAuthenticationNeeded
-		&& cacheOptions !== null
-		&& cacheOptions !== undefined
-		&& (cacheOptions.maxAge ?? 0) > 0;
+		&& cacheOptions !== noCache
+		&& cacheOptions.maxAge > 0;
 }
 
 function replacePathParameters(template: string, parameters: PathParameters): string {
@@ -135,8 +136,8 @@ function replacePathParameters(template: string, parameters: PathParameters): st
 }
 
 export function createMadekApiClient<TResponse>(event: H3Event, fetchDataFunction = fetchData): {
-	fetchFromApi: (endpoint: string, apiRequestConfig?: MadekApiRequestConfig) => Promise<TResponse>;
-	fetchFromApiWithPathParameters: (endpointTemplate: string, endpointPathParameters: PathParameters, apiRequestConfig?: MadekApiRequestConfig) => Promise<TResponse>;
+	fetchFromApi: (endpoint: string, apiRequestConfig: MadekApiRequestConfig) => Promise<TResponse>;
+	fetchFromApiWithPathParameters: (endpointTemplate: string, endpointPathParameters: PathParameters, apiRequestConfig: MadekApiRequestConfig) => Promise<TResponse>;
 } {
 	const serverLogger = createServerLogger(event, LOGGER_SOURCE);
 	const config = useRuntimeConfig(event);
@@ -144,33 +145,33 @@ export function createMadekApiClient<TResponse>(event: H3Event, fetchDataFunctio
 	const apiBaseURL = publicConfig.madekApi.baseURL;
 	const apiToken = config.madekApi.token;
 
-	async function fetchFromApi(endpoint: string, apiRequestConfig: MadekApiRequestConfig = {}): Promise<TResponse> {
+	async function fetchFromApi(endpoint: string, apiRequestConfig: MadekApiRequestConfig): Promise<TResponse> {
 		const url = `${apiBaseURL}${endpoint}`;
 		const isServerSideCachingEnabled = publicConfig.enableServerSideCaching;
-		const isAuthenticationNeeded = apiRequestConfig.apiOptions?.isAuthenticationNeeded === true;
-		const cacheOptions = apiRequestConfig.publicDataCache;
+		const { apiOptions, publicDataCache: cacheOptions } = apiRequestConfig;
+		const { isAuthenticationNeeded } = apiOptions;
 
-		if (isAuthenticationNeeded && apiRequestConfig.publicDataCache !== null) {
-			serverLogger.warn('Authenticated requests should use null for publicDataCache (or omit it entirely). Other cache configurations are ignored.', endpoint);
+		if (isAuthenticationNeeded && cacheOptions !== noCache) {
+			serverLogger.warn('Authenticated requests should use noCache for publicDataCache. Other cache configurations are ignored.', endpoint);
 		}
 
 		if (shouldUseCaching(isServerSideCachingEnabled, isAuthenticationNeeded, cacheOptions)) {
 			serverLogger.info(`Using cache for request: ${endpoint}`, cacheOptions);
 
 			return defineCachedFunction(
-				async () => fetchDataFunction<TResponse>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken),
+				async () => fetchDataFunction<TResponse>(event, url, apiOptions, apiToken),
 				{
 					...cacheOptions,
 					name: 'madek-api',
-					getKey: () => generateCacheKey(endpoint, apiRequestConfig.apiOptions?.query ?? {}),
+					getKey: () => generateCacheKey(endpoint, apiOptions.query ?? {}),
 				},
 			)();
 		}
 
-		return fetchDataFunction<TResponse>(event, url, apiRequestConfig.apiOptions ?? {}, apiToken);
+		return fetchDataFunction<TResponse>(event, url, apiOptions, apiToken);
 	}
 
-	async function fetchFromApiWithPathParameters(endpointTemplate: string, endpointPathParameters: PathParameters, apiRequestConfig: MadekApiRequestConfig = {}): Promise<TResponse> {
+	async function fetchFromApiWithPathParameters(endpointTemplate: string, endpointPathParameters: PathParameters, apiRequestConfig: MadekApiRequestConfig): Promise<TResponse> {
 		const endpoint = replacePathParameters(endpointTemplate, endpointPathParameters);
 
 		return fetchFromApi(endpoint, apiRequestConfig);

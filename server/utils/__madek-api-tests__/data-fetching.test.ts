@@ -18,15 +18,24 @@ describe('fetchData()', () => {
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',
-				{ isAuthenticationNeeded: true, query: { param: 'value' } },
+				{
+					isAuthenticationNeeded: true,
+					query: {
+						param: 'value',
+					},
+				},
 				'test-token',
 				apiTestContext.fetchMock as unknown as $Fetch,
 				true,
 			);
 
 			const expectedConfig = {
-				headers: { Authorization: 'token test-token' },
-				query: { param: 'value' },
+				headers: {
+					Authorization: 'token test-token',
+				},
+				query: {
+					param: 'value',
+				},
 			};
 
 			expect(apiTestContext.fetchMock).toHaveBeenCalledWith('https://api.example.com/test', expectedConfig);
@@ -38,14 +47,21 @@ describe('fetchData()', () => {
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',
-				{ isAuthenticationNeeded: false, query: { param: 'value' } },
+				{
+					isAuthenticationNeeded: false,
+					query: {
+						param: 'value',
+					},
+				},
 				'test-token',
 				apiTestContext.fetchMock as unknown as $Fetch,
 				true,
 			);
 
 			const expectedConfig = {
-				query: { param: 'value' },
+				query: {
+					param: 'value',
+				},
 			};
 
 			expect(apiTestContext.fetchMock).toHaveBeenCalledWith('https://api.example.com/test', expectedConfig);
@@ -59,15 +75,24 @@ describe('fetchData()', () => {
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',
-				{ isAuthenticationNeeded: true, query: { param: 'value' } },
+				{
+					isAuthenticationNeeded: true,
+					query: {
+						param: 'value',
+					},
+				},
 				'test-token',
 				apiTestContext.fetchMock as unknown as $Fetch,
 				false,
 			);
 
 			const expectedConfig = {
-				headers: { cookie: 'test-cookie=value123' },
-				query: { param: 'value' },
+				headers: {
+					cookie: 'test-cookie=value123',
+				},
+				query: {
+					param: 'value',
+				},
 			};
 
 			expect(apiTestContext.fetchMock).toHaveBeenCalledWith('https://api.example.com/test', expectedConfig);
@@ -79,14 +104,21 @@ describe('fetchData()', () => {
 			await fetchData(
 				apiTestContext.mockEvent,
 				'https://api.example.com/test',
-				{ isAuthenticationNeeded: false, query: { param: 'value' } },
+				{
+					isAuthenticationNeeded: false,
+					query: {
+						param: 'value',
+					},
+				},
 				'test-token',
 				apiTestContext.fetchMock as unknown as $Fetch,
 				false,
 			);
 
 			const expectedConfig = {
-				query: { param: 'value' },
+				query: {
+					param: 'value',
+				},
 			};
 
 			expect(apiTestContext.fetchMock).toHaveBeenCalledWith('https://api.example.com/test', expectedConfig);

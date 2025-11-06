@@ -1,44 +1,29 @@
 import type { MadekApiOptions } from '../madek-api';
 import { describe, expect, it } from 'vitest';
+import { noCache, oneHourCache } from '../../constants/cache';
 import { generateCacheKey, shouldUseCaching } from '../madek-api';
 
 describe('shouldUseCaching()', () => {
 	it('returns false when authentication is needed (do not allow caching for user sensitive data)', () => {
-		const cacheOptions = { maxAge: 3600 };
-		const result = shouldUseCaching(true, true, cacheOptions);
+		const result = shouldUseCaching(true, true, oneHourCache);
 
 		expect(result).toBe(false);
 	});
 
 	it('returns false when server side caching is disabled', () => {
-		const cacheOptions = { maxAge: 3600 };
-		const result = shouldUseCaching(false, false, cacheOptions);
+		const result = shouldUseCaching(false, false, oneHourCache);
 
 		expect(result).toBe(false);
 	});
 
-	it('returns false when cache options are undefined', () => {
-		const result = shouldUseCaching(true, false, undefined);
-
-		expect(result).toBe(false);
-	});
-
-	it('returns false when cache options are null (explicit no-cache)', () => {
-		const result = shouldUseCaching(true, false, null);
-
-		expect(result).toBe(false);
-	});
-
-	it('returns false when maxAge is 0 (explicit no-cache)', () => {
-		const cacheOptions = { maxAge: 0, swr: false };
-		const result = shouldUseCaching(true, false, cacheOptions);
+	it('returns false when cache options are noCache (explicit no-cache)', () => {
+		const result = shouldUseCaching(true, false, noCache);
 
 		expect(result).toBe(false);
 	});
 
 	it('returns true when all conditions for caching are met', () => {
-		const cacheOptions = { maxAge: 3600 };
-		const result = shouldUseCaching(true, false, cacheOptions);
+		const result = shouldUseCaching(true, false, oneHourCache);
 
 		expect(result).toBe(true);
 	});

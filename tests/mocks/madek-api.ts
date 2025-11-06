@@ -22,8 +22,8 @@ export const mockEvent = {} as H3Event;
  */
 interface ApiTestContext extends ServerLoggerMock {
 	client: {
-		fetchFromApi: (endpoint: string, config?: MadekApiRequestConfig) => Promise<unknown>;
-		fetchFromApiWithPathParameters: (endpointTemplate: string, pathParameters: PathParameters, config?: MadekApiRequestConfig) => Promise<unknown>;
+		fetchFromApi: (endpoint: string, config: MadekApiRequestConfig) => Promise<unknown>;
+		fetchFromApiWithPathParameters: (endpointTemplate: string, pathParameters: PathParameters, config: MadekApiRequestConfig) => Promise<unknown>;
 	};
 	fetchMock: ReturnType<typeof vi.fn>;
 	fetchDataFunctionMock: ReturnType<typeof vi.fn>;

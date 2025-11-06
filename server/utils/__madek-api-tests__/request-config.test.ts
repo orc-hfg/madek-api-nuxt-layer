@@ -38,7 +38,7 @@ describe('getAuthenticationHeaders()', () => {
 describe('buildRequestConfig()', () => {
 	describe('in development mode', () => {
 		it('returns empty config when no options are provided', () => {
-			const result = buildRequestConfig(mockEvent, {}, undefined, true);
+			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: false }, undefined, true);
 
 			expect(result).toStrictEqual({});
 		});
@@ -61,7 +61,7 @@ describe('buildRequestConfig()', () => {
 
 		it('includes query parameters when provided', () => {
 			const query = { parameter1: 'value1', parameter2: 'value2' };
-			const result = buildRequestConfig(mockEvent, { query }, undefined, true);
+			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: false, query }, undefined, true);
 
 			expect(result).toStrictEqual({ query });
 		});
@@ -80,7 +80,7 @@ describe('buildRequestConfig()', () => {
 
 	describe('in production mode', () => {
 		it('returns empty config when no options are provided', () => {
-			const result = buildRequestConfig(mockEvent, {}, undefined, false);
+			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: false }, undefined, false);
 
 			expect(result).toStrictEqual({});
 		});
@@ -96,7 +96,7 @@ describe('buildRequestConfig()', () => {
 
 		it('includes only query parameters when authentication is not needed', () => {
 			const query = { parameter1: 'value1', parameter2: 'value2' };
-			const result = buildRequestConfig(mockEvent, { query }, undefined, false);
+			const result = buildRequestConfig(mockEvent, { isAuthenticationNeeded: false, query }, undefined, false);
 
 			expect(result).toStrictEqual({ query });
 		});
