@@ -6,7 +6,13 @@ import {
 	TWELVE_HOURS_IN_SECONDS,
 } from '../../shared/constants/time';
 
-// Standard cache configurations
+/*
+ * Disables caching completely.
+ *
+ * Use cases:
+ * - Binary data (Blob, streams) - would be corrupted during serialization
+ * - Real-time data that must never be stale
+ */
 export const noCache: CacheOptions = {
 	maxAge: 0,
 	swr: false,
@@ -32,7 +38,6 @@ export const twentyFourHoursCache: CacheOptions = {
 	swr: true,
 };
 
-// Specialized cache configurations
 export const freshOneHourCache: CacheOptions = {
 	maxAge: ONE_HOUR_IN_SECONDS,
 

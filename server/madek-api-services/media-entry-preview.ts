@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import { fiveMinutesCache } from '../constants/cache';
+import { noCache } from '../constants/cache';
 
 /*
  * Note: Function is named 'getMediaEntryPreviewThumbnails' instead of 'getMediaEntryPreview'
@@ -26,7 +26,9 @@ export async function getMediaEntryPreviewThumbnails(event: H3Event, mediaEntryI
 					isAuthenticationNeeded: false,
 					query,
 				},
-				publicDataCache: fiveMinutesCache,
+
+				// Binary Blob data cannot be cached - would be corrupted during serialization
+				publicDataCache: noCache,
 			},
 		);
 
