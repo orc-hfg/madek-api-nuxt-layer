@@ -113,6 +113,40 @@ describe('createMadekApiClient()', () => {
 			expect(apiTestContext.defineCachedFunctionMock).not.toHaveBeenCalled();
 		});
 
+		it('does not log warning when authenticated request uses null for publicDataCache', async () => {
+			using apiTestContext = setupApiTestContext();
+
+			await apiTestContext.client.fetchFromApi('authenticated-endpoint', {
+				apiOptions: { isAuthenticationNeeded: true },
+				publicDataCache: null,
+			});
+
+			expect(apiTestContext.loggerWarnSpy).not.toHaveBeenCalled();
+			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+				apiTestContext.mockEvent,
+				'https://api.example.com/authenticated-endpoint',
+				{ isAuthenticationNeeded: true },
+				'test-api-token',
+			);
+			expect(apiTestContext.defineCachedFunctionMock).not.toHaveBeenCalled();
+		});
+
+		it('skips caching when publicDataCache is null (explicit no-cache)', async () => {
+			using apiTestContext = setupApiTestContext();
+
+			await apiTestContext.client.fetchFromApi('test-endpoint', {
+				publicDataCache: null,
+			});
+
+			expect(apiTestContext.fetchDataFunctionMock).toHaveBeenCalledWith(
+				apiTestContext.mockEvent,
+				'https://api.example.com/test-endpoint',
+				{},
+				'test-api-token',
+			);
+			expect(apiTestContext.defineCachedFunctionMock).not.toHaveBeenCalled();
+		});
+
 		it('logs cache usage when caching is enabled', async () => {
 			using apiTestContext = setupApiTestContext();
 

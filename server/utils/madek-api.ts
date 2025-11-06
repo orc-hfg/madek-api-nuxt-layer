@@ -2,7 +2,6 @@ import type { H3Event } from 'h3';
 import type { CacheOptions, NitroFetchOptions, NitroFetchRequest } from 'nitropack';
 import { getRequestHeaders } from 'h3';
 import { isDevelopmentEnvironment as defaultIsDevelopmentEnvironment } from '../../shared/utils/environment';
-import { noCache } from '../constants/cache';
 import { isFetchError } from './error-handling';
 import { createServerLogger } from './server-logger';
 
@@ -21,7 +20,7 @@ export interface MadekApiOptions {
 
 export interface MadekApiRequestConfig {
 	apiOptions?: MadekApiOptions;
-	publicDataCache?: CacheOptions;
+	publicDataCache?: CacheOptions | null;
 }
 
 export function generateCacheKey(endpoint: string, query?: QueryParameters): string {
@@ -117,8 +116,12 @@ export async function fetchData<TResponse>(
 	}
 }
 
-export function shouldUseCaching(isServerSideCachingEnabled: boolean, isAuthenticationNeeded: boolean, cacheOptions?: CacheOptions): boolean {
-	return isServerSideCachingEnabled && !isAuthenticationNeeded && cacheOptions !== undefined;
+export function shouldUseCaching(isServerSideCachingEnabled: boolean, isAuthenticationNeeded: boolean, cacheOptions?: CacheOptions | null): boolean {
+	return isServerSideCachingEnabled
+		&& !isAuthenticationNeeded
+		&& cacheOptions !== null
+		&& cacheOptions !== undefined
+		&& (cacheOptions.maxAge ?? 0) > 0;
 }
 
 function replacePathParameters(template: string, parameters: PathParameters): string {
@@ -147,8 +150,8 @@ export function createMadekApiClient<TResponse>(event: H3Event, fetchDataFunctio
 		const isAuthenticationNeeded = apiRequestConfig.apiOptions?.isAuthenticationNeeded === true;
 		const cacheOptions = apiRequestConfig.publicDataCache;
 
-		if (isAuthenticationNeeded && apiRequestConfig.publicDataCache !== noCache) {
-			serverLogger.warn('Authenticated requests should only use \'noCache\' for publicDataCache (or none at all). Other cache configurations are ignored.', endpoint);
+		if (isAuthenticationNeeded && apiRequestConfig.publicDataCache !== null) {
+			serverLogger.warn('Authenticated requests should use null for publicDataCache (or omit it entirely). Other cache configurations are ignored.', endpoint);
 		}
 
 		if (shouldUseCaching(isServerSideCachingEnabled, isAuthenticationNeeded, cacheOptions)) {

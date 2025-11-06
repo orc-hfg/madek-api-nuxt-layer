@@ -12,11 +12,13 @@ import {
  * Use cases:
  * - Binary data (Blob, streams) - would be corrupted during serialization
  * - Real-time data that must never be stale
+ * - Authenticated requests that must not be cached
+ *
+ * Use null instead of a CacheOptions object to indicate no caching.
+ * Null is semantically correct here - it represents the intentional absence of caching.
  */
-export const noCache: CacheOptions = {
-	maxAge: 0,
-	swr: false,
-};
+// eslint-disable-next-line unicorn/no-null
+export const noCache = null;
 
 export const fiveMinutesCache: CacheOptions = {
 	maxAge: FIVE_MINUTES_IN_SECONDS,

@@ -23,6 +23,19 @@ describe('shouldUseCaching()', () => {
 		expect(result).toBe(false);
 	});
 
+	it('returns false when cache options are null (explicit no-cache)', () => {
+		const result = shouldUseCaching(true, false, null);
+
+		expect(result).toBe(false);
+	});
+
+	it('returns false when maxAge is 0 (explicit no-cache)', () => {
+		const cacheOptions = { maxAge: 0, swr: false };
+		const result = shouldUseCaching(true, false, cacheOptions);
+
+		expect(result).toBe(false);
+	});
+
 	it('returns true when all conditions for caching are met', () => {
 		const cacheOptions = { maxAge: 3600 };
 		const result = shouldUseCaching(true, false, cacheOptions);

@@ -20,7 +20,6 @@ export async function getPreviewDataStream(event: H3Event, previewId: MadekPrevi
 
 				// Binary Blob data cannot be cached - would be corrupted during serialization
 				publicDataCache: noCache,
-
 			},
 		);
 
