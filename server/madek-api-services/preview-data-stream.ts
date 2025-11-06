@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import { fiveMinutesCache } from '../constants/cache';
+import { noCache } from '../constants/cache';
 
 export async function getPreviewDataStream(event: H3Event, previewId: MadekPreviewsDataStreamPathParameters['preview_id']): Promise<PreviewDataStream> {
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<PreviewDataStream>(event);
@@ -17,7 +17,10 @@ export async function getPreviewDataStream(event: H3Event, previewId: MadekPrevi
 				apiOptions: {
 					isAuthenticationNeeded: false,
 				},
-				publicDataCache: fiveMinutesCache,
+
+				// Binary Blob data cannot be cached - would be corrupted during serialization
+				publicDataCache: noCache,
+
 			},
 		);
 
