@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import { fiveMinutesCache } from '../constants/cache';
+import { noCache } from '../constants/cache';
 
 export async function getCollections(event: H3Event, query: CollectionsQuery): Promise<Collections> {
 	const { fetchFromApi } = createMadekApiClient<MadekCollectionsResponse>(event);
@@ -13,7 +13,7 @@ export async function getCollections(event: H3Event, query: CollectionsQuery): P
 				isAuthenticationNeeded: false,
 				query,
 			},
-			publicDataCache: fiveMinutesCache,
+			publicDataCache: noCache,
 		});
 
 		return response.collections.map((item) => {

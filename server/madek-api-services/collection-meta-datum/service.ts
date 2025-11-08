@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import { fiveMinutesCache } from '../../constants/cache';
+import { noCache } from '../../constants/cache';
 import { getFallbackMetaKey, mergeRoles, META_KEYS_SHOULD_TRIM, normalizeKeywords, normalizePeople, shouldReturnEmptyArray, shouldReturnEmptyString } from './normalization';
 
 /*
@@ -62,7 +62,7 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 				apiOptions: {
 					isAuthenticationNeeded: false,
 				},
-				publicDataCache: fiveMinutesCache,
+				publicDataCache: noCache,
 			},
 		);
 

@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import { twentyFourHoursCache } from '../constants/cache';
+import { noCache } from '../constants/cache';
 
 /*
  * Fetch admin person data from /admin/people/{id} endpoint
@@ -23,7 +23,7 @@ export async function getAdminPerson(event: H3Event, id: MadekAdminPeopleGetPath
 			apiOptions: {
 				isAuthenticationNeeded: false,
 			},
-			publicDataCache: twentyFourHoursCache,
+			publicDataCache: noCache,
 		});
 
 		return {

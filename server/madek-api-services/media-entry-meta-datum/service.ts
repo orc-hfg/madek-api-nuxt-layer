@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import { fiveMinutesCache } from '../../constants/cache';
+import { noCache } from '../../constants/cache';
 import { getFallbackMetaKey, META_KEYS_SHOULD_TRIM, shouldReturnEmptyString } from './normalization';
 
 function handleNotFoundError(event: H3Event, mediaEntryId: MadekMediaEntryMetaDatumPathParameters['media_entry_id'], metaKeyId: MadekMediaEntryMetaDatumPathParameters['meta_key_id'], serverLogger: Logger): Promise<MediaEntryMetaDatum | undefined> | MediaEntryMetaDatum | undefined {
@@ -39,7 +39,7 @@ export async function getMediaEntryMetaDatum(event: H3Event, mediaEntryId: Madek
 				apiOptions: {
 					isAuthenticationNeeded: false,
 				},
-				publicDataCache: fiveMinutesCache,
+				publicDataCache: noCache,
 			},
 		);
 

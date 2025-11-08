@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import { fiveMinutesCache } from '../constants/cache';
+import { noCache } from '../constants/cache';
 
 export async function getCollectionMediaEntryArcs(event: H3Event, collectionId: MadekCollectionMediaEntryArcsPathParameters['collection_id']): Promise<CollectionMediaEntryArcs> {
 	const { fetchFromApiWithPathParameters } = createMadekApiClient<MadekCollectionMediaEntryArcsResponse>(event);
@@ -17,7 +17,7 @@ export async function getCollectionMediaEntryArcs(event: H3Event, collectionId: 
 				apiOptions: {
 					isAuthenticationNeeded: false,
 				},
-				publicDataCache: fiveMinutesCache,
+				publicDataCache: noCache,
 			},
 		);
 

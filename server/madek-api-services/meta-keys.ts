@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3';
-import { twentyFourHoursCache } from '../constants/cache';
+import { noCache } from '../constants/cache';
 
 export async function getMetaKeyLabels(event: H3Event, id: MadekMetaKeysGetPathParameters['id']): Promise<MetaKeyLabels> {
 	const { fetchFromApi } = createMadekApiClient<MadekMetaKeysGetResponse>(event);
@@ -12,7 +12,7 @@ export async function getMetaKeyLabels(event: H3Event, id: MadekMetaKeysGetPathP
 			apiOptions: {
 				isAuthenticationNeeded: false,
 			},
-			publicDataCache: twentyFourHoursCache,
+			publicDataCache: noCache,
 		});
 
 		return {
