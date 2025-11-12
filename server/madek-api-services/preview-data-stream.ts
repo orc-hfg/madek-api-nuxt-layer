@@ -15,7 +15,7 @@ export async function getPreviewDataStream(event: H3Event, previewId: MadekPrevi
 			},
 			{
 				apiOptions: {
-					isAuthenticationNeeded: false,
+					isAuthenticationNeeded: true,
 				},
 
 				// Binary Blob data cannot be cached - would be corrupted during serialization

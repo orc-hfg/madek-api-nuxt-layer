@@ -15,7 +15,7 @@ export async function getCollectionMediaEntryArcs(event: H3Event, collectionId: 
 			},
 			{
 				apiOptions: {
-					isAuthenticationNeeded: false,
+					isAuthenticationNeeded: true,
 				},
 				publicDataCache: noCache,
 			},

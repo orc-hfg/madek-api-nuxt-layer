@@ -21,7 +21,7 @@ export async function getAdminPerson(event: H3Event, id: MadekAdminPeopleGetPath
 	try {
 		const response = await fetchFromApi(`admin/people/${id}`, {
 			apiOptions: {
-				isAuthenticationNeeded: false,
+				isAuthenticationNeeded: true,
 			},
 			publicDataCache: noCache,
 		});

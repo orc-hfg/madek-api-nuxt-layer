@@ -60,7 +60,7 @@ export async function getCollectionMetaDatum(event: H3Event, collectionId: Madek
 			},
 			{
 				apiOptions: {
-					isAuthenticationNeeded: false,
+					isAuthenticationNeeded: true,
 				},
 				publicDataCache: noCache,
 			},

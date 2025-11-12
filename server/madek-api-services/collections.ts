@@ -10,7 +10,7 @@ export async function getCollections(event: H3Event, query: CollectionsQuery): P
 	try {
 		const response = await fetchFromApi('collections', {
 			apiOptions: {
-				isAuthenticationNeeded: false,
+				isAuthenticationNeeded: true,
 				query,
 			},
 			publicDataCache: noCache,

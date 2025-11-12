@@ -10,7 +10,7 @@ export async function getMetaKeyLabels(event: H3Event, id: MadekMetaKeysGetPathP
 	try {
 		const response = await fetchFromApi(`meta-keys/${id}`, {
 			apiOptions: {
-				isAuthenticationNeeded: false,
+				isAuthenticationNeeded: true,
 			},
 			publicDataCache: noCache,
 		});

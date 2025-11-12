@@ -37,7 +37,7 @@ export async function getMediaEntryMetaDatum(event: H3Event, mediaEntryId: Madek
 			},
 			{
 				apiOptions: {
-					isAuthenticationNeeded: false,
+					isAuthenticationNeeded: true,
 				},
 				publicDataCache: noCache,
 			},

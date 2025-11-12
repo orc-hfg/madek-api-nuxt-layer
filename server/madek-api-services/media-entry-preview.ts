@@ -23,7 +23,7 @@ export async function getMediaEntryPreviewThumbnails(event: H3Event, mediaEntryI
 			},
 			{
 				apiOptions: {
-					isAuthenticationNeeded: false,
+					isAuthenticationNeeded: true,
 					query,
 				},
 
